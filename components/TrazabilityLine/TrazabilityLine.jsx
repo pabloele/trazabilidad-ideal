@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -86,7 +86,20 @@ export default function TrazabilityLine({ protocol }) {
             <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>
-            <span>INICIO </span>
+            <span>
+              <Typography
+                sx={{
+                  display: 'flex',
+                  paddingRight: '1rem',
+                  fontSize: '20px',
+                  fontWeight: '4',
+                  transform: 'translateY(-0.2rem)',
+                  fontWeight: 'bold',
+                }}
+              >
+                Inicio
+              </Typography>
+            </span>
           </TimelineContent>
         </TimelineItem>
         {/* intermedios */}
@@ -97,20 +110,37 @@ export default function TrazabilityLine({ protocol }) {
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignContent: 'flex-start',
+                  transform: 'translateY(-0.5rem)',
+                }}
+              >
                 <Typography
                   sx={{
                     display: 'flex',
                     paddingRight: '1rem',
                     fontSize: '26px',
+                    alignSelf: 'center',
                   }}
                 >
                   {Object.keys(protocolItem)[0]}
                 </Typography>
                 {protocolItem[Object.keys(protocolItem)[0]].map(
                   (item, index) => (
-                    <>
-                      {<HorizontalRuleIcon />}
+                    <Box
+                      key={item}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignContent: 'start',
+                      }}
+                    >
+                      <HorizontalRuleIcon
+                        sx={{ transform: 'translateY(0.5rem)' }}
+                      />
                       <Typography
                         key={index}
                         sx={{
@@ -122,7 +152,7 @@ export default function TrazabilityLine({ protocol }) {
                       >
                         {item}
                       </Typography>
-                    </>
+                    </Box>
                   )
                 )}
               </Box>
