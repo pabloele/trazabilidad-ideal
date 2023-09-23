@@ -66,12 +66,56 @@ const protocol = [
     embotellado: ['asdfs', 'sadfsdf', 'sadfsdf', 'asdfs'],
   },
   {
-    embotellado: ['asdfs', 'sadfsdf', 'sadfsdf', 'asdfs'],
+    embotellado: [
+      'asdfs',
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+      ,
+      'sadfsdf',
+      'sadfsdf',
+      'asdfs',
+    ],
   },
 ];
 
 export const TrazabilityContent = () => {
-  const isMediumScreen = useMediaQuery('(min-width: 500px)');
+  const isMediumScreen = useMediaQuery('(min-width: 600px)');
 
   return (
     <Grid
@@ -89,7 +133,7 @@ export const TrazabilityContent = () => {
         direction="column"
         justifyContent="space-between"
         alignItems="flex-start"
-        backgroundColor="red"
+        backgroundColor="beige"
         sx={{ mb: 1, height: '100%' }}
       >
         <Grid
@@ -97,7 +141,7 @@ export const TrazabilityContent = () => {
           direction="row"
           justifyContent="space-between"
           alignItems="flex-start"
-          backgroundColor="red"
+          backgroundColor="beige"
           sx={{ mb: 1, height: '100%' }}
         >
           <Grid item>

@@ -13,7 +13,7 @@ import { TrazabilityContent } from '../../components/';
 import mintImg from '../../public/images/nft_8146034.png';
 
 const HomePage = () => {
-  const isMediumScreen = useMediaQuery('(min-width: 500px)');
+  const isMediumScreen = useMediaQuery('(min-width: 600px)');
   return (
     <HomeLayout>
       {/* <Box

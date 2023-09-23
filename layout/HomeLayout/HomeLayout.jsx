@@ -8,7 +8,7 @@ export const HomeLayout = ({ children }) => {
     <Box
       sx={{
         display: 'flex',
-        backgroundColor: 'blueviolet',
+        backgroundColor: 'beige',
         // backgroundColor: 'primary.main'
       }}
       className="animate__animated animate__fadeIn animate__faster"
@@ -19,7 +19,7 @@ export const HomeLayout = ({ children }) => {
 
       <Box
         component="main"
-        sx={{ backgroundColor: 'purple', flexGrow: 1, p: 3, marginTop: '3rem' }}
+        sx={{ backgroundColor: 'beige', flexGrow: 1, p: 3, marginTop: '3rem' }}
       >
         {children}
       </Box>

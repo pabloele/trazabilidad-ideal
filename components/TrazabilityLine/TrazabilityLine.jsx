@@ -1,92 +1,158 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState } from 'react';
+import { Box, Typography, useMediaQuery, Paper } from '@mui/material';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-import { Box, Typography, useMediaQuery } from '@mui/material';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 
 export default function TrazabilityLine({ protocol }) {
-  const isMediumScreen = useMediaQuery('(min-width: 500px)');
+  const isMediumScreen = useMediaQuery('(min-width: 600px)');
   const timelineWidth = isMediumScreen ? '1000px' : '500px';
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(null);
-  const [startY, setStartY] = useState(null);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [scrollTop, setScrollTop] = useState(0);
+  const [isGrabbing, setIsGrabbing] = useState(false);
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(
-      e.pageX - document.getElementById('timeline-container').offsetLeft
-    );
-    setStartY(
-      e.pageY - document.getElementById('timeline-container').offsetTop
-    );
-    setScrollLeft(document.getElementById('timeline-container').scrollLeft);
-    setScrollTop(document.getElementById('timeline-container').scrollTop);
+  const handleMouseDown = () => {
+    setIsGrabbing(true);
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    setIsGrabbing(false);
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const x =
-      e.pageX - document.getElementById('timeline-container').offsetLeft;
-    const y = e.pageY - document.getElementById('timeline-container').offsetTop;
-    const walkX = (x - startX) * 2;
-    const walkY = (y - startY) * 2;
-    document.getElementById('timeline-container').scrollLeft =
-      scrollLeft - walkX;
-    document.getElementById('timeline-container').scrollTop = scrollTop - walkY;
+    if (isGrabbing) {
+      const timelineContainer = document.getElementById('timeline-container');
+      timelineContainer.scrollLeft += e.movementX;
+      timelineContainer.scrollTop += e.movementY;
+    }
   };
 
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    } else {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    }
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove);
+
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [isDragging, startX, startY, scrollLeft, scrollTop]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGrabbing]);
 
   return (
-    <div
-      id="timeline-container"
-      style={{
+    <Box
+      sx={{
         width: timelineWidth,
-        height: '100%',
-        overflow: 'auto',
-        cursor: isDragging ? 'grabbing' : 'grab',
+        height: '350px',
+        overflow: 'hidden',
+        cursor: isGrabbing ? 'grabbing' : 'grab',
       }}
-      onMouseDown={handleMouseDown}
     >
-      <Timeline
+      <Paper
+        id="timeline-container"
         sx={{
-          [`& .${timelineItemClasses.root}:before`]: {
-            flex: 0,
-            padding: 0,
-          },
+          height: '100%',
+          overflow: 'auto',
+          backgroundColor: 'beige',
         }}
       >
-        {/* inicio */}
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>
-            <span>
+        <Timeline
+          sx={{
+            [`& .${timelineItemClasses.root}:before`]: {
+              flex: 0,
+              padding: 0,
+            },
+          }}
+        >
+          {/* inicio */}
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineDot />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>
+              <span>
+                <Typography
+                  sx={{
+                    display: 'flex',
+                    paddingRight: '1rem',
+                    fontSize: '20px',
+                    fontWeight: '4',
+                    transform: 'translateY(-0.2rem)',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Inicio
+                </Typography>
+              </span>
+            </TimelineContent>
+          </TimelineItem>
+          {/* intermedios */}
+          {protocol?.map((protocolItem) => (
+            <TimelineItem key={Object.keys(protocolItem)[0]}>
+              <TimelineSeparator>
+                <TimelineDot />
+                <TimelineConnector />
+              </TimelineSeparator>
+              <TimelineContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignContent: 'flex-start',
+                    transform: 'translateY(-0.5rem)',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      display: 'flex',
+                      paddingRight: '1rem',
+                      fontSize: '26px',
+                      alignSelf: 'center',
+                    }}
+                  >
+                    {Object.keys(protocolItem)[0]}
+                  </Typography>
+                  {protocolItem[Object.keys(protocolItem)[0]].map(
+                    (item, index) => (
+                      <Box
+                        key={item}
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignContent: 'start',
+                        }}
+                      >
+                        <HorizontalRuleIcon
+                          sx={{ transform: 'translateY(0.5rem)' }}
+                        />
+                        <Typography
+                          key={index}
+                          sx={{
+                            display: 'flex',
+                            paddingX: '1rem',
+                            height: '30px',
+                            fontSize: '26px',
+                          }}
+                        >
+                          {item}
+                        </Typography>
+                      </Box>
+                    )
+                  )}
+                </Box>
+              </TimelineContent>
+            </TimelineItem>
+          ))}
+
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineDot />
+              {/* <TimelineConnector /> */}
+            </TimelineSeparator>
+            <TimelineContent>
               <Typography
                 sx={{
                   display: 'flex',
@@ -97,94 +163,12 @@ export default function TrazabilityLine({ protocol }) {
                   fontWeight: 'bold',
                 }}
               >
-                Inicio
+                Fin
               </Typography>
-            </span>
-          </TimelineContent>
-        </TimelineItem>
-        {/* intermedios */}
-        {protocol?.map((protocolItem) => (
-          <TimelineItem key={Object.keys(protocolItem)[0]}>
-            <TimelineSeparator>
-              <TimelineDot />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignContent: 'flex-start',
-                  transform: 'translateY(-0.5rem)',
-                }}
-              >
-                <Typography
-                  sx={{
-                    display: 'flex',
-                    paddingRight: '1rem',
-                    fontSize: '26px',
-                    alignSelf: 'center',
-                  }}
-                >
-                  {Object.keys(protocolItem)[0]}
-                </Typography>
-                {protocolItem[Object.keys(protocolItem)[0]].map(
-                  (item, index) => (
-                    <Box
-                      key={item}
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignContent: 'start',
-                      }}
-                    >
-                      <HorizontalRuleIcon
-                        sx={{ transform: 'translateY(0.5rem)' }}
-                      />
-                      <Typography
-                        key={index}
-                        sx={{
-                          display: 'flex',
-                          paddingX: '1rem',
-                          height: '30px',
-                          fontSize: '26px',
-                        }}
-                      >
-                        {item}
-                      </Typography>
-                    </Box>
-                  )
-                )}
-              </Box>
             </TimelineContent>
           </TimelineItem>
-        ))}
-
-        {/* ** */}
-        {/* <TimelineItem>
-        <TimelineSeparator>
-          <TimelineDot />
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent>Sleep</TimelineContent>
-      </TimelineItem> */}
-        {/* fin */}
-        {/* <TimelineItem>
-        <TimelineSeparator>
-          <TimelineDot />
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent>Sleep</TimelineContent>
-      </TimelineItem> */}
-
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            {/* <TimelineConnector /> */}
-          </TimelineSeparator>
-          <TimelineContent>FIN</TimelineContent>
-        </TimelineItem>
-      </Timeline>
-    </div>
+        </Timeline>
+      </Paper>
+    </Box>
   );
 }

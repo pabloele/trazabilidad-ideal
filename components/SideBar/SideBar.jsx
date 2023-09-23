@@ -17,7 +17,7 @@ import logo from '../../public/images/cropped-logo-ideal-2.png';
 import Image from 'next/image';
 
 export const SideBar = ({ drawerWidth = 240 }) => {
-  const isMobileScreen = useMediaQuery('(min-width: 500px)');
+  const isMobileScreen = useMediaQuery('(min-width: 600px)');
 
   return (
     <Drawer
