@@ -9,8 +9,47 @@ import {
 import { Google } from '@mui/icons-material';
 
 import { AuthLayout } from '../../layout';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { Navigate } from 'next/router';
+const handleLogin = async () => {
+  const navigate = Navigate();
+
+  try {
+    await login(email, password);
+    console.log('Login successful');
+    router.push('/protected');
+  } catch (error) {
+    console.log(error);
+    // Handle login error here if needed.
+  }
+};
 
 const LoginPage = () => {
+  const { user, loginWithGoogle, logout, error, loginWithEmail } = useAuth();
+
+  const router = useRouter();
+  // const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    // try {
+    //   await login(email, password);
+    //   console.log('Login successful');
+    //   router.push('/protected');
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
+  const handleLoginWithGoogle = (e) => {
+    loginWithGoogle().then((res) => {
+      console.log(res);
+      if (res.user) router.push('/HomePage');
+    });
+  };
   return (
     <>
       <AuthLayout title="Login">
@@ -55,7 +94,11 @@ const LoginPage = () => {
               </Link>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Button variant="contained" fullWidth>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleLoginWithGoogle}
+              >
                 <Google />
                 <Typography sx={{ ml: 1 }}>Google</Typography>
               </Button>

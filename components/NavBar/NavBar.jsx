@@ -28,7 +28,7 @@ export const NavBar = ({ drawerWidth }) => {
             Bodega 1
           </Typography>
           <IconButton>
-            <LogoutOutlined color="white" />
+            <LogoutOutlined color="secondary" />
           </IconButton>
         </Grid>
       </Toolbar>

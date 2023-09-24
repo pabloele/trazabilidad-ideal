@@ -25,8 +25,8 @@ export default function TrazabilityLine({ protocol }) {
   const handleMouseMove = (e) => {
     if (isGrabbing) {
       const timelineContainer = document.getElementById('timeline-container');
-      timelineContainer.scrollLeft += e.movementX;
-      timelineContainer.scrollTop += e.movementY;
+      timelineContainer.scrollLeft -= e.movementX;
+      timelineContainer.scrollTop -= e.movementY;
     }
   };
 
@@ -38,7 +38,6 @@ export default function TrazabilityLine({ protocol }) {
       window.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('mousemove', handleMouseMove);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGrabbing]);
 
   return (
@@ -54,11 +53,13 @@ export default function TrazabilityLine({ protocol }) {
         id="timeline-container"
         sx={{
           height: '100%',
-          overflow: 'auto',
+          overflow: isMediumScreen ? 'hidden' : 'auto',
           backgroundColor: 'beige',
+          scrollbarGutter: 'auto',
         }}
       >
         <Timeline
+          onMouseDown={handleMouseDown}
           sx={{
             [`& .${timelineItemClasses.root}:before`]: {
               flex: 0,
