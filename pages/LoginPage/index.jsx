@@ -12,10 +12,8 @@ import { AuthLayout } from '../../layout';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Navigate } from 'next/router';
-const handleLogin = async () => {
-  const navigate = Navigate();
 
+const handleLogin = async () => {
   try {
     await login(email, password);
     console.log('Login successful');
