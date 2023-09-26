@@ -1,15 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-
+// import {
+//   getFirestore,
+//   query,
+//   where,
+//   collection,
+//   onSnapshot,
+// } from 'firebase/firestore';
+import { db } from '../../firebase/config';
+import { doc, updateDoc } from 'firebase/firestore';
 const Protected = () => {
   const { user, logout } = useAuth();
-  user ? console.log('USER    :', user) : console.log('Not logged in');
-  const handleLogout = (e) => {
-    // e.preventDefault();
-    try {
-      logout();
-    } catch (error) {
-      console.log(error);
+  // console.log('/*-*/--*/-*/*//*-*-*-*-*-*-*-*', db ? db : null);
+  // user ? console.log('USER    :', user.uid) : console.log('Not logged in');
+  // const [nombre, setNombre] = useState('');
+
+  // useEffect(() => {
+  //   const collectionRef = collection(db, user.uid);
+  //   const doc = collectionRef.doc();
+  //   doc.set({
+  //     nombre: 'Juan Pérez',
+  //     edad: 25,
+  //   });
+  //   doc.save();
+  //   // return () => {
+  //   //   unsubscribe();
+  //   // };
+  // }, []);
+
+  // const { user } = UserAuth();
+
+  const userID = doc(db, 'users', `${user?.uid}`);
+  const saveUser = async () => {
+    if (user?.email) {
+      await updateDoc(userID, {
+        savedProtocol: [],
+      });
+    } else {
+      alert('Por favor inicia sesión');
     }
   };
   return (
@@ -17,16 +45,11 @@ const Protected = () => {
       {user ? (
         <div>
           <h1>PROTEGIDO // {user.email}</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-secondary-dm text-text-dm w-2/12 px-4 py-3 hover:bg-green-800 transition-all duration-500 my-8 ease-in-out rounded font-semibold w-fit"
-          >
-            LOGOUT
-          </button>
         </div>
       ) : (
         <h1>NOT LOGGED IN</h1>
       )}
+      <button onClick={saveUser}>save user</button>
     </div>
   );
 };

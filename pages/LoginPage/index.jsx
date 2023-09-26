@@ -20,7 +20,6 @@ const handleLogin = async () => {
     router.push('/protected');
   } catch (error) {
     console.log(error);
-    // Handle login error here if needed.
   }
 };
 

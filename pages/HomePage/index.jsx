@@ -14,9 +14,11 @@ import mintImg from '../../public/images/nft_8146034.png';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect } from 'react';
+import { FirebaseDB } from '../../firebase/config';
 
 const HomePage = () => {
   const { user, logout } = useAuth();
+
   const router = useRouter();
   user ? console.log('USER    :', user) : console.log('Not logged in');
 
@@ -38,6 +40,7 @@ const HomePage = () => {
           right: 50,
           bottom: 50,
         }}
+        onClick={() => router.push('/AddMilestone')}
       >
         <AddOutlined sx={{ fontSize: 30 }} />
       </IconButton>
