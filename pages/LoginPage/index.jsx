@@ -103,7 +103,7 @@ const LoginPage = () => {
           </Grid>
         </form>
         <Grid container direction="row" justifyContent="end">
-          <Link color="secondary.main" href="/RegisterPage">
+          <Link color="secondary.black" href="/RegisterPage">
             Crear una cuenta
           </Link>
         </Grid>
