@@ -6,10 +6,13 @@ import {
   InputLabel,
   Button,
   Box,
-} from '@mui/material';
-import React from 'react';
-import mintImg from '../../public/images/milestone.png';
-import Image from 'next/image';
+  Typography,
+} from "@mui/material";
+import React from "react";
+import mintImg from "../../public/images/milestone.png";
+import Image from "next/image";
+import { HomeLayout } from "../../layout";
+import Protocols from "../../components/Protocols";
 const AddMilestone = () => {
   const [image, setImage] = React.useState(mintImg);
 
@@ -25,70 +28,27 @@ const AddMilestone = () => {
   };
 
   return (
-    <Grid
-      container
-      alignItems="center"
-      justifyContent="center"
-      justifySelf="center"
-      height="100vh"
-      width="100%px"
-      spacing={4}
-    >
-      <Grid
-        item
-        xs={4}
-        sx={{ width: '100%', height: '400px', objectFit: 'cover' }}
-      >
-        {/* <Box mb={2}> */}
-        <Image src={mintImg} alt="Preview" style={{ objectFit: 'cover' }} />
-        {/* </Box> */}
-      </Grid>
-      <Grid item xs={4}>
-        <FormControl fullWidth>
-          <InputLabel htmlFor="my-input">Descripción</InputLabel>
-          <Input id="my-input" aria-describedby="my-helper-text" />
-          {/* <FormHelperText id="my-helper-text">Metadata</FormHelperText> */}
-        </FormControl>
-        <Grid container mt={2} width="100%" direction="row" spacing={2}>
-          <Grid
-            item
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Button variant="contained" component="label" htmlFor="file-input">
-              Subir Imagen
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                id="file-input"
-                style={{ display: 'none' }}
-              />
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              component="label"
-              htmlFor="file-input"
-              color="success"
-            >
-              Guardar
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                id="file-input"
-                style={{ display: 'none' }}
-              />
-            </Button>
-          </Grid>
+    <HomeLayout>
+      <Box sx={{ color: "primary.main", width: "90%", marginX: "auto" }}>
+        <Typography sx={{ fontSize: 24, marginY: 2, fontWeight: "bold" }}>
+          ¿Qué vas a producir?
+        </Typography>
+        <Typography sx={{ fontSize: 20 }}>
+          Solo se muestran los protocolos guardados
+        </Typography>
+
+        <Grid
+          alignItems="center"
+          justifyContent="center"
+          justifySelf="center"
+          height="90vh"
+          width="100%px"
+          spacing={4}
+        >
+          <Protocols />
         </Grid>
-      </Grid>
-    </Grid>
+      </Box>
+    </HomeLayout>
   );
 };
 

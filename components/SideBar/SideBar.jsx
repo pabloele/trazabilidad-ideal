@@ -1,22 +1,19 @@
 import { Schema } from "@mui/icons-material";
 import Link from "next/link";
 import FactoryIcon from "@mui/icons-material/Factory";
+import SettingsIcon from "@mui/icons-material/Settings";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import {
   AccordionDetails,
   Accordion,
   AccordionSummary,
-  Box,
   Divider,
   Drawer,
-  Grid,
   List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Toolbar,
   Typography,
   useMediaQuery,
+  Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Styles from "./Sidebar.module.css";
@@ -43,21 +40,66 @@ export const SideBar = ({ drawerWidth = 240 }) => {
         <Image src={logo} alt="logo" />
       </Toolbar>
       <Divider />
+      <Box
+        sx={{
+          backgroundColor: "primary.main",
+          padding: 1,
+        }}
+      >
+        <Typography
+          sx={{
+            color: "#fff",
+            display: "flex",
+            gap: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          Configuracion
+        </Typography>
+      </Box>
+      <Divider />
       <List sx={{ backgroundColor: "primary.main", flexGrow: 1 }}>
-        {/* {["Vino 1", "Vino 2", "Vino 3", "Vino 4"].map((t) => (
-          <ListItem key={t} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <Schema />
-              </ListItemIcon>
-              <Grid container>
-                <ListItemText sx={{ color: "secondary.main" }} primary={t} />
-              </Grid>
-            </ListItemButton>
-          </ListItem>
-        ))} */}
+        <Box style={{}}>
+          <Accordion sx={{ background: "transparent" }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography
+                sx={{
+                  color: "#fff",
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                }}
+              >
+                <SettingsIcon sx={{ fontSize: 15 }} />
+                General
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                border: "none",
+                backgroundColor: "#fff",
+                gap: 2,
+              }}
+            >
+              <Link className={Styles.link} href={"/"}>
+                Proovedores
+              </Link>
+              <Link className={Styles.link} href={"/"}>
+                Clientes
+              </Link>
 
-        <div style={{}}>
+              <Link className={Styles.link} href={"/"}>
+                Configuraciones
+              </Link>
+            </AccordionDetails>
+          </Accordion>
           <Accordion sx={{ background: "transparent" }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -79,18 +121,165 @@ export const SideBar = ({ drawerWidth = 240 }) => {
             <AccordionDetails
               sx={{
                 display: "flex",
+                flexDirection: "column",
                 border: "none",
                 backgroundColor: "#fff",
-                paddingX: 2,
-                paddingY: 2,
+                gap: 2,
               }}
             >
               <Link className={Styles.link} href={"/"}>
-                Mis productos
+                Materias primas
+              </Link>
+              <Link className={Styles.link} href={"/"}>
+                Insumos
+              </Link>
+
+              <Link className={Styles.link} href={"/"}>
+                Produccion
+              </Link>
+              <Link className={Styles.link} href={"/"}>
+                Producto Final
               </Link>
             </AccordionDetails>
           </Accordion>
-        </div>
+        </Box>
+
+        <Divider sx={{ backgroundColor: "#fff", marginY: 1 }} />
+        <Box
+          sx={{
+            backgroundColor: "primary.main",
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#fff",
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Registros
+          </Typography>
+        </Box>
+        <Divider sx={{ backgroundColor: "#fff", marginY: 1 }} />
+        <Accordion sx={{ background: "transparent" }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography
+              sx={{
+                color: "#fff",
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+              }}
+            >
+              <AssignmentIcon sx={{ fontSize: 15 }} />
+              Materia prima
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              border: "none",
+              backgroundColor: "#fff",
+              gap: 2,
+            }}
+          >
+            <Link className={Styles.link} href={"/"}>
+              Ingreso
+            </Link>
+            <Link className={Styles.link} href={"/"}>
+              Historico
+            </Link>
+
+            <Link className={Styles.link} href={"/"}>
+              Baja de stock
+            </Link>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion sx={{ background: "transparent" }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography
+              sx={{
+                color: "#fff",
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+              }}
+            >
+              <AssignmentIcon sx={{ fontSize: 15 }} />
+              Insumos
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              border: "none",
+              backgroundColor: "#fff",
+              gap: 2,
+            }}
+          >
+            <Link className={Styles.link} href={"/"}>
+              Ingreso
+            </Link>
+            <Link className={Styles.link} href={"/"}>
+              Historico
+            </Link>
+
+            <Link className={Styles.link} href={"/"}>
+              Baja de stock
+            </Link>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion sx={{ background: "transparent" }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography
+              sx={{
+                color: "#fff",
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+              }}
+            >
+              <AssignmentIcon sx={{ fontSize: 15 }} />
+              Produccion
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              border: "none",
+              backgroundColor: "#fff",
+              gap: 2,
+            }}
+          >
+            <Link className={Styles.link} href={"/AddMilestone"}>
+              Nueva
+            </Link>
+            <Link className={Styles.link} href={"/"}>
+              En curso
+            </Link>
+
+            <Link className={Styles.link} href={"/"}>
+              Realizadas
+            </Link>
+          </AccordionDetails>
+        </Accordion>
       </List>
     </Drawer>
   );
