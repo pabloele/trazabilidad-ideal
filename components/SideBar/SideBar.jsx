@@ -268,7 +268,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               gap: 2,
             }}
           >
-            <Link className={Styles.link} href={"/AddMilestone"}>
+            <Link className={Styles.link} href={"/nueva-produccion"}>
               Nueva
             </Link>
             <Link className={Styles.link} href={"/"}>

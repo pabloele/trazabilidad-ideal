@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import { HomeLayout } from "../../../layout";
-import { Box } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import formularioTrazabilidad from "../../../protocols/protocols";
+
 const Agroalimentario = () => {
   const [formData, setFormData] = useState({});
 
-  // Función para manejar los cambios en los campos del formulario
   const handleFieldChange = (etapa, campo, valor) => {
     setFormData({
       ...formData,
@@ -16,17 +24,20 @@ const Agroalimentario = () => {
     });
   };
 
-  // Función para renderizar los campos de un formulario
   const renderCampos = (etapa) => {
     return formularioTrazabilidad.etapas
       .find((e) => e.nombre === etapa)
       .campos.map((campo) => (
-        <div style={{ display: "flex", gap: 5 }} key={campo.nombre}>
-          <label style={{ width: 100 }} htmlFor={campo.nombre}>
+        <div
+          style={{ display: "flex", alignItems: "center", gap: 10 }}
+          key={campo.nombre}
+        >
+          <InputLabel htmlFor={campo.nombre} style={{ width: 250 }}>
             {campo.nombre}:
-          </label>
+          </InputLabel>
           {campo.tipo === "fecha" ? (
-            <input
+            <TextField
+              sx={{ width: 200 }}
               type="date"
               id={campo.nombre}
               value={formData[etapa]?.[campo.nombre] || ""}
@@ -35,22 +46,25 @@ const Agroalimentario = () => {
               }
             />
           ) : campo.tipo === "opciones" ? (
-            <select
-              id={campo.nombre}
-              value={formData[etapa]?.[campo.nombre] || ""}
-              onChange={(e) =>
-                handleFieldChange(etapa, campo.nombre, e.target.value)
-              }
-            >
-              <option value="">Seleccione una opción</option>
-              {campo.opciones.map((opcion) => (
-                <option key={opcion} value={opcion}>
-                  {opcion}
-                </option>
-              ))}
-            </select>
+            <FormControl>
+              <Select
+                sx={{ width: 200 }}
+                id={campo.nombre}
+                value={formData[etapa]?.[campo.nombre] || ""}
+                onChange={(e) =>
+                  handleFieldChange(etapa, campo.nombre, e.target.value)
+                }
+              >
+                <MenuItem value="">Seleccione una opción</MenuItem>
+                {campo.opciones.map((opcion) => (
+                  <MenuItem key={opcion} value={opcion}>
+                    {opcion}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           ) : (
-            <input
+            <TextField
               type="text"
               id={campo.nombre}
               value={formData[etapa]?.[campo.nombre] || ""}
@@ -62,16 +76,29 @@ const Agroalimentario = () => {
         </div>
       ));
   };
+
   return (
     <HomeLayout>
-      <Box sx={{ color: "primary.main", height: "90vh" }}>
+      <Box sx={{ color: "primary.main", minHeight: "90vh", padding: 2 }}>
         {formularioTrazabilidad.etapas.map((etapa) => (
-          <div key={etapa.nombre}>
+          <div key={etapa.nombre} style={{ marginBottom: 20 }}>
             <h2>{etapa.nombre}</h2>
             {renderCampos(etapa.nombre)}
           </div>
         ))}
-        <button onClick={() => console.log(formData)}>Guardar Datos</button>
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <InputLabel sx={{ width: 250 }}>Observaciones</InputLabel>
+          <TextField sx={{ width: 200 }} />
+        </Box>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => console.log(formData)}
+        >
+          Guardar Datos
+        </Button>
       </Box>
     </HomeLayout>
   );
