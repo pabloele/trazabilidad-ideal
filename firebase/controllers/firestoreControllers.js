@@ -33,10 +33,8 @@ export const addUserProduct = async (uid, product) => {
   const userDocumentRef = await doc(db, 'users', id);
   const documentSnapshot = await getDoc(userDocumentRef);
   const userData = await documentSnapshot.data();
-  const updatedProducts = [...userData.products, product];
+  const data = { ...userData, products: [...userData.products, product] };
 
-  const data = { ...userData, products: [...updatedProducts] };
-  console.log(data);
   await updateDoc(userDocumentRef, { ...data });
 };
 
@@ -47,6 +45,23 @@ export const deleteUserDoc = async (uid) => {
   await deleteDoc(userDoc);
 };
 
-// export const addUserProduct = async (uid, product) => {
-//   await updateUser(uid, product);
-// };
+export const getUserProducts = async (uid) => {
+  const id = await getDocId(uid);
+  const userDocumentRef = await doc(db, 'users', id);
+  try {
+    const userDocumentRef = doc(db, 'users', id);
+    const userDocumentSnapshot = await getDoc(userDocumentRef);
+
+    if (userDocumentSnapshot.exists()) {
+      const userData = userDocumentSnapshot.data();
+      const userProducts = userData.products || [];
+      return userProducts;
+    } else {
+      console.log('User document does not exist.');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching user products:', error);
+    return [];
+  }
+};

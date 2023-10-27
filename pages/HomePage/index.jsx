@@ -32,6 +32,7 @@ import {
   addUserProduct,
   createUser,
   deleteUserDoc,
+  getUserProducts,
   getUsers,
   updateUser,
 } from '../../firebase/controllers/firestoreControllers';
@@ -52,9 +53,14 @@ const product = {
     },
   ],
 };
-
+const activeProduct = 0;
 const HomePage = () => {
   const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState();
+  const handleGetProducts = async (uid) => {
+    const products = await getUserProducts(uid);
+    setProducts(products);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -72,6 +78,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (!user) router.push('/');
+    handleGetProducts(user?.uid);
   }, [user]);
 
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
@@ -108,13 +115,22 @@ const HomePage = () => {
 
       <button
         onClick={() => {
+          handleGetProducts(user.uid);
+        }}
+      >
+        Traer los productos del usuario
+      </button>
+      <button
+        onClick={() => {
           const uid = '1';
           deleteUserDoc(uid);
         }}
       >
         borrar USUARIO
       </button>
-      <TrazabilityContent protocol={product.trazability} />
+      {products && (
+        <TrazabilityContent protocol={products[activeProduct].trazability} />
+      )}
       <IconButton
         size="large"
         sx={{
