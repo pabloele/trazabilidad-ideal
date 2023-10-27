@@ -8,6 +8,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  TextareaAutosize,
 } from "@mui/material";
 import formularioTrazabilidad from "../../../protocols/protocols";
 
@@ -24,6 +25,13 @@ const Agroalimentario = () => {
     });
   };
 
+  const handleObservationsChange = (event) => {
+    setFormData({
+      ...formData,
+      observaciones: event.target.value, // Campo de observaciones
+    });
+  };
+
   const renderCampos = (etapa) => {
     return formularioTrazabilidad.etapas
       .find((e) => e.nombre === etapa)
@@ -37,7 +45,7 @@ const Agroalimentario = () => {
           </InputLabel>
           {campo.tipo === "fecha" ? (
             <TextField
-              sx={{ width: 200 }}
+              sx={{ width: 200, backgroundColor: "#ffff" }}
               type="date"
               id={campo.nombre}
               value={formData[etapa]?.[campo.nombre] || ""}
@@ -48,7 +56,7 @@ const Agroalimentario = () => {
           ) : campo.tipo === "opciones" ? (
             <FormControl>
               <Select
-                sx={{ width: 200 }}
+                sx={{ width: 200, backgroundColor: "#ffff" }}
                 id={campo.nombre}
                 value={formData[etapa]?.[campo.nombre] || ""}
                 onChange={(e) =>
@@ -66,6 +74,7 @@ const Agroalimentario = () => {
           ) : (
             <TextField
               type="text"
+              sx={{ width: 200, backgroundColor: "#ffff" }}
               id={campo.nombre}
               value={formData[etapa]?.[campo.nombre] || ""}
               onChange={(e) =>
@@ -89,10 +98,17 @@ const Agroalimentario = () => {
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <InputLabel sx={{ width: 250 }}>Observaciones</InputLabel>
-          <TextField sx={{ width: 200 }} />
+          <TextareaAutosize
+            minRows={4}
+            sx={{ width: 200 }}
+            id="observaciones"
+            value={formData.observaciones || ""}
+            onChange={handleObservationsChange}
+          />
         </Box>
 
         <Button
+          sx={{ marginY: 5 }}
           variant="contained"
           color="primary"
           onClick={() => console.log(formData)}

@@ -22,7 +22,7 @@ const formularioTrazabilidad = {
       ],
     },
     {
-      nombre: "Cosecha o Sacrificio",
+      nombre: "Elaboracion",
       campos: [
         {
           nombre: "Fecha de Cosecha o Sacrificio",
@@ -41,7 +41,47 @@ const formularioTrazabilidad = {
         },
       ],
     },
-    // Puedes agregar más etapas aquí
+
+    {
+      nombre: "Despacho",
+      campos: [
+        {
+          nombre: "Fecha de Cosecha o Sacrificio",
+          tipo: "fecha",
+          requerido: true,
+        },
+        {
+          nombre: "Ubicación",
+          tipo: "texto",
+          requerido: true,
+        },
+        {
+          nombre: "Registro de Lote",
+          tipo: "texto",
+          requerido: false,
+        },
+      ],
+    },
+    {
+      nombre: "Comercialización",
+      campos: [
+        {
+          nombre: "Fecha de Cosecha o Sacrificio",
+          tipo: "fecha",
+          requerido: true,
+        },
+        {
+          nombre: "Ubicación",
+          tipo: "texto",
+          requerido: true,
+        },
+        {
+          nombre: "Registro de Lote",
+          tipo: "texto",
+          requerido: false,
+        },
+      ],
+    },
   ],
 };
 

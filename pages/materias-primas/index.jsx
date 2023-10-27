@@ -9,6 +9,7 @@ import {
   TableCell,
   TableBody,
   IconButton,
+  Button,
 } from "@mui/material";
 import useRawMaterials from "../../hooks/useRawMaterials";
 import DeleteIcon from "@mui/icons-material/Delete"; // Importa el ícono de "tacho de basura" de Material-UI
@@ -35,6 +36,10 @@ const RawMaterials = () => {
         >
           Materias primas
         </Typography>
+
+        <Box sx={{ display: "flex", justifyContent: "end" }}>
+          <Button variant="contained">Agregar</Button>
+        </Box>
         <Table>
           <TableHead>
             <TableRow>
