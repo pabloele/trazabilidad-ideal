@@ -1,12 +1,18 @@
-import {
-  IconButton,
+
+import { IconButton, useMediaQuery, 
   Typography,
   Button,
   Grid,
   TextField,
   useMediaQuery,
-  Box,
-} from '@mui/material';
+  Box,} from "@mui/material";
+import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
+import { HomeLayout } from "../../layout";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
+import { useEffect } from "react";
+import Welcome from "../../components/Welcome/Welcome";
+
 import { AddOutlined, Image, MailOutlined } from '@mui/icons-material';
 import { HomeLayout } from '../../layout';
 import { TrazabilityContent } from '../../components/';
@@ -45,6 +51,7 @@ const protocol = [
   },
 ];
 
+
 const HomePage = () => {
   const [users, setUsers] = useState([]);
 
@@ -60,15 +67,20 @@ const HomePage = () => {
   const { user, logout } = useAuth();
 
   const router = useRouter();
-  user ? console.log('USER    :', user) : console.log('Not logged in');
+  user ? console.log("USER    :", user) : console.log("Not logged in");
 
   useEffect(() => {
-    if (!user) router.push('/');
+    if (!user) router.push("/");
   }, [user]);
 
-  const isMediumScreen = useMediaQuery('(min-width: 600px)');
+  const isMediumScreen = useMediaQuery("(min-width: 600px)");
   return (
     <HomeLayout>
+
+      <Welcome />
+      {/* <TrazabilityContent /> */}
+     
+
       <button
         onClick={() => {
           createUser({ uid: user.uid, data: protocol });
@@ -108,6 +120,7 @@ const HomePage = () => {
       >
         <AddOutlined sx={{ fontSize: 30 }} />
       </IconButton>
+
     </HomeLayout>
   );
 };

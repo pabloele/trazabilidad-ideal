@@ -1,7 +1,7 @@
-import { LogoutOutlined, MenuOutlined } from '@mui/icons-material';
-import { AppBar, Grid, IconButton, Toolbar, Typography } from '@mui/material';
-import { useAuth } from '../../context/AuthContext';
-import { useEffect } from 'react';
+import { LogoutOutlined, MenuOutlined } from "@mui/icons-material";
+import { AppBar, Grid, IconButton, Toolbar, Typography } from "@mui/material";
+import { useAuth } from "../../context/AuthContext";
+import { useEffect } from "react";
 
 export const NavBar = ({ drawerWidth }) => {
   const handleLogout = (e) => {
@@ -13,9 +13,8 @@ export const NavBar = ({ drawerWidth }) => {
   };
   const { user, logout } = useAuth();
   useEffect(() => {
-    user ? console.log('USER    :', user) : console.log('Not logged in');
+    user ? console.log("USER    :", user) : console.log("Not logged in");
   }, [user]);
-  user ? console.log('USER    :', user) : console.log('Not logged in');
   return (
     <AppBar
       position="fixed"
@@ -27,7 +26,7 @@ export const NavBar = ({ drawerWidth }) => {
       <Toolbar>
         <IconButton
           edge="start"
-          sx={{ mr: 2, color: 'secondary.main', display: { sm: 'none' } }}
+          sx={{ mr: 2, color: "secondary.main", display: { sm: "none" } }}
         >
           <MenuOutlined />
         </IconButton>
