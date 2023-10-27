@@ -5,6 +5,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from 'firebase/firestore/lite';
 import { db } from '../config';
 
@@ -16,8 +17,8 @@ export const getUsers = async () => {
   return users;
 };
 
-export const createUser = async ({ uid, data }) => {
-  await addDoc(usersCollectionRef, { uid, data: data });
+export const createUser = async (payload) => {
+  await addDoc(usersCollectionRef, { ...payload });
 };
 
 export const getDocId = async (uid) => {
@@ -27,12 +28,16 @@ export const getDocId = async (uid) => {
   return id;
 };
 
-export const updateUser = async (uid, data) => {
+export const addUserProduct = async (uid, product) => {
   const id = await getDocId(uid);
-  const userDoc = await doc(db, 'users', id);
+  const userDocumentRef = await doc(db, 'users', id);
+  const documentSnapshot = await getDoc(userDocumentRef);
+  const userData = await documentSnapshot.data();
+  const updatedProducts = [...userData.products, product];
 
-  const response = await updateDoc(userDoc, { data });
-  console.log(response);
+  const data = { ...userData, products: [...updatedProducts] };
+  console.log(data);
+  await updateDoc(userDocumentRef, { ...data });
 };
 
 export const deleteUserDoc = async (uid) => {
@@ -41,3 +46,7 @@ export const deleteUserDoc = async (uid) => {
   const userDoc = doc(db, 'users', id);
   await deleteDoc(userDoc);
 };
+
+// export const addUserProduct = async (uid, product) => {
+//   await updateUser(uid, product);
+// };

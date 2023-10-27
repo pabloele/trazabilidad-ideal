@@ -1,25 +1,23 @@
-
-import { IconButton, useMediaQuery, 
+import { useEffect, useState } from 'react';
+import {
+  IconButton,
+  useMediaQuery,
   Typography,
   Button,
   Grid,
   TextField,
-  useMediaQuery,
-  Box,} from "@mui/material";
-import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
-import { HomeLayout } from "../../layout";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthContext";
-import { useEffect } from "react";
-import Welcome from "../../components/Welcome/Welcome";
-
+  Box,
+} from '@mui/material';
 import { AddOutlined, Image, MailOutlined } from '@mui/icons-material';
 import { HomeLayout } from '../../layout';
-import { TrazabilityContent } from '../../components/';
-import mintImg from '../../public/images/nft_8146034.png';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
-import { useEffect, useState } from 'react';
+
+import Welcome from '../../components/Welcome/Welcome';
+
+import { TrazabilityContent } from '../../components/';
+import mintImg from '../../public/images/nft_8146034.png';
+
 import { db } from '../../firebase/config';
 import {
   addDoc,
@@ -31,26 +29,29 @@ import {
 } from 'firebase/firestore/lite';
 
 import {
+  addUserProduct,
   createUser,
   deleteUserDoc,
   getUsers,
   updateUser,
 } from '../../firebase/controllers/firestoreControllers';
 
-const protocol = [
-  { Prod_pria: ['Hasta Mañana', 'riego', 'etcétera'] },
-  { Elaboracion: ['11/11/2022'] },
-  { Despacho: ['asduyuyutfs', 'saduifsdf', 'sadfiiiiiisdf'] },
-  {
-    Compercializacion: [
-      'asiiiiidfs',
-      'sadfsdiiiiif',
-      'sadfsiiiiiidf',
-      'sadfsidf',
-    ],
-  },
-];
-
+const product = {
+  name: 'Vino 1',
+  trazability: [
+    { Prod_pria: ['Hasta Mañana', 'riego', 'etcétera'] },
+    { Elaboracion: ['11/11/2022'] },
+    { Despacho: ['asduyuyutfs', 'saduifsdf', 'sadfiiiiiisdf'] },
+    {
+      Compercializacion: [
+        'asiiiiidfs',
+        'sadfsdiiiiif',
+        'sadfsiiiiiidf',
+        'sadfsidf',
+      ],
+    },
+  ],
+};
 
 const HomePage = () => {
   const [users, setUsers] = useState([]);
@@ -67,34 +68,42 @@ const HomePage = () => {
   const { user, logout } = useAuth();
 
   const router = useRouter();
-  user ? console.log("USER    :", user) : console.log("Not logged in");
+  user ? console.log('USER    :', user) : console.log('Not logged in');
 
   useEffect(() => {
-    if (!user) router.push("/");
+    if (!user) router.push('/');
   }, [user]);
 
-  const isMediumScreen = useMediaQuery("(min-width: 600px)");
+  const isMediumScreen = useMediaQuery('(min-width: 600px)');
   return (
     <HomeLayout>
-
       <Welcome />
-      {/* <TrazabilityContent /> */}
-     
 
       <button
         onClick={() => {
-          createUser({ uid: user.uid, data: protocol });
+          createUser({
+            uid: user.uid,
+            data: { Name: 'Juan Perez', Phone: '1234-1234' },
+            products: [],
+          });
         }}
       >
-        CREAR USUARIO CON EL ARRAY
+        CREAR USUARIO
       </button>
 
-      <button
+      {/* <button
         onClick={() => {
           updateUser(user.uid, protocol);
         }}
       >
         actualizar USUARIO
+      </button> */}
+      <button
+        onClick={() => {
+          addUserProduct(user.uid, product);
+        }}
+      >
+        Agregar producto
       </button>
 
       <button
@@ -105,7 +114,7 @@ const HomePage = () => {
       >
         borrar USUARIO
       </button>
-      <TrazabilityContent />
+      <TrazabilityContent protocol={product.trazability} />
       <IconButton
         size="large"
         sx={{
@@ -120,7 +129,6 @@ const HomePage = () => {
       >
         <AddOutlined sx={{ fontSize: 30 }} />
       </IconButton>
-
     </HomeLayout>
   );
 };
