@@ -5,8 +5,8 @@ import { Box, Typography } from "@mui/material";
 import useProduct from "../../hooks/useProduct";
 import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
 import { IconButton, useMediaQuery } from "@mui/material";
-
 import { useRouter } from "next/router";
+import Trazability from "../../components/Trazability/Trazability";
 
 const Producto = () => {
   const router = useRouter();
@@ -26,12 +26,17 @@ const Producto = () => {
   } else {
     return (
       <HomeLayout>
-        <Box container sx={{ height: "90vh" }}>
+        {/* <Box container sx={{ height: "90vh" }}>
           <Typography sx={{ color: "primary.main", fontSize: 24 }}>
             Producto: {product.name}
           </Typography>
           <TrazabilityLine />
+        </Box> */}
+
+        <Box sx={{ minHeight: "90vh" }}>
+          <Trazability product={product} />
         </Box>
+
         <IconButton
           size="large"
           sx={{
