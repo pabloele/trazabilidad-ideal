@@ -10,7 +10,10 @@ import {
 import React from 'react';
 import mintImg from '../../public/images/milestone.png';
 import Image from 'next/image';
+import { useAuth } from '../../context/AuthContext';
+
 const AddMilestone = () => {
+  const { uploadFile, getFile } = useAuth();
   const [image, setImage] = React.useState(mintImg);
 
   const handleImageChange = (event) => {
@@ -22,6 +25,29 @@ const AddMilestone = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleImageUpload = async (event) => {
+    const selectedFile = event.target.files[0];
+    let fileURI;
+    if (selectedFile) {
+      try {
+        const response = await uploadFile(selectedFile);
+
+        const firebaseFullPath = response.metadata.fullPath;
+
+        fileURI = await getFile(firebaseFullPath);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error uploading file //', error.message);
+        } else {
+          console.error('Error uploading file');
+        }
+      }
+    }
+
+    console.log('FILE URI: ', fileURI);
+    return fileURI;
   };
 
   return (
@@ -63,7 +89,7 @@ const AddMilestone = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={handleImageUpload}
                 id="file-input"
                 style={{ display: 'none' }}
               />
