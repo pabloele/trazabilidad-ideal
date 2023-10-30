@@ -12,6 +12,7 @@ import { AuthLayout } from '../../layout';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { createUser } from '../../firebase/controllers/firestoreControllers';
 
 const handleLogin = async () => {
   try {
@@ -43,7 +44,13 @@ const LoginPage = () => {
 
   const handleLoginWithGoogle = (e) => {
     loginWithGoogle().then((res) => {
-      console.log(res);
+      console.log(res.user);
+
+      // createUser({
+      //   uid: user.uid,
+      //   data: { name: user.displayName, email: user.email },
+      //   products: [],
+      // });
       if (res.user) router.push('/HomePage');
     });
   };

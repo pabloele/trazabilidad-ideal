@@ -49,6 +49,13 @@ export default function TrazabilityLine({ protocol }) {
         cursor: isGrabbing ? 'grabbing' : 'grab',
       }}
     >
+      {/* <Typography color="black">LINEA</Typography> */}
+      {/* <Typography color="black">{JSON.stringify(protocol)}</Typography> */}
+      {/* protocol.map((stage) => (
+        <Typography color="black" key={stage.name}>
+          {stage.name}
+        </Typography>
+      )) */}
       <Paper
         id="timeline-container"
         sx={{
@@ -90,9 +97,9 @@ export default function TrazabilityLine({ protocol }) {
               </span>
             </TimelineContent>
           </TimelineItem>
-          {/* intermedios */}
-          {protocol?.map((protocolItem) => (
-            <TimelineItem key={Object.keys(protocolItem)[0]}>
+
+          {protocol.map((stage, stageIndex) => (
+            <TimelineItem key={stage.name}>
               <TimelineSeparator>
                 <TimelineDot />
                 <TimelineConnector />
@@ -114,35 +121,33 @@ export default function TrazabilityLine({ protocol }) {
                       alignSelf: 'center',
                     }}
                   >
-                    {Object.keys(protocolItem)[0]}
+                    {stage.name}
                   </Typography>
-                  {protocolItem[Object.keys(protocolItem)[0]].map(
-                    (item, index) => (
-                      <Box
-                        key={item}
+                  {stage.line.map((item, index) => (
+                    <Box
+                      key={stage.name + item.name}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignContent: 'start',
+                      }}
+                    >
+                      <HorizontalRuleIcon
+                        sx={{ transform: 'translateY(0.5rem)' }}
+                      />
+                      <Typography
                         sx={{
                           display: 'flex',
-                          flexDirection: 'row',
-                          alignContent: 'start',
+                          paddingX: '1rem',
+                          height: '30px',
+                          fontSize: '26px',
                         }}
                       >
-                        <HorizontalRuleIcon
-                          sx={{ transform: 'translateY(0.5rem)' }}
-                        />
-                        <Typography
-                          key={index}
-                          sx={{
-                            display: 'flex',
-                            paddingX: '1rem',
-                            height: '30px',
-                            fontSize: '26px',
-                          }}
-                        >
-                          {item}
-                        </Typography>
-                      </Box>
-                    )
-                  )}
+                        {/* todo map multiple milestones*/}
+                        {item.name}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
               </TimelineContent>
             </TimelineItem>
