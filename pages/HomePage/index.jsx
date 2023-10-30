@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from 'react';
+
 import {
   IconButton,
   useMediaQuery,
@@ -7,6 +9,7 @@ import {
   Grid,
   TextField,
   Box,
+
 } from '@mui/material';
 import { AddOutlined, Image, MailOutlined } from '@mui/icons-material';
 import { HomeLayout } from '../../layout';
@@ -19,6 +22,19 @@ import { TrazabilityContent } from '../../components/';
 import mintImg from '../../public/images/nft_8146034.png';
 
 import { db } from '../../firebase/config';
+
+} from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
+import Welcome from "../../components/Welcome/Welcome";
+
+import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
+import { HomeLayout } from "../../layout";
+import { TrazabilityContent } from "../../components/";
+import mintImg from "../../public/images/nft_8146034.png";
+import { useEffect, useState } from "react";
+import { db } from "../../firebase/config";
+
 import {
   addDoc,
   collection,
@@ -26,7 +42,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-} from 'firebase/firestore/lite';
+} from "firebase/firestore/lite";
 
 import {
   addMilestone,
@@ -36,7 +52,8 @@ import {
   getUserProducts,
   getUsers,
   updateUser,
-} from '../../firebase/controllers/firestoreControllers';
+} from "../../firebase/controllers/firestoreControllers";
+
 
 const product = {
   name: 'Vino 1',
@@ -146,6 +163,7 @@ const product = {
 
 const activeProduct = 0;
 
+
 const HomePage = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState();
@@ -178,6 +196,7 @@ const HomePage = () => {
   return (
     <HomeLayout>
       <Welcome />
+
       <button
         onClick={() => {
           createUser({
@@ -224,7 +243,7 @@ const HomePage = () => {
       </button>
       <button
         onClick={() => {
-          const uid = '1';
+          const uid = "1";
           deleteUserDoc(uid);
         }}
       >
@@ -236,14 +255,14 @@ const HomePage = () => {
       <IconButton
         size="large"
         sx={{
-          color: 'white',
-          backgroundColor: 'error.main',
-          ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
-          position: 'fixed',
+          color: "white",
+          backgroundColor: "error.main",
+          ":hover": { backgroundColor: "error.main", opacity: 0.9 },
+          position: "fixed",
           right: 50,
           bottom: 50,
         }}
-        onClick={() => router.push('/AddMilestone')}
+        onClick={() => router.push("/AddMilestone")}
       >
         <AddOutlined sx={{ fontSize: 30 }} />
       </IconButton>
