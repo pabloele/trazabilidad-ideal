@@ -28,6 +28,7 @@ import Trazabilityline from '../TrazabilityLine/TrazabilityLine';
 // ];
 
 export const TrazabilityContent = ({ protocol }) => {
+  console.log('-------------------------*', protocol);
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
 
   return (
