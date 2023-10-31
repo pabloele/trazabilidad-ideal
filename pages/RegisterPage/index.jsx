@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Alert,
@@ -7,15 +7,15 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
-import { AuthLayout } from '../../layout';
-
+} from "@mui/material";
+import { AuthLayout } from "../../layout";
+import styles from "./RegisterPage.module.css";
 const RegisterPage = () => {
   return (
-    <AuthLayout title="Register">
+    <AuthLayout title="Registro">
       <form
         // onSubmit={onSubmit}
-        className="animate__animated animate__fadeIn animate__faster"
+        className={`animate__animated animate__fadeIn animate__faster ${styles.form}`}
       >
         <Grid container>
           <Grid item xs={12} sx={{ mt: 2 }}>
@@ -65,11 +65,11 @@ const RegisterPage = () => {
         </Grid>
       </form>
       <Grid container direction="row" justifyContent="end">
-        <Typography sx={{ ml: 1, mr: 1, color: 'secondary.main' }}>
+        <Typography sx={{ ml: 1, mr: 1, color: "secondary.black" }}>
           ¿Ya tenés una cuenta?
         </Typography>
         <Link href="/LoginPage">
-          <Typography sx={{ ml: 1, mr: 1, color: 'crypto.main' }}>
+          <Typography sx={{ ml: 1, mr: 1, color: "crypto.main" }}>
             Ingresar
           </Typography>
         </Link>

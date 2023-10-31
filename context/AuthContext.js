@@ -8,7 +8,15 @@ import {
   signUpWithGoogle,
   GoogleAuthProvider,
 } from 'firebase/auth';
-import { FirebaseAuth } from '../firebase/config';
+import { FirebaseAuth, FirebaseStorage } from '../firebase/config';
+import { v4 } from 'uuid';
+import {
+  ref,
+  uploadBytes,
+  getStorage,
+  getMetadata,
+  getDownloadURL,
+} from 'firebase/storage';
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -62,6 +70,22 @@ export const AuthContextProvider = ({ children }) => {
     const { error, user } = await signUpWithGoogle(FirebaseAuth);
   };
 
+  const uploadFile = async (file) => {
+    const storageRef = ref(FirebaseStorage, v4());
+    return await uploadBytes(storageRef, file);
+  };
+
+  const getFile = async (firebaseFullpath) => {
+    const imageRef = ref(FirebaseStorage, firebaseFullpath);
+
+    try {
+      const url = await getDownloadURL(imageRef);
+      return url;
+    } catch (error) {
+      console.error('Error obtaining image URL', error);
+      throw error;
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -71,6 +95,8 @@ export const AuthContextProvider = ({ children }) => {
         signup,
         signUpWithGoogle,
         loginWithGoogle,
+        getFile,
+        uploadFile,
       }}
     >
       {loading ? null : children}

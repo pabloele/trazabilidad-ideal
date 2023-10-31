@@ -7,7 +7,8 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
-
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 export default function TrazabilityLine({ protocol }) {
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
   const timelineWidth = isMediumScreen ? '1000px' : '500px';
@@ -44,15 +45,22 @@ export default function TrazabilityLine({ protocol }) {
     <Box
       sx={{
         width: timelineWidth,
-        height: '350px',
+        height: '90vh',
         overflow: 'hidden',
         cursor: isGrabbing ? 'grabbing' : 'grab',
       }}
     >
+      {/* <Typography color="black">LINEA</Typography> */}
+      {/* <Typography color="black">{JSON.stringify(protocol)}</Typography> */}
+      {/* protocol.map((stage) => (
+        <Typography color="black" key={stage.name}>
+          {stage.name}
+        </Typography>
+      )) */}
       <Paper
         id="timeline-container"
         sx={{
-          height: '100%',
+          height: '100vh',
           overflow: isMediumScreen ? 'hidden' : 'auto',
           backgroundColor: 'beige',
           scrollbarGutter: 'auto',
@@ -90,9 +98,9 @@ export default function TrazabilityLine({ protocol }) {
               </span>
             </TimelineContent>
           </TimelineItem>
-          {/* intermedios */}
-          {protocol?.map((protocolItem) => (
-            <TimelineItem key={Object.keys(protocolItem)[0]}>
+
+          {protocol?.map((stage, stageIndex) => (
+            <TimelineItem key={stage.name} sx={{ marginY: 'auto' }}>
               <TimelineSeparator>
                 <TimelineDot />
                 <TimelineConnector />
@@ -114,35 +122,57 @@ export default function TrazabilityLine({ protocol }) {
                       alignSelf: 'center',
                     }}
                   >
-                    {Object.keys(protocolItem)[0]}
+                    {stage.name}
                   </Typography>
-                  {protocolItem[Object.keys(protocolItem)[0]].map(
-                    (item, index) => (
-                      <Box
-                        key={item}
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignContent: 'start',
-                        }}
-                      >
-                        <HorizontalRuleIcon
-                          sx={{ transform: 'translateY(0.5rem)' }}
-                        />
-                        <Typography
-                          key={index}
-                          sx={{
-                            display: 'flex',
-                            paddingX: '1rem',
-                            height: '30px',
-                            fontSize: '26px',
-                          }}
+                  {stage.line.map((item, index) => {
+                    if (item.milestones.length > 0) {
+                      return (
+                        <Box
+                          key={stage.name + item.name}
+                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                         >
-                          {item}
-                        </Typography>
-                      </Box>
-                    )
-                  )}
+                          <HorizontalRuleIcon />
+                          <CheckCircleOutlineIcon sx={{ color: 'green' }} />
+
+                          <Typography
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              paddingX: '1rem',
+                              fontSize: '16px',
+                              width: '300px',
+                            }}
+                          >
+                            {/* todo map multiple milestones*/}
+                            {item.name}
+                          </Typography>
+                        </Box>
+                      );
+                    } else {
+                      return (
+                        <Box
+                          key={stage.name + item.name}
+                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                        >
+                          <HorizontalRuleIcon />
+                          <HighlightOffIcon sx={{ color: 'red' }} />
+
+                          <Typography
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              fontSize: '16px',
+                              width: '10rem',
+                              textAlign: 'center',
+                            }}
+                          >
+                            {/* todo map multiple milestones*/}
+                            {item.name}
+                          </Typography>
+                        </Box>
+                      );
+                    }
+                  })}
                 </Box>
               </TimelineContent>
             </TimelineItem>

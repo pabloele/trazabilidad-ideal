@@ -11,115 +11,24 @@ import Image from 'next/image';
 
 import Trazabilityline from '../TrazabilityLine/TrazabilityLine';
 
-const protocol = [
-  { siembra: ['plantado', 'riego', 'etcétera'] },
-  { cosecha: ['11/11/2022'] },
-  { estrujado: ['asduyuyutfs', 'saduifsdf', 'sadfiiiiiisdf'] },
-  {
-    maceración: ['asiiiiidfs', 'sadfsdiiiiif', 'sadfsiiiiiidf', 'sadfsidf'],
-  },
-  { descube: ['asdfhhs'] },
-  { crianza: ['asdfgggs', 'sadfsjjjjdf', 'sadfsllllldf'] },
-  {
-    embotellado: [
-      'asdfssdsssss',
-      'sadfffffffffsdf',
-      'saggggggfsdf',
-      'asdfjjjjs',
-    ],
-  },
-  // {
-  //   embotellado: [
-  //     'asdfs',
-  //     'sadfsdf',
-  //     'sadfsdf',
-  //     // 'asdfs',
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // ,
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // ,
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // ,
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // ,
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // ,
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //     // ,
-  //     // 'sadfsdf',
-  //     // 'asdfs',
-  //   ],
-  // },
-  {
-    embotellado2: ['asdfs767', 'sadf76sdf', 'sad68fsdf', 'asd00fs'],
-  },
-  {
-    embotellado3: ['asdf6s', 'sadfskjkjdf', 'sadfsoidf', 'askjldfs'],
-  },
-  {
-    embotellado4: ['asdfus', 'sadfsddszff', 'sadfsdf', 'asdfs'],
-  },
-  {
-    embotellado5: ['asdf78996878s', 'sadfsdghhff', 'sadfsdfd', 'asdgffs'],
-  },
-  {
-    embotellado6: [
-      '0asdfs',
-      '1sadfsdf',
-      '2sadfsdf',
-      '3asdfs',
-      '4sadfsdf',
-      '5sadfsdf',
-      '6asdfs',
-      ,
-      '7sadfsdf',
-      '8sadfsdf',
-      '9asdfs',
-      ,
-      '01sadfsdf',
-      'asdsadfsdf',
-      'sssasdfs',
-      ,
-      'sadsfsdf',
-      'sadfssdf',
-      'asdfsss',
-      ,
-      'sadfsdf',
-      'sadfsd555f',
-      'asdfsttt',
-      ,
-      'sadfsdftt',
-      'sadfsdff',
-      'asdfds',
-      ,
-      'sad0fsdf',
-      'sadf0sdf',
-      'asdfs0',
-      ,
-      'sadfsd0f',
-      'sadfsdf0',
-      'asñññdfs',
+// const protocol = [
 
-      'sadfscdf',
-      'sadfscccdf',
-      'asdf3s',
-      ,
-      'tjsadfsdf',
-      'saddfsdf',
-      'asdfbs',
-    ],
-  },
-];
+//   { Prod_pria: ['plantado', 'riego', 'etcétera'] },
+//   { Elaboracion: ['11/11/2022'] },
+//   { Despacho: ['asduyuyutfs', 'saduifsdf', 'sadfiiiiiisdf'] },
+//   {
+//     Compercializacion: [
+//       'asiiiiidfs',
+//       'sadfsdiiiiif',
+//       'sadfsiiiiiidf',
+//       'sadfsidf',
 
-export const TrazabilityContent = () => {
+//     ],
+//   },
+// ];
+
+export const TrazabilityContent = ({ protocol }) => {
+  console.log('-------------------------*', protocol);
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
 
   return (
@@ -151,9 +60,9 @@ export const TrazabilityContent = () => {
         >
           <Grid item>
             <Typography
-              fontSize={isMediumScreen ? 36 : 24}
+              fontSize={isMediumScreen ? 20 : 18}
               fontWeight="light"
-              sx={{ padding: '1rem' }}
+              sx={{ padding: '1rem', color: 'secondary.black' }}
             >
               Trazabilidad
             </Typography>

@@ -1,7 +1,7 @@
-import { createTheme } from '@mui/material';
-import { red } from '@mui/material/colors';
-import NextLink from 'next/link';
-import { forwardRef } from 'react';
+import { createTheme } from "@mui/material";
+import { red } from "@mui/material/colors";
+import NextLink from "next/link";
+import { forwardRef } from "react";
 
 const LinkBehaviour = forwardRef(function LinkBehaviour(props, ref) {
   return <NextLink ref={ref} {...props} />;
@@ -10,18 +10,19 @@ const LinkBehaviour = forwardRef(function LinkBehaviour(props, ref) {
 export const idealTheme = createTheme({
   palette: {
     primary: {
-      main: '#F1EDE2',
+      main: "#0330ab",
       // main: '#EEEEEE',
     },
     secondary: {
-      main: '#543884',
+      main: "#ffff",
+      black: "#000",
     },
     crypto: {
-      main: '#8A2BE2',
+      main: "#8A2BE2",
     },
 
     white: {
-      main: 'white',
+      main: "white",
     },
     error: {
       main: red.A400,

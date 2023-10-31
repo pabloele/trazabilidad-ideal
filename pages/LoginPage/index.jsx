@@ -5,19 +5,20 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
-import { Google } from '@mui/icons-material';
+} from "@mui/material";
+import { Google } from "@mui/icons-material";
 
-import { AuthLayout } from '../../layout';
-import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { AuthLayout } from "../../layout";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { createUser } from "../../firebase/controllers/firestoreControllers";
 
 const handleLogin = async () => {
   try {
     await login(email, password);
-    console.log('Login successful');
-    router.push('/protected');
+    console.log("Login successful");
+    router.push("/protected");
   } catch (error) {
     console.log(error);
   }
@@ -28,8 +29,8 @@ const LoginPage = () => {
 
   const router = useRouter();
   // const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     // try {
@@ -43,8 +44,14 @@ const LoginPage = () => {
 
   const handleLoginWithGoogle = (e) => {
     loginWithGoogle().then((res) => {
-      console.log(res);
-      if (res.user) router.push('/HomePage');
+      console.log(res.user.uid);
+
+      createUser({
+        uid: res.user.uid,
+        data: { name: res.user.displayName, email: res.user.email },
+        products: [],
+      });
+      if (res.user) router.push("/home");
     });
   };
   return (
@@ -84,7 +91,7 @@ const LoginPage = () => {
           </Grid> */}
 
             <Grid item xs={12} sm={6}>
-              <Link color="secondary.main" href="/HomePage">
+              <Link color="secondary.main" href="/home">
                 <Button type="submit" variant="contained" fullWidth>
                   <Typography sx={{ ml: 1 }}>Login</Typography>
                 </Button>
@@ -103,7 +110,7 @@ const LoginPage = () => {
           </Grid>
         </form>
         <Grid container direction="row" justifyContent="end">
-          <Link color="secondary.main" href="/RegisterPage">
+          <Link color="secondary.black" href="/RegisterPage">
             Crear una cuenta
           </Link>
         </Grid>

@@ -1,0 +1,13 @@
+.link {
+  color: black;
+  margin: auto;
+  font-size: 14px;
+  padding: 2px 4px;
+  transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 500ms;
+  width: 100%;
+}
+
+.link:hover {
+  background-color: #0330ab;
+  color: white;
+}
