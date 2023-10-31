@@ -9,7 +9,7 @@ const Welcome = () => {
       spacing={0}
       justifyContent="center"
       sx={{
-        minHeight: "calc(100vh - 110px)",
+        minHeight: "90vh",
         backgroundColor: "beige",
         borderRadius: 3,
         textAlign: "center",

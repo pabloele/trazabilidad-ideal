@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
-import { Box, Typography, useMediaQuery, Paper } from '@mui/material';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
-
+import { useEffect, useState } from "react";
+import { Box, Typography, useMediaQuery, Paper } from "@mui/material";
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 export default function TrazabilityLine({ protocol }) {
-  const isMediumScreen = useMediaQuery('(min-width: 600px)');
-  const timelineWidth = isMediumScreen ? '1000px' : '500px';
+  const isMediumScreen = useMediaQuery("(min-width: 600px)");
+  const timelineWidth = isMediumScreen ? "1000px" : "500px";
 
   const [isGrabbing, setIsGrabbing] = useState(false);
 
@@ -24,19 +25,19 @@ export default function TrazabilityLine({ protocol }) {
 
   const handleMouseMove = (e) => {
     if (isGrabbing) {
-      const timelineContainer = document.getElementById('timeline-container');
+      const timelineContainer = document.getElementById("timeline-container");
       timelineContainer.scrollLeft -= e.movementX;
       timelineContainer.scrollTop -= e.movementY;
     }
   };
 
   useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isGrabbing]);
 
@@ -44,9 +45,9 @@ export default function TrazabilityLine({ protocol }) {
     <Box
       sx={{
         width: timelineWidth,
-        height: '350px',
-        overflow: 'hidden',
-        cursor: isGrabbing ? 'grabbing' : 'grab',
+        height: "90vh",
+        overflow: "hidden",
+        cursor: isGrabbing ? "grabbing" : "grab",
       }}
     >
       {/* <Typography color="black">LINEA</Typography> */}
@@ -59,10 +60,10 @@ export default function TrazabilityLine({ protocol }) {
       <Paper
         id="timeline-container"
         sx={{
-          height: '100%',
-          overflow: isMediumScreen ? 'hidden' : 'auto',
-          backgroundColor: 'beige',
-          scrollbarGutter: 'auto',
+          height: "100vh",
+          overflow: isMediumScreen ? "hidden" : "auto",
+          backgroundColor: "beige",
+          scrollbarGutter: "auto",
         }}
       >
         <Timeline
@@ -84,12 +85,12 @@ export default function TrazabilityLine({ protocol }) {
               <span>
                 <Typography
                   sx={{
-                    display: 'flex',
-                    paddingRight: '1rem',
-                    fontSize: '20px',
-                    fontWeight: '4',
-                    transform: 'translateY(-0.2rem)',
-                    fontWeight: 'bold',
+                    display: "flex",
+                    paddingRight: "1rem",
+                    fontSize: "20px",
+                    fontWeight: "4",
+                    transform: "translateY(-0.2rem)",
+                    fontWeight: "bold",
                   }}
                 >
                   Inicio
@@ -98,8 +99,8 @@ export default function TrazabilityLine({ protocol }) {
             </TimelineContent>
           </TimelineItem>
 
-          {protocol.map((stage, stageIndex) => (
-            <TimelineItem key={stage.name}>
+          {protocol?.map((stage, stageIndex) => (
+            <TimelineItem key={stage.name} sx={{ marginY: "auto" }}>
               <TimelineSeparator>
                 <TimelineDot />
                 <TimelineConnector />
@@ -107,47 +108,73 @@ export default function TrazabilityLine({ protocol }) {
               <TimelineContent>
                 <Box
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignContent: 'flex-start',
-                    transform: 'translateY(-0.5rem)',
+                    display: "flex",
+                    flexDirection: "row",
+                    alignContent: "flex-start",
+                    transform: "translateY(-0.5rem)",
                   }}
                 >
                   <Typography
                     sx={{
-                      display: 'flex',
-                      paddingRight: '1rem',
-                      fontSize: '26px',
-                      alignSelf: 'center',
+                      display: "flex",
+                      paddingRight: "1rem",
+                      fontSize: "26px",
+                      alignSelf: "center",
                     }}
                   >
                     {stage.name}
                   </Typography>
-                  {stage.line.map((item, index) => (
-                    <Box
-                      key={stage.name + item.name}
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignContent: 'start',
-                      }}
-                    >
-                      <HorizontalRuleIcon
-                        sx={{ transform: 'translateY(0.5rem)' }}
-                      />
-                      <Typography
-                        sx={{
-                          display: 'flex',
-                          paddingX: '1rem',
-                          height: '30px',
-                          fontSize: '26px',
-                        }}
-                      >
-                        {/* todo map multiple milestones*/}
-                        {item.name}
-                      </Typography>
-                    </Box>
-                  ))}
+                  {stage.line.map((item, index) => {
+                    if (item.milestones.length > 0) {
+                      return (
+                        <Box
+                          key={stage.name + item.name}
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+
+                        <HorizontalRuleIcon />
+                          <CheckCircleOutlineIcon sx={{ color: "green" }} />
+
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              paddingX: "1rem",
+                              fontSize: "16px",
+                              width: "300px",
+                            }}
+                          >
+                            {/* todo map multiple milestones*/}
+                            {item.name}
+                          </Typography>
+
+                        </Box>
+                      );
+                    } else {
+                      return (
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+
+                          <HorizontalRuleIcon />
+                          <HighlightOffIcon sx={{ color: "red" }} />
+
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              fontSize: "16px",
+                              width: "10rem",
+                              textAlign: "center",
+                            }}
+                          >
+                            {/* todo map multiple milestones*/}
+                            {item.name}
+                          </Typography>
+                        </Box>
+                      );
+                    }
+                  })}
                 </Box>
               </TimelineContent>
             </TimelineItem>
@@ -161,12 +188,12 @@ export default function TrazabilityLine({ protocol }) {
             <TimelineContent>
               <Typography
                 sx={{
-                  display: 'flex',
-                  paddingRight: '1rem',
-                  fontSize: '20px',
-                  fontWeight: '4',
-                  transform: 'translateY(-0.2rem)',
-                  fontWeight: 'bold',
+                  display: "flex",
+                  paddingRight: "1rem",
+                  fontSize: "20px",
+                  fontWeight: "4",
+                  transform: "translateY(-0.2rem)",
+                  fontWeight: "bold",
                 }}
               >
                 Fin

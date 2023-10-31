@@ -11,9 +11,9 @@ import Trazability from "../../components/Trazability/Trazability";
 const Producto = () => {
   const router = useRouter();
 
-  console.log(router.query.id);
-
   const { product } = useProduct(router.query.id);
+
+  console.log(product);
 
   if (!product) {
     return (
@@ -26,17 +26,17 @@ const Producto = () => {
   } else {
     return (
       <HomeLayout>
-        {/* <Box container sx={{ height: "90vh" }}>
-          <Typography sx={{ color: "primary.main", fontSize: 24 }}>
-            Producto: {product.name}
+        <Box sx={{ height: "90vh" }}>
+          <Typography
+            sx={{
+              color: "primary.main",
+              fontSize:24
+            }}
+          >
+           Cadena de produccion para :  {product.name}
           </Typography>
-          <TrazabilityLine />
-        </Box> */}
-
-        <Box sx={{ minHeight: "90vh" }}>
-          <Trazability product={product} />
+          <TrazabilityLine protocol={product.trazability} />
         </Box>
-
         <IconButton
           size="large"
           sx={{
@@ -47,7 +47,7 @@ const Producto = () => {
             right: 50,
             bottom: 50,
           }}
-          onClick={() => {}}
+          onClick={() => router.push("/AddMilestone")}
         >
           <AddOutlined sx={{ fontSize: 30 }} />
         </IconButton>

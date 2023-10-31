@@ -6,42 +6,73 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
-} from 'firebase/firestore/lite';
-import { db } from '../config';
-import { v4 as uuidv4 } from 'uuid';
+  query,
+  where,
+} from "firebase/firestore/lite";
+import { db } from "../config";
+import { v4 as uuidv4 } from "uuid";
 
-export const usersCollectionRef = collection(db, 'users');
+export const usersCollectionRef = collection(db, "users");
 
 export const getUsers = async () => {
-  const data = await getDocs(usersCollectionRef);
-  const users = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  return users;
+  try {
+    const data = await getDocs(usersCollectionRef);
+    const users = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const createUser = async (payload) => {
-  await addDoc(usersCollectionRef, { ...payload });
+  const { uid } = payload;
+
+  // Verificar si el usuario ya existe en la colección de usuarios
+  const usersQuery = query(usersCollectionRef, where("uid", "==", uid));
+  const userDocs = await getDocs(usersQuery);
+
+  if (userDocs.empty) {
+    // El usuario no existe, entonces podemos crearlo
+    await addDoc(usersCollectionRef, { ...payload });
+    console.log("Usuario creado exitosamente.");
+  } else {
+    // El usuario ya existe, muestra un mensaje de error o realiza alguna otra acción
+    console.log("El usuario ya existe en la base de datos.");
+  }
 };
 
 export const getDocId = async (uid) => {
-  const users = await getUsers();
-  const user = users.find((user) => user.uid === uid);
-  const { id } = user;
-  return id;
+  try {
+    const users = await getUsers();
+    const user = users.find((user) => user.uid === uid);
+    if (user) {
+      const { id } = user;
+      return id;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const addUserProduct = async (uid, product) => {
-  const id = await getDocId(uid);
-  const userDocumentRef = await doc(db, 'users', id);
-  const documentSnapshot = await getDoc(userDocumentRef);
-  const userData = await documentSnapshot.data();
-  const data = { ...userData, products: [...userData.products, product] };
+  try {
+    const productsCollection = collection(db, "products");
 
-  await updateDoc(userDocumentRef, { ...data });
+    const docRef = await addDoc(productsCollection, product);
+    console.log("Documento agregado con éxito", docRef.id);
+
+    return docRef.id;
+  } catch {
+    console.log(error);
+  }
 };
 export const addMilestone = async (uid, path, milestone) => {
   const milestoneId = uuidv4();
   const id = await getDocId(uid);
-  const userDocumentRef = await doc(db, 'users', id);
+  const userDocumentRef = await doc(db, "users", id);
   const documentSnapshot = await getDoc(userDocumentRef);
   const userData = await documentSnapshot.data();
 
@@ -82,15 +113,15 @@ export const addMilestone = async (uid, path, milestone) => {
 
 export const deleteUserDoc = async (uid) => {
   const id = await getDocId(uid);
-  const userDoc = doc(db, 'users', id);
+  const userDoc = doc(db, "users", id);
   await deleteDoc(userDoc);
 };
 
 export const getUserProducts = async (uid) => {
   const id = await getDocId(uid);
-  const userDocumentRef = await doc(db, 'users', id);
+
   try {
-    const userDocumentRef = doc(db, 'users', id);
+    const userDocumentRef = doc(db, "users", id);
     const userDocumentSnapshot = await getDoc(userDocumentRef);
 
     if (userDocumentSnapshot.exists()) {
@@ -98,11 +129,11 @@ export const getUserProducts = async (uid) => {
       const userProducts = userData.products || [];
       return userProducts;
     } else {
-      console.log('User document does not exist.');
+      console.log("User document does not exist.");
       return [];
     }
   } catch (error) {
-    console.error('Error fetching user products:', error);
+    console.error("Error fetching user products:", error);
     return [];
   }
 };

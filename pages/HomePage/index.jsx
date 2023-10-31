@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 import {
   IconButton,
@@ -8,19 +8,19 @@ import {
   Grid,
   TextField,
   Box,
-} from '@mui/material';
-import { AddOutlined, Image, MailOutlined } from '@mui/icons-material';
-import { HomeLayout } from '../../layout';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
+} from "@mui/material";
+import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
+import { HomeLayout } from "../../layout";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
 
-import Welcome from '../../components/Welcome/Welcome';
+import Welcome from "../../components/Welcome/Welcome";
 
-import { TrazabilityContent } from '../../components/';
+import { TrazabilityContent } from "../../components/";
 
-import mintImg from '../../public/images/nft_8146034.png';
+import mintImg from "../../public/images/nft_8146034.png";
 
-import { db } from '../../firebase/config';
+import { db } from "../../firebase/config";
 
 import {
   addDoc,
@@ -29,7 +29,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-} from 'firebase/firestore/lite';
+} from "firebase/firestore/lite";
 
 import {
   addMilestone,
@@ -39,113 +39,7 @@ import {
   getUserProducts,
   getUsers,
   updateUser,
-} from '../../firebase/controllers/firestoreControllers';
-
-const product = {
-  name: 'Vino 1',
-  trazability: [
-    {
-      name: 'Producción primaria',
-      line: [
-        {
-          name: 'Etapa 1',
-          milestones: [],
-          path: '/vino1/produccion-primaria/etapa1',
-        },
-        {
-          name: 'Etapa 2',
-          milestones: [],
-          path: '/vino1/produccion-primaria/etapa2',
-        },
-        {
-          name: 'Etapa 3',
-          milestones: [],
-          path: '/vino1/produccion-primaria/etapa3',
-        },
-        {
-          name: 'Misceláneo',
-          milestones: [],
-          path: '/vino1/produccion-primaria/misc',
-        },
-      ],
-    },
-    {
-      name: 'Elaboración',
-      line: [
-        {
-          name: 'Etapa 1',
-          milestones: [],
-          path: '/vino1/elaboracion/etapa1',
-        },
-        {
-          name: 'Etapa 2',
-          milestones: [],
-          path: '/vino1/elaboracion/etapa2',
-        },
-        {
-          name: 'Etapa 3',
-          milestones: [],
-          path: '/vino1/elaboracion/etapa3',
-        },
-        {
-          name: 'Misceláneo',
-          milestones: [],
-          path: '/vino1/elaboracion/misc',
-        },
-      ],
-    },
-    {
-      name: 'Despacho',
-      line: [
-        {
-          name: 'Etapa 1',
-          milestones: [],
-          path: '/vino1/despacho/etapa1',
-        },
-        {
-          name: 'Etapa 2',
-          milestones: [],
-          path: '/vino1/despacho/etapa2',
-        },
-        {
-          name: 'Etapa 3',
-          milestones: [],
-          path: '/vino1/despacho/etapa3',
-        },
-        {
-          name: 'Misceláneo',
-          milestones: [],
-          path: '/vino1/despacho/misc',
-        },
-      ],
-    },
-    {
-      name: 'Comercialización',
-      line: [
-        {
-          name: 'Etapa 1',
-          milestones: [],
-          path: '/vino1/comercializacion/etapa1',
-        },
-        {
-          name: 'Etapa 2',
-          milestones: [],
-          path: '/vino1/comercializacion/etapa2',
-        },
-        {
-          name: 'Etapa 3',
-          milestones: [],
-          path: '/vino1/comercializacion/etapa3',
-        },
-        {
-          name: 'Misceláneo',
-          milestones: [],
-          path: '/vino1/comercializacion/misc',
-        },
-      ],
-    },
-  ],
-};
+} from "../../firebase/controllers/firestoreControllers";
 
 const activeProduct = 0;
 
@@ -169,27 +63,28 @@ const HomePage = () => {
 
   const { user, logout } = useAuth();
 
+  console.log(user);
   const router = useRouter();
   // user ? console.log('USER    :', user) : console.log('Not logged in');
 
   useEffect(() => {
-    if (!user) router.push('/');
+    if (!user) router.push("/");
     handleGetProducts(user?.uid);
   }, [user]);
 
-  const isMediumScreen = useMediaQuery('(min-width: 600px)');
+  const isMediumScreen = useMediaQuery("(min-width: 600px)");
   return (
     <HomeLayout>
       <Welcome />
 
       <button
-        onClick={() => {
-          createUser({
-            uid: user.uid,
-            data: { Name: 'Juan Perez', Phone: '1234-1234' },
-            products: [],
-          });
-        }}
+      // onClick={() => {
+      //   createUser({
+      //     uid: user.uid,
+      //     data: { name: user.displayName, email: user.email },
+      //     products: [],
+      //   });
+      // }}
       >
         CREAR USUARIO
       </button>
@@ -209,10 +104,10 @@ const HomePage = () => {
       </button>
       <button
         onClick={() => {
-          const path = '/vino1/despacho/etapa2';
+          const path = "/vino1/despacho/etapa2";
           const milestone = {
-            Description: 'Este es otro proceso hardcodeado',
-            image: 'TODO agregar imagen en el storage',
+            Description: "Este es otro proceso hardcodeado",
+            image: "TODO agregar imagen en el storage",
           };
           addMilestone(user.uid, path, milestone);
         }}
@@ -228,7 +123,7 @@ const HomePage = () => {
       </button>
       <button
         onClick={() => {
-          const uid = '1';
+          const uid = "1";
           deleteUserDoc(uid);
         }}
       >
@@ -240,14 +135,14 @@ const HomePage = () => {
       <IconButton
         size="large"
         sx={{
-          color: 'white',
-          backgroundColor: 'error.main',
-          ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
-          position: 'fixed',
+          color: "white",
+          backgroundColor: "error.main",
+          ":hover": { backgroundColor: "error.main", opacity: 0.9 },
+          position: "fixed",
           right: 50,
           bottom: 50,
         }}
-        onClick={() => router.push('/AddMilestone')}
+        onClick={() => router.push("/AddMilestone")}
       >
         <AddOutlined sx={{ fontSize: 30 }} />
       </IconButton>

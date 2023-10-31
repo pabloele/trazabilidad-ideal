@@ -5,20 +5,20 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
-import { Google } from '@mui/icons-material';
+} from "@mui/material";
+import { Google } from "@mui/icons-material";
 
-import { AuthLayout } from '../../layout';
-import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { createUser } from '../../firebase/controllers/firestoreControllers';
+import { AuthLayout } from "../../layout";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { createUser } from "../../firebase/controllers/firestoreControllers";
 
 const handleLogin = async () => {
   try {
     await login(email, password);
-    console.log('Login successful');
-    router.push('/protected');
+    console.log("Login successful");
+    router.push("/protected");
   } catch (error) {
     console.log(error);
   }
@@ -29,8 +29,8 @@ const LoginPage = () => {
 
   const router = useRouter();
   // const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     // try {
@@ -44,14 +44,14 @@ const LoginPage = () => {
 
   const handleLoginWithGoogle = (e) => {
     loginWithGoogle().then((res) => {
-      console.log(res.user);
+      console.log(res.user.uid);
 
-      // createUser({
-      //   uid: user.uid,
-      //   data: { name: user.displayName, email: user.email },
-      //   products: [],
-      // });
-      if (res.user) router.push('/HomePage');
+      createUser({
+        uid: res.user.uid,
+        data: { name: res.user.displayName, email: res.user.email },
+        products: [],
+      });
+      if (res.user) router.push("/HomePage");
     });
   };
   return (
