@@ -51,7 +51,7 @@ const LoginPage = () => {
         data: { name: res.user.displayName, email: res.user.email },
         products: [],
       });
-      if (res.user) router.push("/HomePage");
+      if (res.user) router.push("/home");
     });
   };
   return (
@@ -91,7 +91,7 @@ const LoginPage = () => {
           </Grid> */}
 
             <Grid item xs={12} sm={6}>
-              <Link color="secondary.main" href="/HomePage">
+              <Link color="secondary.main" href="/home">
                 <Button type="submit" variant="contained" fullWidth>
                   <Typography sx={{ ml: 1 }}>Login</Typography>
                 </Button>

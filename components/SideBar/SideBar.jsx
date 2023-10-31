@@ -271,11 +271,11 @@ export const SideBar = ({ drawerWidth = 240 }) => {
             <Link className={Styles.link} href={"/nueva-produccion"}>
               Nueva
             </Link>
-            <Link className={Styles.link} href={"/"}>
+            <Link className={Styles.link} href={"/productos/pendiente"}>
               En curso
             </Link>
 
-            <Link className={Styles.link} href={"/"}>
+            <Link className={Styles.link} href={"/productos/realizado"}>
               Realizadas
             </Link>
           </AccordionDetails>

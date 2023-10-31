@@ -14,7 +14,6 @@ const useProduct = (productId) => {
       if (response.exists()) {
         const productData = response.data();
         setProduct(productData);
-        console.log(productData);
       }
     } catch (error) {
       console.log(error);

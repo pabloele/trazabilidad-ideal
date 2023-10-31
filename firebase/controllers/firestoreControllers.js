@@ -137,3 +137,113 @@ export const getUserProducts = async (uid) => {
     return [];
   }
 };
+
+export const addProtocol = async () => {
+  const protocolRef = collection(db, "protocols");
+
+  await addDoc(protocolRef, {
+    name: "agroalimentario",
+    trazability: [
+      {
+        name: "Producción",
+        line: [
+          {
+            name: "Origen de la producción",
+            milestones: [],
+            path: "/vino1/produccion-primaria/etapa1",
+          },
+          {
+            name: "Características fenológicas / ciclos",
+            milestones: [],
+            path: "/vino1/produccion-primaria/etapa2",
+          },
+          {
+            name: "Métodos de cultivo / cría",
+            milestones: [],
+            path: "/vino1/produccion-primaria/etapa3",
+          },
+          {
+            name: "Registros fitosanitarios / sanidad",
+            milestones: [],
+            path: "/vino1/produccion-primaria/misc",
+          },
+          {
+            name: "Caracteristicas adicionales",
+            milestones: [],
+            path: "/vino1/produccion-primaria/misc",
+          },
+        ],
+      },
+      {
+        name: "Elaboracion / Procesamiento",
+        line: [
+          {
+            name: "Procesos de elaboración",
+            milestones: [],
+            path: "/vino1/elaboracion/etapa1",
+          },
+          {
+            name: "Etiquetado y empaque",
+            milestones: [],
+            path: "/vino1/elaboracion/etapa2",
+          },
+          {
+            name: "Normativa aplicable",
+            milestones: [],
+            path: "/vino1/elaboracion/etapa3",
+          },
+          {
+            name: "Capacitación del personal",
+            milestones: [],
+            path: "/vino1/elaboracion/misc",
+          },
+          {
+            name: "Auditorías y verificaciones",
+            milestones: [],
+            path: "/vino1/elaboracion/misc",
+          },
+          {
+            name: "Caracteristicas adicionales",
+            milestones: [],
+            path: "/vino1/produccion-primaria/misc",
+          },
+        ],
+      },
+      {
+        name: "Despacho / Distribución",
+        line: [
+          {
+            name: "Transporte",
+            milestones: [],
+            path: "/vino1/despacho/etapa1",
+          },
+          {
+            name: "Almacenamiento",
+            milestones: [],
+            path: "/vino1/despacho/etapa2",
+          },
+          {
+            name: "Caracteristicas adicionales",
+            milestones: [],
+            path: "/vino1/produccion-primaria/misc",
+          },
+        ],
+      },
+      {
+        name: "Comercialización",
+        line: [
+          {
+            name: "Trazabilidad del producto",
+            milestones: [],
+            path: "/vino1/comercializacion/etapa1",
+          },
+          {
+            name: "Caracteristicas adicionales",
+            milestones: [],
+            path: "/vino1/produccion-primaria/misc",
+          },
+        ],
+      },
+    ],
+  });
+};

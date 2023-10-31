@@ -5,8 +5,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/router";
 import { addUserProduct } from "../../firebase/controllers/firestoreControllers";
 import { useAuth } from "../../context/AuthContext";
+import useProtocols from "../../hooks/useProtocols";
+
 const Protocols = () => {
   const { user } = useAuth();
+
+  const { protocols } = useProtocols();
 
   const router = useRouter();
 
@@ -15,11 +19,8 @@ const Protocols = () => {
   const [productName, setProductName] = useState("");
   const [protocolSelected, setProtocolSelected] = useState();
   const [loading, setLoading] = useState(false);
-  const protocols = [
-    {
-      name: "Agroalimentario",
-    },
-  ];
+
+  const [trazabilitySelected, setTrazability] = useState();
 
   const style = {
     position: "absolute",
@@ -38,7 +39,13 @@ const Protocols = () => {
 
   const handleClickProtocol = async (event) => {
     const nameProtocol = event.target.getAttribute("name");
-    console.log(nameProtocol);
+
+    const trazability = protocols.find(
+      (protocol) => protocol.name === nameProtocol
+    );
+
+    setTrazability(trazability.trazability);
+
     setProtocolSelected(nameProtocol); // Actualiza el estado primero
     setOpen(true); // Luego abre el modal
   };
@@ -49,110 +56,10 @@ const Protocols = () => {
     try {
       const docRef = await addUserProduct(user.uid, {
         name: productName,
-        trazability: [
-          {
-            name: "Producción",
-            line: [
-              {
-                name: "Origen de la producción",
-                milestones: [],
-                path: "/vino1/produccion-primaria/etapa1",
-              },
-              {
-                name: "Características fenológicas / ciclos",
-                milestones: [],
-                path: "/vino1/produccion-primaria/etapa2",
-              },
-              {
-                name: "Métodos de cultivo / cría",
-                milestones: [],
-                path: "/vino1/produccion-primaria/etapa3",
-              },
-              {
-                name: "Registros fitosanitarios / sanidad",
-                milestones: [],
-                path: "/vino1/produccion-primaria/misc",
-              },
-              {
-                name: "Caracteristicas adicionales",
-                milestones: [],
-                path: "/vino1/produccion-primaria/misc",
-              },
-            ],
-          },
-          {
-            name: "Elaboracion / Procesamiento",
-            line: [
-              {
-                name: "Procesos de elaboración",
-                milestones: [],
-                path: "/vino1/elaboracion/etapa1",
-              },
-              {
-                name: "Etiquetado y empaque",
-                milestones: [],
-                path: "/vino1/elaboracion/etapa2",
-              },
-              {
-                name: "Normativa aplicable",
-                milestones: [],
-                path: "/vino1/elaboracion/etapa3",
-              },
-              {
-                name: "Capacitación del personal",
-                milestones: [],
-                path: "/vino1/elaboracion/misc",
-              },
-              {
-                name: "Auditorías y verificaciones",
-                milestones: [],
-                path: "/vino1/elaboracion/misc",
-              },
-              {
-                name: "Caracteristicas adicionales",
-                milestones: [],
-                path: "/vino1/produccion-primaria/misc",
-              },
-            ],
-          },
-          {
-            name: "Despacho / Distribución",
-            line: [
-              {
-                name: "Transporte",
-                milestones: [],
-                path: "/vino1/despacho/etapa1",
-              },
-              {
-                name: "Almacenamiento",
-                milestones: [],
-                path: "/vino1/despacho/etapa2",
-              },
-              {
-                name: "Caracteristicas adicionales",
-                milestones: [],
-                path: "/vino1/produccion-primaria/misc",
-              },
-            ],
-          },
-          {
-            name: "Comercialización",
-            line: [
-              {
-                name: "Trazabilidad del producto",
-                milestones: [],
-                path: "/vino1/comercializacion/etapa1",
-              },
-              {
-                name: "Caracteristicas adicionales",
-                milestones: [],
-                path: "/vino1/produccion-primaria/misc",
-              },
-            ],
-          },
-        ],
+        trazability: trazabilitySelected,
+        status: "en curso",
+        protocolName: protocolSelected,
       });
-
       router.push(`/producto/${docRef}`);
     } catch (error) {
       console.error("Error al agregar el documento", error);
@@ -193,7 +100,12 @@ const Protocols = () => {
             </Typography>
 
             <Typography
-              sx={{ color: "primary.main", marginY: 1, fontWeight: "bold" }}
+              sx={{
+                color: "primary.main",
+                marginY: 1,
+                fontWeight: "bold",
+                textTransform: "capitalize",
+              }}
             >
               {protocolSelected}
             </Typography>
@@ -232,8 +144,9 @@ const Protocols = () => {
 
         <Box>
           <Box container sx={{ display: "flex", gap: 2 }}>
-            {protocols.map((protocol, index) => (
+            {protocols?.map((protocol, index) => (
               <Box
+                data={protocol.trazability}
                 key={index}
                 name={protocol.name}
                 onClick={handleClickProtocol}
@@ -254,7 +167,13 @@ const Protocols = () => {
                   transition: "all ease .3s",
                 }}
               >
-                <Typography name={protocol.name}>{protocol.name}</Typography>
+                <Typography
+                  sx={{ textTransform: "capitalize" }}
+                  name={protocol.name}
+                  data={protocol.trazability}
+                >
+                  {protocol.name}
+                </Typography>
               </Box>
             ))}
           </Box>

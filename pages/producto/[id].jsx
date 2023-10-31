@@ -13,8 +13,6 @@ const Producto = () => {
 
   const { product } = useProduct(router.query.id);
 
-  console.log(product);
-
   if (!product) {
     return (
       <HomeLayout>
@@ -30,10 +28,10 @@ const Producto = () => {
           <Typography
             sx={{
               color: "primary.main",
-              fontSize:24
+              fontSize: 24,
             }}
           >
-           Cadena de produccion para :  {product.name}
+            Cadena de produccion para : {product.name}
           </Typography>
           <TrazabilityLine protocol={product.trazability} />
         </Box>
