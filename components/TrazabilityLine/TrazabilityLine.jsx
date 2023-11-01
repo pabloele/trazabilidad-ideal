@@ -19,8 +19,8 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 export default function TrazabilityLine({ protocol }) {
-  const isMediumScreen = useMediaQuery("(min-width: 600px)");
-  const timelineWidth = isMediumScreen ? "1000px" : "500px";
+  const isMediumScreen = useMediaQuery('(min-width: 600px)');
+  const timelineWidth = isMediumScreen ? '1000px' : '500px';
 
   const [isGrabbing, setIsGrabbing] = useState(false);
 
@@ -37,19 +37,19 @@ export default function TrazabilityLine({ protocol }) {
 
   const handleMouseMove = (e) => {
     if (isGrabbing) {
-      const timelineContainer = document.getElementById("timeline-container");
+      const timelineContainer = document.getElementById('timeline-container');
       timelineContainer.scrollLeft -= e.movementX;
       timelineContainer.scrollTop -= e.movementY;
     }
   };
 
   useEffect(() => {
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, [isGrabbing]);
 

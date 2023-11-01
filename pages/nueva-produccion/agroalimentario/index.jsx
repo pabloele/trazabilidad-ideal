@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { HomeLayout } from "../../../layout";
+import React, { useState } from 'react';
+import { HomeLayout } from '../../../layout';
 import {
   Box,
   TextField,
@@ -9,8 +9,9 @@ import {
   FormControl,
   InputLabel,
   TextareaAutosize,
-} from "@mui/material";
-import formularioTrazabilidad from "../../../protocols/protocols";
+} from '@mui/material';
+
+import formularioTrazabilidad from '../../../components/Protocols';
 
 const Agroalimentario = () => {
   const [formData, setFormData] = useState({});
@@ -37,28 +38,28 @@ const Agroalimentario = () => {
       .find((e) => e.nombre === etapa)
       .campos.map((campo) => (
         <div
-          style={{ display: "flex", alignItems: "center", gap: 10 }}
+          style={{ display: 'flex', alignItems: 'center', gap: 10 }}
           key={campo.nombre}
         >
           <InputLabel htmlFor={campo.nombre} style={{ width: 250 }}>
             {campo.nombre}:
           </InputLabel>
-          {campo.tipo === "fecha" ? (
+          {campo.tipo === 'fecha' ? (
             <TextField
-              sx={{ width: 200, backgroundColor: "#ffff" }}
+              sx={{ width: 200, backgroundColor: '#ffff' }}
               type="date"
               id={campo.nombre}
-              value={formData[etapa]?.[campo.nombre] || ""}
+              value={formData[etapa]?.[campo.nombre] || ''}
               onChange={(e) =>
                 handleFieldChange(etapa, campo.nombre, e.target.value)
               }
             />
-          ) : campo.tipo === "opciones" ? (
+          ) : campo.tipo === 'opciones' ? (
             <FormControl>
               <Select
-                sx={{ width: 200, backgroundColor: "#ffff" }}
+                sx={{ width: 200, backgroundColor: '#ffff' }}
                 id={campo.nombre}
-                value={formData[etapa]?.[campo.nombre] || ""}
+                value={formData[etapa]?.[campo.nombre] || ''}
                 onChange={(e) =>
                   handleFieldChange(etapa, campo.nombre, e.target.value)
                 }
@@ -74,9 +75,9 @@ const Agroalimentario = () => {
           ) : (
             <TextField
               type="text"
-              sx={{ width: 200, backgroundColor: "#ffff" }}
+              sx={{ width: 200, backgroundColor: '#ffff' }}
               id={campo.nombre}
-              value={formData[etapa]?.[campo.nombre] || ""}
+              value={formData[etapa]?.[campo.nombre] || ''}
               onChange={(e) =>
                 handleFieldChange(etapa, campo.nombre, e.target.value)
               }
@@ -88,7 +89,7 @@ const Agroalimentario = () => {
 
   return (
     <HomeLayout>
-      <Box sx={{ color: "primary.main", minHeight: "90vh", padding: 2 }}>
+      <Box sx={{ color: 'primary.main', minHeight: '90vh', padding: 2 }}>
         {formularioTrazabilidad.etapas.map((etapa) => (
           <div key={etapa.nombre} style={{ marginBottom: 20 }}>
             <h2>{etapa.nombre}</h2>
@@ -96,13 +97,13 @@ const Agroalimentario = () => {
           </div>
         ))}
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <InputLabel sx={{ width: 250 }}>Observaciones</InputLabel>
           <TextareaAutosize
             minRows={4}
             sx={{ width: 200 }}
             id="observaciones"
-            value={formData.observaciones || ""}
+            value={formData.observaciones || ''}
             onChange={handleObservationsChange}
           />
         </Box>
