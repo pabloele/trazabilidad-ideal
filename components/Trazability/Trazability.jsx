@@ -38,167 +38,13 @@ const Trazability = ({ product }) => {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography sx={{ color: "primary.main", fontSize: 24 }}>
-        Crea tu trazabilidad para {product.name}
-      </Typography>
-
-      <Box
-        sx={{
-          bgcolor: "#e7e7e6",
-          width: "30rem",
-          height: "10rem",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 2,
-        }}
-      >
-        <Box>
-          <ImageIcon sx={{ color: "#9f9f9f", fontSize: "5rem" }} />
-        </Box>
-
-        <Box>
-          <Typography sx={{ color: "#000" }}>
-            Añadir imagen encabezado
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box
-        sx={{
-          marginTop: 3,
-          color: "primary.main",
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-        }}
-      >
-        <EditableField
-          value={product.title}
-          label={"Escribe un titulo"}
-          onSave={(newValue) => updateProduct("title", newValue)}
-        />
-      </Box>
-
-      <Box
-        sx={{
-          marginTop: 3,
-          color: "primary.main",
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-        }}
-      >
-        <EditableField
-          value={product.title}
-          label={"Escribe la compañia"}
-          onSave={(newValue) => updateProduct("company", newValue)}
-        />
-      </Box>
-
-      <Typography
-        sx={{
-          color: "primary.main",
-          fontSize: 24,
-          fontWeight: "bold",
-          marginTop: 4,
-        }}
-      >
-        El producto
-      </Typography>
-
-      <Box
-        sx={{
-          marginTop: 2,
-          color: "primary.main",
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-        }}
-      >
-        <EditableField
-          label={"Escrible la descripcion"}
-          value={productObject.description}
-          onSave={(newValue) => updateProduct("description", newValue)}
-        />
-      </Box>
-
-      <Grid
-        container={"true"}
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 1, sm: 2, md: 2 }}
-      >
-        {[1, 2, 3, 4].map((e, i) => (
-          <Grid
-            key={i}
-            item
-            sx={{
-              padding: 0,
-            }}
-          >
-            <Box
-              sx={{
-                bgcolor: "#e7e7e6",
-                width: "30rem",
-                height: "10rem",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 2,
-              }}
-            >
-              <Box>
-                <ImageIcon sx={{ color: "#9f9f9f", fontSize: "5rem" }} />
-              </Box>
-
-              <Box>
-                <Typography sx={{ color: "#000" }}>
-                  Añadir imagen encabezado
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}>
-        <Dropdown>
-          <MenuButton>Agregar contenido</MenuButton>
-          <Menu slots={{ listbox: Listbox }}>
-            <MenuItem>
-              {" "}
-              <ImageIcon /> Imagen
-            </MenuItem>
-            <MenuItem>
-              {" "}
-              <FormatAlignLeftIcon /> Texto
-            </MenuItem>
-            <MenuItem>
-              {" "}
-              <AttachFileIcon /> Adjuntar
-            </MenuItem>
-          </Menu>
-        </Dropdown>
-      </Box>
-
-      <Typography
-        sx={{
-          color: "primary.main",
-          fontSize: 24,
-          fontWeight: "bold",
-          marginTop: 1,
-        }}
-      >
-        La historia
-      </Typography>
-
       <Box>
         <Timeline
           sx={{
             [`& .${timelineOppositeContentClasses.root}`]: {
-              flex: 0.2,
+              flex: 0,
+              padding: 0,
+              margin: 0,
             },
           }}
         >
@@ -218,8 +64,9 @@ const Trazability = ({ product }) => {
             <TimelineContent>
               <Box
                 sx={{
+                  borderRadius: "10px",
                   border: "1px solid black",
-                  width: "620px",
+                  width: "800",
                   height: "183px",
                   padding: "20px",
                   display: "flex",
@@ -229,66 +76,14 @@ const Trazability = ({ product }) => {
                 <Box
                   sx={{
                     bgcolor: "#e7e7e6",
-                    width: "114px",
-                    height: "110px",
+                    width: "200px",
+                    height: "120px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
                     marginTop: 2,
-                  }}
-                >
-                  <Box>
-                    <ImageIcon sx={{ color: "#9f9f9f" }} />
-                  </Box>
-
-                  <Box>
-                    <Typography sx={{ color: "#000" }}>
-                      Añadir imagen
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box>
-                  <EditableField label={"Descripcion"} size={15} />
-                </Box>
-              </Box>
-            </TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent
-              sx={{ m: "auto 0" }}
-              align="right"
-              variant="body2"
-              color="text.secondary"
-            ></TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot>
-                <ModeEditIcon />
-              </TimelineDot>
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Box
-                sx={{
-                  border: "1px solid black",
-                  width: "620px",
-                  height: "183px",
-                  padding: "20px",
-                  display: "flex",
-                  gap: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#e7e7e6",
-                    width: "114px",
-                    height: "110px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: 2,
+                    padding: 0.5,
                   }}
                 >
                   <Box>
