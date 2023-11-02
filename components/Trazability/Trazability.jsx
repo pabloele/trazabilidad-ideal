@@ -18,24 +18,15 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineOppositeContent, {
   timelineOppositeContentClasses,
 } from "@mui/lab/TimelineOppositeContent";
-const Trazability = ({ product, subprocessSelected }) => {
-  const productObject = {
-    name: product.name,
-    title: "",
-    description: "",
-    company: "",
-    images: [],
-  };
+import { useAuth } from "../../context/AuthContext";
+import Image from "next/image";
 
-  const updateProduct = (field, newValue) => {
-    // Aquí debes actualizar el producto con el nuevo valor
-    // Puedes usar un estado global, Redux, o enviar una solicitud al servidor
-    // Por simplicidad, aquí solo actualizamos el campo especificado
-    productObject[field] = newValue;
-
-    console.log(productObject);
-  };
-
+const Trazability = ({
+  product,
+  subprocessSelected,
+  handleImageUpload,
+  fileUri,
+}) => {
   return (
     <Box sx={{ padding: 4 }}>
       <Box>
@@ -74,9 +65,13 @@ const Trazability = ({ product, subprocessSelected }) => {
                   gap: 2,
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <Box
+                    onClick={handleImageUpload}
                     sx={{
+                      ":hover": {
+                        cursor: "pointer",
+                      },
                       bgcolor: "#e7e7e6",
                       width: "200px",
                       height: "120px",
@@ -89,13 +84,19 @@ const Trazability = ({ product, subprocessSelected }) => {
                     }}
                   >
                     <Box>
-                      <ImageIcon sx={{ color: "#9f9f9f" }} />
+                      {fileUri ? (
+                        <Image src={fileUri} width={200} height={150} />
+                      ) : (
+                        <ImageIcon sx={{ color: "#9f9f9f" }} />
+                      )}
                     </Box>
 
                     <Box>
-                      <Typography sx={{ color: "#000" }}>
-                        Añadir imagen
-                      </Typography>
+                      {!fileUri && (
+                        <Typography sx={{ color: "#000" }}>
+                          Añadir imagen
+                        </Typography>
+                      )}
                     </Box>
                   </Box>
 
@@ -106,6 +107,8 @@ const Trazability = ({ product, subprocessSelected }) => {
                 {subprocessSelected && (
                   <Typography
                     sx={{
+                      textAlign: "center",
+                      maxWidth: 200,
                       backgroundColor: "#e1e1e1",
                       borderRadius: 4,
                       padding: "5px",
@@ -158,7 +161,6 @@ const EditableField = ({ label, value, onSave, size = 24 }) => {
 
   const handleSaveClick = () => {
     setIsEditing(false);
-    onSave(editedValue);
   };
 
   return (
@@ -172,7 +174,11 @@ const EditableField = ({ label, value, onSave, size = 24 }) => {
           marginY: 2,
         }}
       >
-        <Typography sx={{ fontSize: size, marginRight: 1 }}>{label}</Typography>
+        {value == "" && (
+          <Typography sx={{ fontSize: size, marginRight: 1 }}>
+            {label}
+          </Typography>
+        )}
         {/* Mostrar el label aquí */}
         {isEditing ? (
           <TextField

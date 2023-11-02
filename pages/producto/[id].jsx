@@ -9,12 +9,23 @@ import { AddOutlined } from "@mui/icons-material";
 import ImageIcon from "@mui/icons-material/Image";
 import Trazability from "../../components/Trazability/Trazability";
 import TabPanel from "../../components/TabPanel/TabPanel";
+import useMilestone from "../../hooks/useMilestone";
 const Producto = () => {
+  const router = useRouter();
+
   const [tabActive, setTabActive] = useState(0);
   const [open, setOpen] = useState(false);
 
   const [subprocessSelected, setSubprocessSelected] = useState();
 
+  const { milestone, setMilestone, handleImageUpload, fileUri } =
+    useMilestone();
+
+  const { product, setProduct } = useProduct(router.query.id);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
   const handleClickSubprocess = (event) => {
     const subprocess = event.target.getAttribute("name");
     setSubprocessSelected(subprocess);
@@ -28,23 +39,15 @@ const Producto = () => {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 900,
-    height: 600,
+    width: "80vw",
+    height: "90vh",
+    overflowY: "auto", // Habilita el desplazamiento vertical
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
     textAlign: "center",
   };
-
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
-
-  const router = useRouter();
-
-  const { product, setProduct } = useProduct(router.query.id);
-
   if (!product) {
     return (
       <HomeLayout>
@@ -126,6 +129,8 @@ const Producto = () => {
               </Box>
             ))}
             <Trazability
+              fileUri={fileUri}
+              handleImageUpload={handleImageUpload}
               product={product}
               subprocessSelected={subprocessSelected}
             />

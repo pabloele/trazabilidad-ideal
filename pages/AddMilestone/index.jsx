@@ -6,11 +6,11 @@ import {
   InputLabel,
   Button,
   Box,
-} from '@mui/material';
-import React from 'react';
-import mintImg from '../../public/images/milestone.png';
-import Image from 'next/image';
-import { useAuth } from '../../context/AuthContext';
+} from "@mui/material";
+import React from "react";
+import mintImg from "../../public/images/milestone.png";
+import Image from "next/image";
+import { useAuth } from "../../context/AuthContext";
 
 const AddMilestone = () => {
   const { uploadFile, getFile } = useAuth();
@@ -39,14 +39,14 @@ const AddMilestone = () => {
         fileURI = await getFile(firebaseFullPath);
       } catch (error) {
         if (error instanceof Error) {
-          console.error('Error uploading file //', error.message);
+          console.error("Error uploading file //", error.message);
         } else {
-          console.error('Error uploading file');
+          console.error("Error uploading file");
         }
       }
     }
 
-    console.log('FILE URI: ', fileURI);
+    console.log("FILE URI: ", fileURI);
     return fileURI;
   };
 
@@ -63,10 +63,10 @@ const AddMilestone = () => {
       <Grid
         item
         xs={4}
-        sx={{ width: '100%', height: '400px', objectFit: 'cover' }}
+        sx={{ width: "100%", height: "400px", objectFit: "cover" }}
       >
         {/* <Box mb={2}> */}
-        <Image src={mintImg} alt="Preview" style={{ objectFit: 'cover' }} />
+        <Image src={mintImg} alt="Preview" style={{ objectFit: "cover" }} />
         {/* </Box> */}
       </Grid>
       <Grid item xs={4}>
@@ -79,9 +79,9 @@ const AddMilestone = () => {
           <Grid
             item
             sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
           >
             <Button variant="contained" component="label" htmlFor="file-input">
@@ -91,7 +91,7 @@ const AddMilestone = () => {
                 accept="image/*"
                 onChange={handleImageUpload}
                 id="file-input"
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
             </Button>
           </Grid>
@@ -108,7 +108,7 @@ const AddMilestone = () => {
                 accept="image/*"
                 onChange={handleImageChange}
                 id="file-input"
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
             </Button>
           </Grid>
