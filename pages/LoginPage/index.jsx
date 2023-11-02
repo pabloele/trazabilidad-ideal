@@ -51,7 +51,7 @@ const LoginPage = () => {
         data: { name: res.user.displayName, email: res.user.email },
         products: [],
       });
-      if (res.user) router.push("/inicio");
+      if (res.user) router.push("/home");
     });
   };
   return (

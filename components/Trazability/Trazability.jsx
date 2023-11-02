@@ -18,7 +18,7 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineOppositeContent, {
   timelineOppositeContentClasses,
 } from "@mui/lab/TimelineOppositeContent";
-const Trazability = ({ product }) => {
+const Trazability = ({ product, subprocessSelected }) => {
   const productObject = {
     name: product.name,
     title: "",
@@ -66,44 +66,83 @@ const Trazability = ({ product }) => {
                 sx={{
                   borderRadius: "10px",
                   border: "1px solid black",
-                  width: "800",
-                  height: "183px",
+                  width: "100%",
+                  height: "100%",
                   padding: "20px",
                   display: "flex",
+                  flexDirection: "column",
                   gap: 2,
                 }}
               >
-                <Box
-                  sx={{
-                    bgcolor: "#e7e7e6",
-                    width: "200px",
-                    height: "120px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: 2,
-                    padding: 0.5,
-                  }}
-                >
-                  <Box>
-                    <ImageIcon sx={{ color: "#9f9f9f" }} />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 20 }}>
+                  <Box
+                    sx={{
+                      bgcolor: "#e7e7e6",
+                      width: "200px",
+                      height: "120px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: 2,
+                      padding: 0.5,
+                    }}
+                  >
+                    <Box>
+                      <ImageIcon sx={{ color: "#9f9f9f" }} />
+                    </Box>
+
+                    <Box>
+                      <Typography sx={{ color: "#000" }}>
+                        Añadir imagen
+                      </Typography>
+                    </Box>
                   </Box>
 
                   <Box>
-                    <Typography sx={{ color: "#000" }}>
-                      Añadir imagen
-                    </Typography>
+                    <EditableField label={"Descripcion"} size={15} />
                   </Box>
                 </Box>
-
-                <Box>
-                  <EditableField label={"Descripcion"} size={15} />
-                </Box>
+                {subprocessSelected && (
+                  <Typography
+                    sx={{
+                      backgroundColor: "#e1e1e1",
+                      borderRadius: 4,
+                      padding: "5px",
+                      fontSize: 12,
+                      color: "primary.main",
+                      flex: "1",
+                    }}
+                  >
+                    {subprocessSelected}
+                  </Typography>
+                )}
               </Box>
             </TimelineContent>
           </TimelineItem>
         </Timeline>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: 3,
+        }}
+      >
+        <Dropdown>
+          <MenuButton>Agregar contenido</MenuButton>
+          <Menu slots={{ listbox: Listbox }}>
+            <MenuItem>
+              <ImageIcon /> Imagen
+            </MenuItem>
+            <MenuItem>
+              <FormatAlignLeftIcon /> Texto
+            </MenuItem>
+            <MenuItem>
+              <AttachFileIcon /> Adjuntar
+            </MenuItem>
+          </Menu>
+        </Dropdown>
       </Box>
     </Box>
   );
@@ -123,36 +162,38 @@ const EditableField = ({ label, value, onSave, size = 24 }) => {
   };
 
   return (
-    <Box
-      sx={{
-        color: "primary.main",
-        display: "flex",
-        gap: 1,
-        alignItems: "center",
-        marginY: 2,
-      }}
-    >
-      <Typography sx={{ fontSize: size, marginRight: 1 }}>{label}</Typography>
-      {/* Mostrar el label aquí */}
-      {isEditing ? (
-        <TextField
-          value={editedValue}
-          onChange={(e) => setEditedValue(e.target.value)}
-        />
-      ) : (
-        <Typography sx={{ fontSize: size }}>{editedValue}</Typography>
-      )}
-      {isEditing ? (
-        <Button variant="contained" onClick={handleSaveClick}>
-          Guardar
-        </Button>
-      ) : (
-        <ModeEditIcon
-          sx={{ fontSize: size, cursor: "pointer" }}
-          onClick={handleEditClick}
-        />
-      )}
-    </Box>
+    <>
+      <Box
+        sx={{
+          color: "primary.main",
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+          marginY: 2,
+        }}
+      >
+        <Typography sx={{ fontSize: size, marginRight: 1 }}>{label}</Typography>
+        {/* Mostrar el label aquí */}
+        {isEditing ? (
+          <TextField
+            value={editedValue}
+            onChange={(e) => setEditedValue(e.target.value)}
+          />
+        ) : (
+          <Typography sx={{ fontSize: size }}>{editedValue}</Typography>
+        )}
+        {isEditing ? (
+          <Button variant="contained" onClick={handleSaveClick}>
+            Guardar
+          </Button>
+        ) : (
+          <ModeEditIcon
+            sx={{ fontSize: size, cursor: "pointer" }}
+            onClick={handleEditClick}
+          />
+        )}
+      </Box>
+    </>
   );
 };
 

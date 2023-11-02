@@ -1,14 +1,28 @@
 import React, { useState } from "react";
 import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
 import { HomeLayout } from "../../layout";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, Tab, Tabs } from "@mui/material";
 import useProduct from "../../hooks/useProduct";
 import { useRouter } from "next/router";
 import Modal from "@mui/material/Modal";
 import { AddOutlined } from "@mui/icons-material";
 import ImageIcon from "@mui/icons-material/Image";
 import Trazability from "../../components/Trazability/Trazability";
+import TabPanel from "../../components/TabPanel/TabPanel";
 const Producto = () => {
+  const [tabActive, setTabActive] = useState(0);
+  const [open, setOpen] = useState(false);
+
+  const [subprocessSelected, setSubprocessSelected] = useState();
+
+  const handleClickSubprocess = (event) => {
+    const subprocess = event.target.getAttribute("name");
+    setSubprocessSelected(subprocess);
+  };
+  const handleChange = (event, newValue) => {
+    setTabActive(newValue);
+  };
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -27,11 +41,9 @@ const Producto = () => {
 
   const handleClose = () => setOpen(false);
 
-  const [open, setOpen] = useState(false);
-
   const router = useRouter();
 
-  const { product } = useProduct(router.query.id);
+  const { product, setProduct } = useProduct(router.query.id);
 
   if (!product) {
     return (
@@ -47,8 +59,76 @@ const Producto = () => {
         <Modal open={open} onClose={handleClose}>
           <Box sx={style}>
             <Box>
-              <Trazability product={product} />
+              <Typography
+                sx={{
+                  color: "primary.main",
+                  fontSize: 24,
+                }}
+              >
+                ¿A que categoria te gustaria agregar una etapa?
+              </Typography>
+              <Tabs
+                variant="scrollable"
+                onChange={handleChange}
+                value={tabActive}
+              >
+                {product.trazability.map((element, index) => (
+                  <Tab
+                    label={element.name}
+                    sx={{
+                      color: "primary.main",
+                    }}
+                  />
+                ))}
+              </Tabs>
             </Box>
+            {product.trazability.map((element, index) => (
+              <Box>
+                <TabPanel
+                  sx={{ display: "flex", flexDirection: "row", gap: 2 }}
+                  value={tabActive}
+                  index={index}
+                  key={index}
+                >
+                  {element.line.map((subprocess, subprocessIndex) => (
+                    <Box
+                      key={subprocessIndex}
+                      sx={{
+                        marginTop: 1,
+                        backgroundColor:
+                          subprocessSelected === subprocess.name
+                            ? "primary.main"
+                            : "transparent",
+                        transition: "background-color 0.3s ease", // Agregamos la transición CSS aquí
+                      }}
+                    >
+                      <Typography
+                        onClick={handleClickSubprocess}
+                        name={subprocess.name}
+                        sx={{
+                          color:
+                            subprocessSelected === subprocess.name
+                              ? "white"
+                              : "primary.main",
+                          marginY: 2,
+                          fontSize: 12,
+                          textTransform: "uppercase",
+                          ":hover": {
+                            cursor: "pointer",
+                          },
+                        }}
+                      >
+                        {subprocess.name}
+                      </Typography>
+                    </Box>
+                  ))}
+                </TabPanel>
+              </Box>
+            ))}
+            <Trazability
+              product={product}
+              subprocessSelected={subprocessSelected}
+            />
           </Box>
         </Modal>
 

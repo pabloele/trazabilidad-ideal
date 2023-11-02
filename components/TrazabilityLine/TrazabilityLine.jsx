@@ -6,7 +6,6 @@ import {
   Paper,
   Tab,
   Tabs,
-
 } from "@mui/material";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
@@ -19,13 +18,10 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 export default function TrazabilityLine({ protocol }) {
-  const isMediumScreen = useMediaQuery('(min-width: 600px)');
-  const timelineWidth = isMediumScreen ? '1000px' : '500px';
+  const isMediumScreen = useMediaQuery("(min-width: 600px)");
+  const timelineWidth = isMediumScreen ? "1000px" : "500px";
 
   const [isGrabbing, setIsGrabbing] = useState(false);
-
-
-
 
   const handleMouseDown = () => {
     setIsGrabbing(true);
@@ -37,27 +33,24 @@ export default function TrazabilityLine({ protocol }) {
 
   const handleMouseMove = (e) => {
     if (isGrabbing) {
-      const timelineContainer = document.getElementById('timeline-container');
+      const timelineContainer = document.getElementById("timeline-container");
       timelineContainer.scrollLeft -= e.movementX;
       timelineContainer.scrollTop -= e.movementY;
     }
   };
 
   useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isGrabbing]);
 
- 
-
   return (
     <>
-      
       <Box
         sx={{
           width: timelineWidth,
@@ -164,37 +157,38 @@ export default function TrazabilityLine({ protocol }) {
                             </Typography>
                           </Box>
                         );
-                      } else {
-                        return (
-                          <Box
-                            key={item.name}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
-                          >
-                            <HorizontalRuleIcon />
-                            <HighlightOffIcon sx={{ color: "red" }} />
-
-                            <Typography
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                fontSize: "16px",
-                                width: "10rem",
-                                textAlign: "center",
-                                ":hover": {
-                                  cursor: "pointer",
-                                },
-                              }}
-                            >
-                              {/* todo map multiple milestones*/}
-                              {item.name}
-                            </Typography>
-                          </Box>
-                        );
                       }
+                      // else {
+                      //   return (
+                      //     <Box
+                      //       key={item.name}
+                      //       sx={{
+                      //         display: "flex",
+                      //         alignItems: "center",
+                      //         gap: 1,
+                      //       }}
+                      //     >
+                      //       <HorizontalRuleIcon />
+                      //       <HighlightOffIcon sx={{ color: "red" }} />
+
+                      //       <Typography
+                      //         sx={{
+                      //           display: "flex",
+                      //           alignItems: "center",
+                      //           fontSize: "16px",
+                      //           width: "10rem",
+                      //           textAlign: "center",
+                      //           ":hover": {
+                      //             cursor: "pointer",
+                      //           },
+                      //         }}
+                      //       >
+                      //         {/* todo map multiple milestones*/}
+                      //         {item.name}
+                      //       </Typography>
+                      //     </Box>
+                      //   );
+                      // }
                     })}
                   </Box>
                 </TimelineContent>
@@ -223,7 +217,6 @@ export default function TrazabilityLine({ protocol }) {
             </TimelineItem>
           </Timeline>
         </Paper>
-      
       </Box>
     </>
   );
