@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  useMediaQuery,
-  Paper,
-  Tab,
-  Tabs,
-} from "@mui/material";
+import { Box, Typography, useMediaQuery, Paper, Modal } from "@mui/material";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -16,12 +9,30 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-
+import TimelineOppositeContent, {
+  timelineOppositeContentClasses,
+} from "@mui/lab/TimelineOppositeContent";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import Image from "next/image";
 export default function TrazabilityLine({ protocol }) {
   const isMediumScreen = useMediaQuery("(min-width: 600px)");
   const timelineWidth = isMediumScreen ? "1000px" : "500px";
 
   const [isGrabbing, setIsGrabbing] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedMilestone, setSelectedMilestone] = useState(null);
+
+  const openModal = (milestone) => {
+    setSelectedMilestone(milestone);
+    setIsModalOpen(true);
+    console.log(milestone);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleMouseDown = () => {
     setIsGrabbing(true);
@@ -48,9 +59,112 @@ export default function TrazabilityLine({ protocol }) {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isGrabbing]);
-
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80vw",
+    height: "90vh",
+    overflowY: "auto", // Habilita el desplazamiento vertical
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+    textAlign: "center",
+  };
   return (
     <>
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <Box sx={style}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6">Contenido del Milestone</Typography>
+
+            <Timeline
+              sx={{
+                [`& .${timelineOppositeContentClasses.root}`]: {
+                  flex: 0,
+                  padding: 0,
+                  margin: 0,
+                },
+              }}
+            >
+              {selectedMilestone &&
+                selectedMilestone.map((element, index) => {
+                  return (
+                    <TimelineItem key={index}>
+                      <TimelineOppositeContent
+                        sx={{ m: "auto 0" }}
+                        align="right"
+                        variant="body2"
+                        color="text.secondary"
+                      ></TimelineOppositeContent>
+                      <TimelineSeparator>
+                        <TimelineDot>
+                          <ModeEditIcon />
+                        </TimelineDot>
+                        <TimelineConnector />
+                      </TimelineSeparator>
+                      <TimelineContent>
+                        <Box
+                          sx={{
+                            borderRadius: "10px",
+                            border: "1px solid black",
+                            width: "100%",
+                            height: "100%",
+                            padding: "20px",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 10,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                ":hover": {
+                                  cursor: "pointer",
+                                },
+                                bgcolor: "#e7e7e6",
+                                width: "200px",
+                                height: "120px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginTop: 2,
+                                padding: 0.5,
+                              }}
+                            >
+                              <Box>
+                                {element?.image ? (
+                                  <Image
+                                    src={element.image}
+                                    width={200}
+                                    height={150}
+                                  />
+                                ) : (
+                                  <ImageIcon sx={{ color: "#9f9f9f" }} />
+                                )}
+                              </Box>
+                            </Box>
+                          </Box>
+
+                          <Typography>{element.description}</Typography>
+                        </Box>
+                      </TimelineContent>
+                    </TimelineItem>
+                  );
+                })}
+            </Timeline>
+          </Paper>
+        </Box>
+      </Modal>
       <Box
         sx={{
           width: timelineWidth,
@@ -101,99 +215,71 @@ export default function TrazabilityLine({ protocol }) {
               </TimelineContent>
             </TimelineItem>
 
-            {protocol?.map((stage, stageIndex) => (
-              <TimelineItem key={stage.name} sx={{ marginY: "auto" }}>
-                <TimelineSeparator>
-                  <TimelineDot />
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignContent: "flex-start",
-                      transform: "translateY(-0.5rem)",
-                    }}
-                  >
-                    <Typography
+            {protocol?.map((stage, stageIndex) => {
+              return (
+                <TimelineItem key={stage.name} sx={{ marginY: "auto" }}>
+                  <TimelineSeparator>
+                    <TimelineDot />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent>
+                    <Box
                       sx={{
                         display: "flex",
-                        paddingRight: "1rem",
-                        fontSize: "26px",
-                        alignSelf: "center",
+                        flexDirection: "row",
+                        alignContent: "flex-start",
+                        transform: "translateY(-0.5rem)",
                       }}
                     >
-                      {stage.name}
-                    </Typography>
-                    {stage.line.map((item, index) => {
-                      if (item.milestones.length > 0) {
-                        return (
-                          <Box
-                            key={stage.name + item.name}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
-                          >
-                            <HorizontalRuleIcon />
-                            <CheckCircleOutlineIcon sx={{ color: "green" }} />
-
-                            <Typography
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          paddingRight: "1rem",
+                          fontSize: "26px",
+                          alignSelf: "center",
+                        }}
+                      >
+                        {stage.name}
+                      </Typography>
+                      {stage.line.map((item, index) => {
+                        if (item.milestones.length > 0) {
+                          return (
+                            <Box
+                              onClick={() => openModal(item.milestones)}
+                              key={stage.name + item.name}
                               sx={{
                                 display: "flex",
                                 alignItems: "center",
-                                fontSize: "16px",
-                                width: "10rem",
-                                textAlign: "center",
-                                ":hover": {
-                                  cursor: "pointer",
-                                },
+                                gap: 1,
                               }}
                             >
-                              {/* todo map multiple milestones*/}
-                              {item.name}
-                            </Typography>
-                          </Box>
-                        );
-                      }
-                      // else {
-                      //   return (
-                      //     <Box
-                      //       key={item.name}
-                      //       sx={{
-                      //         display: "flex",
-                      //         alignItems: "center",
-                      //         gap: 1,
-                      //       }}
-                      //     >
-                      //       <HorizontalRuleIcon />
-                      //       <HighlightOffIcon sx={{ color: "red" }} />
+                              <HorizontalRuleIcon />
+                              <CheckCircleOutlineIcon sx={{ color: "green" }} />
 
-                      //       <Typography
-                      //         sx={{
-                      //           display: "flex",
-                      //           alignItems: "center",
-                      //           fontSize: "16px",
-                      //           width: "10rem",
-                      //           textAlign: "center",
-                      //           ":hover": {
-                      //             cursor: "pointer",
-                      //           },
-                      //         }}
-                      //       >
-                      //         {/* todo map multiple milestones*/}
-                      //         {item.name}
-                      //       </Typography>
-                      //     </Box>
-                      //   );
-                      // }
-                    })}
-                  </Box>
-                </TimelineContent>
-              </TimelineItem>
-            ))}
+                              <Typography
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontSize: "16px",
+                                  width: "10rem",
+                                  textAlign: "center",
+                                  ":hover": {
+                                    cursor: "pointer",
+                                  },
+                                }}
+                              >
+                                {/* todo map multiple milestones*/}
+                                {item.name}
+                              </Typography>
+                            </Box>
+                          );
+                        }
+                      })}
+                    </Box>
+                  </TimelineContent>
+                </TimelineItem>
+              );
+            })}
 
             <TimelineItem>
               <TimelineSeparator>

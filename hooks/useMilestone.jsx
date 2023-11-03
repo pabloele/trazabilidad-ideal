@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 const useMilestone = () => {
   const [milestone, setMilestone] = useState({
@@ -14,19 +14,21 @@ const useMilestone = () => {
     try {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = "image/*"; // Puedes ajustar las extensiones permitidas según tus necesidades
+      input.accept = "image/*";
 
       input.onchange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-          // Sube el archivo a Firestore Storage
-          console.log(file);
-
           const response = await uploadFile(file);
-          console.log(response);
           const firebaseFullPath = response.metadata.fullPath;
-          setFileUri(await getFile(firebaseFullPath));
-          console.log(fileUri);
+          const urlImage = await getFile(firebaseFullPath);
+
+          setFileUri(urlImage);
+
+          // Establece el valor de image en milestone después de que fileUri esté listo
+          setMilestone({ ...milestone, image: urlImage });
+
+          console.log(milestone);
         }
       };
 
@@ -36,7 +38,12 @@ const useMilestone = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("Milestone updated:", milestone);
+  }, [milestone]);
+
   return {
+    setFileUri,
     fileUri,
     milestone,
     setMilestone,

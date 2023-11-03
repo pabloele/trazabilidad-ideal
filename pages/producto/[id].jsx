@@ -6,7 +6,6 @@ import useProduct from "../../hooks/useProduct";
 import { useRouter } from "next/router";
 import Modal from "@mui/material/Modal";
 import { AddOutlined } from "@mui/icons-material";
-import ImageIcon from "@mui/icons-material/Image";
 import Trazability from "../../components/Trazability/Trazability";
 import TabPanel from "../../components/TabPanel/TabPanel";
 import useMilestone from "../../hooks/useMilestone";
@@ -18,7 +17,7 @@ const Producto = () => {
 
   const [subprocessSelected, setSubprocessSelected] = useState();
 
-  const { milestone, setMilestone, handleImageUpload, fileUri } =
+  const { milestone, setMilestone, handleImageUpload, fileUri, setFileUri } =
     useMilestone();
 
   const { product, setProduct } = useProduct(router.query.id);
@@ -32,6 +31,44 @@ const Producto = () => {
   };
   const handleChange = (event, newValue) => {
     setTabActive(newValue);
+  };
+
+  const saveMilestone = () => {
+    if (!milestone.image || !milestone.description) {
+      alert("Por favor, completa la imagen y la descripción del hito.");
+      return;
+    }
+
+    if (!subprocessSelected || tabActive === null) {
+      alert("Por favor, selecciona un proceso y un subproceso.");
+      return;
+    }
+
+    const selectedStage = product.trazability[tabActive];
+    const selectedSubprocess = selectedStage.line.find(
+      (sub) => sub.name === subprocessSelected
+    );
+    selectedSubprocess.milestones.push(milestone);
+
+    const updateProduct = { ...product };
+    updateProduct.trazability[tabActive] = selectedStage;
+    setProduct(updateProduct);
+
+    // Restablecer estados y cerrar el modal
+    setMilestone({
+      image: "",
+      description: "",
+    });
+    setSubprocessSelected(null);
+    setTabActive(null);
+    setOpen(false); // Cierra el modal
+
+    setMilestone({
+      image: "",
+      description: "",
+    });
+
+    setFileUri("");
   };
 
   const style = {
@@ -133,6 +170,9 @@ const Producto = () => {
               handleImageUpload={handleImageUpload}
               product={product}
               subprocessSelected={subprocessSelected}
+              milestone={milestone}
+              setMilestone={setMilestone}
+              saveMilestone={saveMilestone}
             />
           </Box>
         </Modal>

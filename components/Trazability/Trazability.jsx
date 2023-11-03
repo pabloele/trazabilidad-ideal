@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, Typography, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { Dropdown } from "@mui/base/Dropdown";
@@ -26,6 +33,9 @@ const Trazability = ({
   subprocessSelected,
   handleImageUpload,
   fileUri,
+  milestone,
+  setMilestone,
+  saveMilestone,
 }) => {
   return (
     <Box sx={{ padding: 4 }}>
@@ -101,7 +111,12 @@ const Trazability = ({
                   </Box>
 
                   <Box>
-                    <EditableField label={"Descripcion"} size={15} />
+                    <EditableField
+                      label={"Descripcion"}
+                      size={15}
+                      milestone={milestone}
+                      setMilestone={setMilestone}
+                    />
                   </Box>
                 </Box>
                 {subprocessSelected && (
@@ -133,7 +148,7 @@ const Trazability = ({
         }}
       >
         <Dropdown>
-          <MenuButton>Agregar contenido</MenuButton>
+          <MenuButton onClick={saveMilestone}>Agregar contenido</MenuButton>
           <Menu slots={{ listbox: Listbox }}>
             <MenuItem>
               <ImageIcon /> Imagen
@@ -151,7 +166,14 @@ const Trazability = ({
   );
 };
 
-const EditableField = ({ label, value, onSave, size = 24 }) => {
+const EditableField = ({
+  label,
+  value,
+  onSave,
+  size = 24,
+  milestone,
+  setMilestone,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
 
@@ -160,6 +182,10 @@ const EditableField = ({ label, value, onSave, size = 24 }) => {
   };
 
   const handleSaveClick = () => {
+    setMilestone({ ...milestone, description: editedValue });
+
+    console.log(milestone);
+
     setIsEditing(false);
   };
 
@@ -174,14 +200,16 @@ const EditableField = ({ label, value, onSave, size = 24 }) => {
           marginY: 2,
         }}
       >
-        {value == "" && (
+        {value !== "" && (
           <Typography sx={{ fontSize: size, marginRight: 1 }}>
             {label}
           </Typography>
         )}
         {/* Mostrar el label aquí */}
         {isEditing ? (
-          <TextField
+          <TextareaAutosize
+            minRows={5} // Ajusta este valor al número mínimo de filas deseado
+            maxRows={15} // Ajusta este valor al número máximo de filas deseado
             value={editedValue}
             onChange={(e) => setEditedValue(e.target.value)}
           />

@@ -24,7 +24,7 @@ const useProduct = (productId) => {
     getProduct();
   }, [productId]);
 
-  return { product };
+  return { product, setProduct };
 };
 
 export default useProduct;
