@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
-import { HomeLayout } from "../../layout";
-import { Box, Typography, IconButton, Tab, Tabs } from "@mui/material";
-import useProduct from "../../hooks/useProduct";
-import { useRouter } from "next/router";
-import Modal from "@mui/material/Modal";
-import { AddOutlined } from "@mui/icons-material";
-import Trazability from "../../components/Trazability/Trazability";
-import TabPanel from "../../components/TabPanel/TabPanel";
-import useMilestone from "../../hooks/useMilestone";
+import React, { useState } from 'react';
+import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
+import { HomeLayout } from '../../layout';
+import { Box, Typography, IconButton, Tab, Tabs } from '@mui/material';
+import useProduct from '../../hooks/useProduct';
+import { useRouter } from 'next/router';
+import Modal from '@mui/material/Modal';
+import { AddOutlined } from '@mui/icons-material';
+import Trazability from '../../components/Trazability/Trazability';
+import TabPanel from '../../components/TabPanel/TabPanel';
+import useMilestone from '../../hooks/useMilestone';
 const Producto = () => {
   const router = useRouter();
 
@@ -26,7 +26,7 @@ const Producto = () => {
 
   const handleClose = () => setOpen(false);
   const handleClickSubprocess = (event) => {
-    const subprocess = event.target.getAttribute("name");
+    const subprocess = event.target.getAttribute('name');
     setSubprocessSelected(subprocess);
   };
   const handleChange = (event, newValue) => {
@@ -35,12 +35,12 @@ const Producto = () => {
 
   const saveMilestone = () => {
     if (!milestone.image || !milestone.description) {
-      alert("Por favor, completa la imagen y la descripción del hito.");
+      alert('Por favor, completa la imagen y la descripción del hito.');
       return;
     }
 
     if (!subprocessSelected || tabActive === null) {
-      alert("Por favor, selecciona un proceso y un subproceso.");
+      alert('Por favor, selecciona un proceso y un subproceso.');
       return;
     }
 
@@ -56,39 +56,39 @@ const Producto = () => {
 
     // Restablecer estados y cerrar el modal
     setMilestone({
-      image: "",
-      description: "",
+      image: '',
+      description: '',
     });
     setSubprocessSelected(null);
     setTabActive(null);
     setOpen(false); // Cierra el modal
 
     setMilestone({
-      image: "",
-      description: "",
+      image: '',
+      description: '',
     });
 
-    setFileUri("");
+    setFileUri('');
   };
 
   const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80vw",
-    height: "90vh",
-    overflowY: "auto", // Habilita el desplazamiento vertical
-    bgcolor: "background.paper",
-    border: "2px solid #000",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '80vw',
+    height: '90vh',
+    overflowY: 'auto', // Habilita el desplazamiento vertical
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-    textAlign: "center",
+    textAlign: 'center',
   };
   if (!product) {
     return (
       <HomeLayout>
-        <Box container sx={{ height: "90vh" }}>
+        <Box container sx={{ height: '90vh' }}>
           <p>Loading...</p>
         </Box>
       </HomeLayout>
@@ -101,7 +101,7 @@ const Producto = () => {
             <Box>
               <Typography
                 sx={{
-                  color: "primary.main",
+                  color: 'primary.main',
                   fontSize: 24,
                 }}
               >
@@ -116,16 +116,17 @@ const Producto = () => {
                   <Tab
                     label={element.name}
                     sx={{
-                      color: "primary.main",
+                      color: 'primary.main',
                     }}
+                    key={element.name}
                   />
                 ))}
               </Tabs>
             </Box>
             {product.trazability.map((element, index) => (
-              <Box>
+              <Box key={element.name}>
                 <TabPanel
-                  sx={{ display: "flex", flexDirection: "row", gap: 2 }}
+                  sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
                   value={tabActive}
                   index={index}
                   key={index}
@@ -137,9 +138,9 @@ const Producto = () => {
                         marginTop: 1,
                         backgroundColor:
                           subprocessSelected === subprocess.name
-                            ? "primary.main"
-                            : "transparent",
-                        transition: "background-color 0.3s ease", // Agregamos la transición CSS aquí
+                            ? 'primary.main'
+                            : 'transparent',
+                        transition: 'background-color 0.3s ease',
                       }}
                     >
                       <Typography
@@ -148,13 +149,13 @@ const Producto = () => {
                         sx={{
                           color:
                             subprocessSelected === subprocess.name
-                              ? "white"
-                              : "primary.main",
+                              ? 'white'
+                              : 'primary.main',
                           marginY: 2,
                           fontSize: 12,
-                          textTransform: "uppercase",
-                          ":hover": {
-                            cursor: "pointer",
+                          textTransform: 'uppercase',
+                          ':hover': {
+                            cursor: 'pointer',
                           },
                         }}
                       >
@@ -177,10 +178,10 @@ const Producto = () => {
           </Box>
         </Modal>
 
-        <Box sx={{ height: "90vh" }}>
+        <Box sx={{ height: '90vh' }}>
           <Typography
             sx={{
-              color: "primary.main",
+              color: 'primary.main',
               fontSize: 24,
             }}
           >
@@ -191,10 +192,10 @@ const Producto = () => {
         <IconButton
           size="large"
           sx={{
-            color: "white",
-            backgroundColor: "error.main",
-            ":hover": { backgroundColor: "error.main", opacity: 0.9 },
-            position: "fixed",
+            color: 'white',
+            backgroundColor: 'error.main',
+            ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
+            position: 'fixed',
             right: 50,
             bottom: 50,
           }}
