@@ -5,41 +5,38 @@ import {
   Link,
   TextField,
   Typography,
-} from "@mui/material";
-import { Google } from "@mui/icons-material";
-
-import { AuthLayout } from "../../layout";
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useRouter } from "next/navigation";
-import { createUser } from "../../firebase/controllers/firestoreControllers";
-
-const handleLogin = async () => {
-  try {
-    await login(email, password);
-    console.log("Login successful");
-    router.push("/protected");
-  } catch (error) {
-    console.log(error);
-  }
-};
+} from '@mui/material';
+import { Google } from '@mui/icons-material';
+import axios from 'axios';
+import { AuthLayout } from '../../layout';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { createUser } from '../../firebase/controllers/firestoreControllers';
 
 const LoginPage = () => {
-  const { user, loginWithGoogle, logout, error, loginWithEmail } = useAuth();
-
+  const { loginWithGoogle, login } = useAuth();
   const router = useRouter();
-  // const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
-    // try {
-    //   await login(email, password);
-    //   console.log('Login successful');
-    //   router.push('/protected');
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onUserEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const onUserPasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleLogin = async (e) => {
+    try {
+      const response = await login(email, password);
+      console.log('Login successful: ', response);
+      router.push('/home');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleLoginWithGoogle = (e) => {
@@ -51,14 +48,15 @@ const LoginPage = () => {
         data: { name: res.user.displayName, email: res.user.email },
         products: [],
       });
-      if (res.user) router.push("/home");
+      if (res.user) router.push('/home');
     });
   };
+
   return (
     <>
       <AuthLayout title="Login">
         <form
-          // onSubmit={onSubmit}
+          // onSubmit={handleLogin}
           className="animate__animated animate__fadeIn animate__faster"
         >
           <Grid container>
@@ -69,8 +67,8 @@ const LoginPage = () => {
                 placeholder="correo@google.com"
                 fullWidth
                 name="email"
-                //   onChange={onInputChange}
-                //   value={email}
+                onChange={onUserEmailChange}
+                value={email}
               />
             </Grid>
             <Grid item xs={12} sx={{ mt: 2 }}>
@@ -80,8 +78,8 @@ const LoginPage = () => {
                 placeholder="Contraseña"
                 fullWidth
                 name="password"
-                //   onChange={onInputChange}
-                //   value={password}
+                onChange={onUserPasswordChange}
+                value={password}
               />
             </Grid>
           </Grid>
@@ -91,8 +89,13 @@ const LoginPage = () => {
           </Grid> */}
 
             <Grid item xs={12} sm={6}>
-              <Link color="secondary.main" href="/inicio">
-                <Button type="submit" variant="contained" fullWidth>
+              <Link color="secondary.main" href="/home">
+                <Button
+                  onClick={handleLogin}
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                >
                   <Typography sx={{ ml: 1 }}>Login</Typography>
                 </Button>
               </Link>
