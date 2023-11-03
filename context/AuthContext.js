@@ -5,8 +5,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
   signInWithPopup,
-  signUpWithGoogle,
+  // signUpWithGoogle,
   GoogleAuthProvider,
+  loginWithEmailPassword,
 } from 'firebase/auth';
 import { FirebaseAuth, FirebaseStorage } from '../firebase/config';
 import { v4 } from 'uuid';
@@ -41,12 +42,23 @@ export const AuthContextProvider = ({ children }) => {
     return () => unsusbscribe();
   }, []);
 
-  const signup = (email, password) => {
+  const signup = async (email, password) => {
     return createUserWithEmailAndPassword(FirebaseAuth, email, password);
   };
 
-  const login = (email, password) => {
-    return signInWithEmailAndPassword(FirebaseAuth, email, password);
+  const login = async (email, password) => {
+    try {
+      const response = await signInWithEmailAndPassword(
+        FirebaseAuth,
+        email,
+        password
+      );
+      console.log('Login successful: ', response);
+      return response;
+    } catch (error) {
+      console.error('Login error: ', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
@@ -86,6 +98,7 @@ export const AuthContextProvider = ({ children }) => {
       throw error;
     }
   };
+
   return (
     <AuthContext.Provider
       value={{

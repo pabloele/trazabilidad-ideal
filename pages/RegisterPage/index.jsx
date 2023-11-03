@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 import {
   Alert,
@@ -7,14 +7,63 @@ import {
   Link,
   TextField,
   Typography,
-} from "@mui/material";
-import { AuthLayout } from "../../layout";
-import styles from "./RegisterPage.module.css";
+} from '@mui/material';
+import { AuthLayout } from '../../layout';
+import styles from './RegisterPage.module.css';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useForm } from '../../hooks/useForm';
+
+const initialForm = {
+  username: '',
+  email: '',
+  password: '',
+};
+
+const formValidations = {
+  email: [(value) => value.includes('@'), 'Proporcione un email válido.'],
+  password: [
+    (value) => value.length >= 6,
+    'La contraseña debe tener más de seis caracteres.',
+  ],
+  username: [(value) => value.length >= 1, 'El nombre es obligatorio'],
+};
+
 const RegisterPage = () => {
+  const { user, loginWithGoogle, logout, error, login, signup } = useAuth();
+  const router = useRouter();
+  const [showErrors, setShowErrors] = useState(false);
+  const {
+    username,
+    password,
+    email,
+    onInputChange,
+    formState,
+    passwordValid,
+    emailValid,
+    usernameValid,
+    isFormValid,
+  } = useForm(initialForm, formValidations);
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    if (!isFormValid) {
+      setShowErrors(true);
+      return;
+    }
+    try {
+      const response = await signup(email, password);
+      console.log(response);
+      router.push('/home');
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <AuthLayout title="Registro">
       <form
-        // onSubmit={onSubmit}
+        onSubmit={handleSignUp}
         className={`animate__animated animate__fadeIn animate__faster ${styles.form}`}
       >
         <Grid container>
@@ -22,9 +71,13 @@ const RegisterPage = () => {
             <TextField
               label="Nombre completo"
               type="text"
-              placeholder="Juan Perez"
+              placeholder="Nombre completo"
               fullWidth
-              name="displayName"
+              name="username"
+              value={username}
+              onChange={onInputChange}
+              error={showErrors && usernameValid}
+              helperText={showErrors && usernameValid}
             />
           </Grid>
           <Grid item xs={12} sx={{ mt: 2 }}>
@@ -34,6 +87,10 @@ const RegisterPage = () => {
               placeholder="correo@google.com"
               fullWidth
               name="email"
+              value={email}
+              onChange={onInputChange}
+              error={showErrors && emailValid}
+              helperText={showErrors && emailValid}
             />
           </Grid>
           <Grid item xs={12} sx={{ mt: 2 }}>
@@ -43,6 +100,10 @@ const RegisterPage = () => {
               placeholder="Contraseña"
               fullWidth
               name="password"
+              value={password}
+              onChange={onInputChange}
+              error={showErrors && passwordValid}
+              helperText={showErrors && passwordValid}
             />
           </Grid>
         </Grid>
@@ -65,11 +126,11 @@ const RegisterPage = () => {
         </Grid>
       </form>
       <Grid container direction="row" justifyContent="end">
-        <Typography sx={{ ml: 1, mr: 1, color: "secondary.black" }}>
+        <Typography sx={{ ml: 1, mr: 1, color: 'secondary.black' }}>
           ¿Ya tenés una cuenta?
         </Typography>
         <Link href="/LoginPage">
-          <Typography sx={{ ml: 1, mr: 1, color: "crypto.main" }}>
+          <Typography sx={{ ml: 1, mr: 1, color: 'crypto.main' }}>
             Ingresar
           </Typography>
         </Link>
