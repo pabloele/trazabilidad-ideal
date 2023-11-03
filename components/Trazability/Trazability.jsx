@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, Typography, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { Dropdown } from "@mui/base/Dropdown";
@@ -18,187 +25,27 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineOppositeContent, {
   timelineOppositeContentClasses,
 } from "@mui/lab/TimelineOppositeContent";
-const Trazability = ({ product }) => {
-  const productObject = {
-    name: product.name,
-    title: "",
-    description: "",
-    company: "",
-    images: [],
-  };
+import { useAuth } from "../../context/AuthContext";
+import Image from "next/image";
 
-  const updateProduct = (field, newValue) => {
-    // Aquí debes actualizar el producto con el nuevo valor
-    // Puedes usar un estado global, Redux, o enviar una solicitud al servidor
-    // Por simplicidad, aquí solo actualizamos el campo especificado
-    productObject[field] = newValue;
-
-    console.log(productObject);
-  };
-
+const Trazability = ({
+  product,
+  subprocessSelected,
+  handleImageUpload,
+  fileUri,
+  milestone,
+  setMilestone,
+  saveMilestone,
+}) => {
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography sx={{ color: "primary.main", fontSize: 24 }}>
-        Crea tu trazabilidad para {product.name}
-      </Typography>
-
-      <Box
-        sx={{
-          bgcolor: "#e7e7e6",
-          width: "30rem",
-          height: "10rem",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 2,
-        }}
-      >
-        <Box>
-          <ImageIcon sx={{ color: "#9f9f9f", fontSize: "5rem" }} />
-        </Box>
-
-        <Box>
-          <Typography sx={{ color: "#000" }}>
-            Añadir imagen encabezado
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box
-        sx={{
-          marginTop: 3,
-          color: "primary.main",
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-        }}
-      >
-        <EditableField
-          value={product.title}
-          label={"Escribe un titulo"}
-          onSave={(newValue) => updateProduct("title", newValue)}
-        />
-      </Box>
-
-      <Box
-        sx={{
-          marginTop: 3,
-          color: "primary.main",
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-        }}
-      >
-        <EditableField
-          value={product.title}
-          label={"Escribe la compañia"}
-          onSave={(newValue) => updateProduct("company", newValue)}
-        />
-      </Box>
-
-      <Typography
-        sx={{
-          color: "primary.main",
-          fontSize: 24,
-          fontWeight: "bold",
-          marginTop: 4,
-        }}
-      >
-        El producto
-      </Typography>
-
-      <Box
-        sx={{
-          marginTop: 2,
-          color: "primary.main",
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-        }}
-      >
-        <EditableField
-          label={"Escrible la descripcion"}
-          value={productObject.description}
-          onSave={(newValue) => updateProduct("description", newValue)}
-        />
-      </Box>
-
-      <Grid
-        container={"true"}
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 1, sm: 2, md: 2 }}
-      >
-        {[1, 2, 3, 4].map((e, i) => (
-          <Grid
-            key={i}
-            item
-            sx={{
-              padding: 0,
-            }}
-          >
-            <Box
-              sx={{
-                bgcolor: "#e7e7e6",
-                width: "30rem",
-                height: "10rem",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 2,
-              }}
-            >
-              <Box>
-                <ImageIcon sx={{ color: "#9f9f9f", fontSize: "5rem" }} />
-              </Box>
-
-              <Box>
-                <Typography sx={{ color: "#000" }}>
-                  Añadir imagen encabezado
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}>
-        <Dropdown>
-          <MenuButton>Agregar contenido</MenuButton>
-          <Menu slots={{ listbox: Listbox }}>
-            <MenuItem>
-              {" "}
-              <ImageIcon /> Imagen
-            </MenuItem>
-            <MenuItem>
-              {" "}
-              <FormatAlignLeftIcon /> Texto
-            </MenuItem>
-            <MenuItem>
-              {" "}
-              <AttachFileIcon /> Adjuntar
-            </MenuItem>
-          </Menu>
-        </Dropdown>
-      </Box>
-
-      <Typography
-        sx={{
-          color: "primary.main",
-          fontSize: 24,
-          fontWeight: "bold",
-          marginTop: 1,
-        }}
-      >
-        La historia
-      </Typography>
-
       <Box>
         <Timeline
           sx={{
             [`& .${timelineOppositeContentClasses.root}`]: {
-              flex: 0.2,
+              flex: 0,
+              padding: 0,
+              margin: 0,
             },
           }}
         >
@@ -218,103 +65,115 @@ const Trazability = ({ product }) => {
             <TimelineContent>
               <Box
                 sx={{
+                  borderRadius: "10px",
                   border: "1px solid black",
-                  width: "620px",
-                  height: "183px",
+                  width: "100%",
+                  height: "100%",
                   padding: "20px",
                   display: "flex",
+                  flexDirection: "column",
                   gap: 2,
                 }}
               >
-                <Box
-                  sx={{
-                    bgcolor: "#e7e7e6",
-                    width: "114px",
-                    height: "110px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: 2,
-                  }}
-                >
-                  <Box>
-                    <ImageIcon sx={{ color: "#9f9f9f" }} />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Box
+                    onClick={handleImageUpload}
+                    sx={{
+                      ":hover": {
+                        cursor: "pointer",
+                      },
+                      bgcolor: "#e7e7e6",
+                      width: "200px",
+                      height: "120px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: 2,
+                      padding: 0.5,
+                    }}
+                  >
+                    <Box>
+                      {fileUri ? (
+                        <Image src={fileUri} width={200} height={150} />
+                      ) : (
+                        <ImageIcon sx={{ color: "#9f9f9f" }} />
+                      )}
+                    </Box>
+
+                    <Box>
+                      {!fileUri && (
+                        <Typography sx={{ color: "#000" }}>
+                          Añadir imagen
+                        </Typography>
+                      )}
+                    </Box>
                   </Box>
 
                   <Box>
-                    <Typography sx={{ color: "#000" }}>
-                      Añadir imagen
-                    </Typography>
+                    <EditableField
+                      label={"Descripcion"}
+                      size={15}
+                      milestone={milestone}
+                      setMilestone={setMilestone}
+                    />
                   </Box>
                 </Box>
-
-                <Box>
-                  <EditableField label={"Descripcion"} size={15} />
-                </Box>
-              </Box>
-            </TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent
-              sx={{ m: "auto 0" }}
-              align="right"
-              variant="body2"
-              color="text.secondary"
-            ></TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot>
-                <ModeEditIcon />
-              </TimelineDot>
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Box
-                sx={{
-                  border: "1px solid black",
-                  width: "620px",
-                  height: "183px",
-                  padding: "20px",
-                  display: "flex",
-                  gap: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#e7e7e6",
-                    width: "114px",
-                    height: "110px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: 2,
-                  }}
-                >
-                  <Box>
-                    <ImageIcon sx={{ color: "#9f9f9f" }} />
-                  </Box>
-
-                  <Box>
-                    <Typography sx={{ color: "#000" }}>
-                      Añadir imagen
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box>
-                  <EditableField label={"Descripcion"} size={15} />
-                </Box>
+                {subprocessSelected && (
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      maxWidth: 200,
+                      backgroundColor: "#e1e1e1",
+                      borderRadius: 4,
+                      padding: "5px",
+                      fontSize: 12,
+                      color: "primary.main",
+                      flex: "1",
+                    }}
+                  >
+                    {subprocessSelected}
+                  </Typography>
+                )}
               </Box>
             </TimelineContent>
           </TimelineItem>
         </Timeline>
       </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: 3,
+        }}
+      >
+        <Dropdown>
+          <MenuButton onClick={saveMilestone}>Agregar contenido</MenuButton>
+          <Menu slots={{ listbox: Listbox }}>
+            <MenuItem>
+              <ImageIcon /> Imagen
+            </MenuItem>
+            <MenuItem>
+              <FormatAlignLeftIcon /> Texto
+            </MenuItem>
+            <MenuItem>
+              <AttachFileIcon /> Adjuntar
+            </MenuItem>
+          </Menu>
+        </Dropdown>
+      </Box>
     </Box>
   );
 };
 
-const EditableField = ({ label, value, onSave, size = 24 }) => {
+const EditableField = ({
+  label,
+  value,
+  onSave,
+  size = 24,
+  milestone,
+  setMilestone,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
 
@@ -323,41 +182,52 @@ const EditableField = ({ label, value, onSave, size = 24 }) => {
   };
 
   const handleSaveClick = () => {
+    setMilestone({ ...milestone, description: editedValue });
+
+    console.log(milestone);
+
     setIsEditing(false);
-    onSave(editedValue);
   };
 
   return (
-    <Box
-      sx={{
-        color: "primary.main",
-        display: "flex",
-        gap: 1,
-        alignItems: "center",
-        marginY: 2,
-      }}
-    >
-      <Typography sx={{ fontSize: size, marginRight: 1 }}>{label}</Typography>
-      {/* Mostrar el label aquí */}
-      {isEditing ? (
-        <TextField
-          value={editedValue}
-          onChange={(e) => setEditedValue(e.target.value)}
-        />
-      ) : (
-        <Typography sx={{ fontSize: size }}>{editedValue}</Typography>
-      )}
-      {isEditing ? (
-        <Button variant="contained" onClick={handleSaveClick}>
-          Guardar
-        </Button>
-      ) : (
-        <ModeEditIcon
-          sx={{ fontSize: size, cursor: "pointer" }}
-          onClick={handleEditClick}
-        />
-      )}
-    </Box>
+    <>
+      <Box
+        sx={{
+          color: "primary.main",
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+          marginY: 2,
+        }}
+      >
+        {value !== "" && (
+          <Typography sx={{ fontSize: size, marginRight: 1 }}>
+            {label}
+          </Typography>
+        )}
+        {/* Mostrar el label aquí */}
+        {isEditing ? (
+          <TextareaAutosize
+            minRows={5} // Ajusta este valor al número mínimo de filas deseado
+            maxRows={15} // Ajusta este valor al número máximo de filas deseado
+            value={editedValue}
+            onChange={(e) => setEditedValue(e.target.value)}
+          />
+        ) : (
+          <Typography sx={{ fontSize: size }}>{editedValue}</Typography>
+        )}
+        {isEditing ? (
+          <Button variant="contained" onClick={handleSaveClick}>
+            Guardar
+          </Button>
+        ) : (
+          <ModeEditIcon
+            sx={{ fontSize: size, cursor: "pointer" }}
+            onClick={handleEditClick}
+          />
+        )}
+      </Box>
+    </>
   );
 };
 
