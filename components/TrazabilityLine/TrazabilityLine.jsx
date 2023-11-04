@@ -27,7 +27,6 @@ export default function TrazabilityLine({ protocol }) {
   const openModal = (milestone) => {
     setSelectedMilestone(milestone);
     setIsModalOpen(true);
-    console.log(milestone);
   };
 
   const closeModal = () => {

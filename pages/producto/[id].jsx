@@ -20,7 +20,7 @@ const Producto = () => {
   const { milestone, setMilestone, handleImageUpload, fileUri, setFileUri } =
     useMilestone();
 
-  const { product, setProduct } = useProduct(router.query.id);
+  const { product, setProduct, uploadProduct } = useProduct(router.query.id);
 
   const handleOpen = () => setOpen(true);
 
@@ -33,7 +33,7 @@ const Producto = () => {
     setTabActive(newValue);
   };
 
-  const saveMilestone = () => {
+  const saveMilestone = async () => {
     if (!milestone.image || !milestone.description) {
       alert("Por favor, completa la imagen y la descripción del hito.");
       return;
@@ -44,31 +44,38 @@ const Producto = () => {
       return;
     }
 
-    const selectedStage = product.trazability[tabActive];
-    const selectedSubprocess = selectedStage.line.find(
-      (sub) => sub.name === subprocessSelected
-    );
-    selectedSubprocess.milestones.push(milestone);
+    try {
 
-    const updateProduct = { ...product };
-    updateProduct.trazability[tabActive] = selectedStage;
-    setProduct(updateProduct);
+      const selectedStage = product.trazability[tabActive];
+      const selectedSubprocess = selectedStage.line.find(
+        (sub) => sub.name === subprocessSelected
+      );
+      selectedSubprocess.milestones.push(milestone);
 
-    // Restablecer estados y cerrar el modal
-    setMilestone({
-      image: "",
-      description: "",
-    });
-    setSubprocessSelected(null);
-    setTabActive(null);
-    setOpen(false); // Cierra el modal
+      const updateProduct = { ...product };
+      updateProduct.trazability[tabActive] = selectedStage;
+      setProduct(updateProduct);
+      const response = await uploadProduct(updateProduct);
 
-    setMilestone({
-      image: "",
-      description: "",
-    });
 
-    setFileUri("");
+      // Restablecer estados y cerrar el modal
+      setMilestone({
+        image: "",
+        description: "",
+      });
+      setSubprocessSelected(null);
+      setTabActive(null);
+      setOpen(false); // Cierra el modal
+
+      setMilestone({
+        image: "",
+        description: "",
+      });
+
+      setFileUri("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const style = {
