@@ -1,23 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Box, Typography, useMediaQuery, Paper, Modal } from '@mui/material';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useEffect, useState } from "react";
+import { Box, Typography, useMediaQuery, Paper, Modal } from "@mui/material";
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import TimelineOppositeContent, {
   timelineOppositeContentClasses,
-} from '@mui/lab/TimelineOppositeContent';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import Image from 'next/image';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+} from "@mui/lab/TimelineOppositeContent";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import Image from "next/image";
 export default function TrazabilityLine({ protocol }) {
-  const isMediumScreen = useMediaQuery('(min-width: 600px)');
-  const timelineWidth = isMediumScreen ? '1000px' : '500px';
+  const isMediumScreen = useMediaQuery("(min-width: 600px)");
+  const timelineWidth = isMediumScreen ? "900px" : "500px";
 
   const [isGrabbing, setIsGrabbing] = useState(false);
 
@@ -44,34 +42,34 @@ export default function TrazabilityLine({ protocol }) {
 
   const handleMouseMove = (e) => {
     if (isGrabbing) {
-      const timelineContainer = document.getElementById('timeline-container');
+      const timelineContainer = document.getElementById("timeline-container");
       timelineContainer.scrollLeft -= e.movementX;
       timelineContainer.scrollTop -= e.movementY;
     }
   };
 
   useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isGrabbing]);
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '80vw',
-    height: '90vh',
-    overflowY: 'auto',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80vw",
+    height: "100%",
+    overflowY: "auto",
+    bgcolor: "background.paper",
+    border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-    textAlign: 'center',
+    textAlign: "center",
   };
   return (
     <>
@@ -94,7 +92,7 @@ export default function TrazabilityLine({ protocol }) {
                   return (
                     <TimelineItem key={index}>
                       <TimelineOppositeContent
-                        sx={{ m: 'auto 0' }}
+                        sx={{ m: "auto 0" }}
                         align="right"
                         variant="body2"
                         color="text.secondary"
@@ -108,50 +106,46 @@ export default function TrazabilityLine({ protocol }) {
                       <TimelineContent>
                         <Box
                           sx={{
-                            borderRadius: '10px',
-                            border: '1px solid black',
-                            width: '100%',
-                            height: '100%',
-                            padding: '20px',
-                            display: 'flex',
-                            flexDirection: 'column',
+                            borderRadius: "10px",
+                            border: "1px solid black",
+                            width: "100%",
+                            height: "100%",
+                            padding: "20px",
+                            display: "flex",
+                            flexDirection: "row",
                             gap: 2,
                           }}
                         >
                           <Box
                             sx={{
-                              display: 'flex',
-                              alignItems: 'center',
+                              display: "flex",
+                              alignItems: "center",
                               gap: 10,
                             }}
                           >
                             <Box
                               sx={{
-                                ':hover': {
-                                  cursor: 'pointer',
+                                ":hover": {
+                                  cursor: "pointer",
                                 },
-                                bgcolor: '#e7e7e6',
-                                width: '200px',
-                                height: '120px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
+                                bgcolor: "#e7e7e6",
+                                width: "200px",
+                                height: "120px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 marginTop: 2,
                                 padding: 0.5,
                               }}
                             >
                               <Box>
-                                {element?.image ? (
-                                  <Image
-                                    src={element.image}
-                                    width={200}
-                                    height={150}
-                                    alt="image"
-                                  />
-                                ) : (
-                                  <InsertPhotoIcon sx={{ color: '#9f9f9f' }} />
-                                )}
+                                <Image
+                                  src={element.image}
+                                  width={200}
+                                  height={150}
+                                  alt="image"
+                                />
                               </Box>
                             </Box>
                           </Box>
@@ -168,19 +162,18 @@ export default function TrazabilityLine({ protocol }) {
       </Modal>
       <Box
         sx={{
+          height: "100%",
           width: timelineWidth,
-          height: '90vh',
-          overflow: 'hidden',
-          cursor: isGrabbing ? 'grabbing' : 'grab',
+          overflow: "hidden",
+          cursor: isGrabbing ? "grabbing" : "grab",
         }}
       >
         <Paper
           id="timeline-container"
           sx={{
-            height: '100vh',
-            overflow: isMediumScreen ? 'hidden' : 'auto',
-            backgroundColor: 'beige',
-            scrollbarGutter: 'auto',
+            overflow: isMediumScreen ? "hidden" : "auto",
+            backgroundColor: "beige",
+            scrollbarGutter: "auto",
           }}
         >
           <Timeline
@@ -202,12 +195,12 @@ export default function TrazabilityLine({ protocol }) {
                 <span>
                   <Typography
                     sx={{
-                      display: 'flex',
-                      paddingRight: '1rem',
-                      fontSize: '20px',
-                      fontWeight: '4',
-                      transform: 'translateY(-0.2rem)',
-                      fontWeight: 'bold',
+                      display: "flex",
+                      paddingRight: "1rem",
+                      fontSize: "20px",
+                      fontWeight: "4",
+                      transform: "translateY(-0.2rem)",
+                      fontWeight: "bold",
                     }}
                   >
                     Inicio
@@ -218,7 +211,7 @@ export default function TrazabilityLine({ protocol }) {
 
             {protocol?.map((stage, stageIndex) => {
               return (
-                <TimelineItem key={stage.name} sx={{ marginY: 'auto' }}>
+                <TimelineItem key={stage.name} sx={{ marginY: "auto" }}>
                   <TimelineSeparator>
                     <TimelineDot />
                     <TimelineConnector />
@@ -226,18 +219,18 @@ export default function TrazabilityLine({ protocol }) {
                   <TimelineContent>
                     <Box
                       sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignContent: 'flex-start',
-                        transform: 'translateY(-0.5rem)',
+                        display: "flex",
+                        flexDirection: "row",
+                        alignContent: "flex-start",
+                        transform: "translateY(-0.5rem)",
                       }}
                     >
                       <Typography
                         sx={{
-                          display: 'flex',
-                          paddingRight: '1rem',
-                          fontSize: '26px',
-                          alignSelf: 'center',
+                          display: "flex",
+                          paddingRight: "1rem",
+                          fontSize: "26px",
+                          alignSelf: "center",
                         }}
                       >
                         {stage.name}
@@ -249,23 +242,23 @@ export default function TrazabilityLine({ protocol }) {
                               onClick={() => openModal(item.milestones)}
                               key={stage.name + item.name}
                               sx={{
-                                display: 'flex',
-                                alignItems: 'center',
+                                display: "flex",
+                                alignItems: "center",
                                 gap: 1,
                               }}
                             >
                               <HorizontalRuleIcon />
-                              <CheckCircleOutlineIcon sx={{ color: 'green' }} />
+                              <CheckCircleOutlineIcon sx={{ color: "green" }} />
 
                               <Typography
                                 sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  fontSize: '16px',
-                                  width: '10rem',
-                                  textAlign: 'center',
-                                  ':hover': {
-                                    cursor: 'pointer',
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontSize: "16px",
+                                  width: "10rem",
+                                  textAlign: "center",
+                                  ":hover": {
+                                    cursor: "pointer",
                                   },
                                 }}
                               >
@@ -290,12 +283,12 @@ export default function TrazabilityLine({ protocol }) {
               <TimelineContent>
                 <Typography
                   sx={{
-                    display: 'flex',
-                    paddingRight: '1rem',
-                    fontSize: '20px',
-                    fontWeight: '4',
-                    transform: 'translateY(-0.2rem)',
-                    fontWeight: 'bold',
+                    display: "flex",
+                    paddingRight: "1rem",
+                    fontSize: "20px",
+                    fontWeight: "4",
+                    transform: "translateY(-0.2rem)",
+                    fontWeight: "bold",
                   }}
                 >
                   Fin

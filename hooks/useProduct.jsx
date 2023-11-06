@@ -20,6 +20,16 @@ const useProduct = (productId) => {
     }
   };
 
+  const uploadQr = async (product, qrcode) => {
+    const productRef = doc(db, "products", productId);
+
+    const productWithQr = { ...product, qrcode };
+
+    const response = await setDoc(productRef, productWithQr, { merge: true });
+
+    console.log(response);
+  };
+
   const uploadProduct = async (updateProduct) => {
     try {
       const productRef = doc(db, "products", productId);
@@ -36,7 +46,7 @@ const useProduct = (productId) => {
     getProduct();
   }, [productId]);
 
-  return { product, setProduct, uploadProduct };
+  return { product, setProduct, uploadProduct, uploadQr };
 };
 
 export default useProduct;
