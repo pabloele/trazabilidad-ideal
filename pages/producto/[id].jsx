@@ -17,16 +17,22 @@ const Producto = () => {
   const [tabActive, setTabActive] = useState(0);
   const [open, setOpen] = useState(false);
 
+  const [milestoneBox, setMilestoneBox] = useState([1]);
+
   const [subprocessSelected, setSubprocessSelected] = useState();
 
-  const { milestone, setMilestone, handleImageUpload, fileUri, setFileUri } =
+  const { milestones, setMilestones, handleImageUpload, fileUri, setFileUri } =
     useMilestone();
 
   const { product, setProduct, uploadProduct, uploadQr } = useProduct(
     router.query.id
   );
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setTabActive(0);
+    setSubprocessSelected(null)
+    setOpen(true);
+  };
 
   const handleClose = () => setOpen(false);
   const handleClickSubprocess = (event) => {
@@ -37,9 +43,18 @@ const Producto = () => {
     setTabActive(newValue);
   };
 
-  const saveMilestone = async () => {
-    if (!milestone.image || !milestone.description) {
-      alert("Por favor, completa la imagen y la descripción del hito.");
+  const saveMilestone = async (index) => {
+    let milestonesValid = true;
+
+    milestones.forEach((element, index) => {
+      if (element.image === "" || element.description === "") {
+        const number = index + 1;
+        alert(`Faltan completar datos en el hito número ${number}`);
+        milestonesValid = false;
+      }
+    });
+
+    if (!milestonesValid) {
       return;
     }
 
@@ -53,35 +68,31 @@ const Producto = () => {
       const selectedSubprocess = selectedStage.line.find(
         (sub) => sub.name === subprocessSelected
       );
-      selectedSubprocess.milestones.push(milestone);
+
+      milestones.forEach((element, index) => {
+        selectedSubprocess.milestones.push(element);
+      });
 
       const updateProduct = { ...product };
-      updateProduct.trazability[tabActive] = selectedStage;
-      setProduct(updateProduct);
-      const response = await uploadProduct(updateProduct);
+
+      console.log(updateProduct);
+
+      uploadProduct(updateProduct);
 
       // Restablecer estados y cerrar el modal
-      setMilestone({
-        image: "",
-        description: "",
-      });
+      setMilestoneBox([0]);
+      setMilestones([{ description: "", image: "" }]);
+      setFileUri("");
       setSubprocessSelected(null);
       setTabActive(null);
       setOpen(false); // Cierra el modal
-
-      setMilestone({
-        image: "",
-        description: "",
-      });
-
-      setFileUri("");
     } catch (error) {
       console.log(error);
     }
   };
 
   const createQRcode = () => {
-    const QRdata = `${process.env.NEXT_PUBLIC_PAGE_URL}/${router.query.id}`;
+    const QRdata = `${process.env.NEXT_PUBLIC_PAGE_URL}/history/${router.query.id}`;
 
     const canvas = document.getElementById("canvas");
 
@@ -193,9 +204,11 @@ const Producto = () => {
                 handleImageUpload={handleImageUpload}
                 product={product}
                 subprocessSelected={subprocessSelected}
-                milestone={milestone}
-                setMilestone={setMilestone}
+                milestones={milestones}
+                setMilestones={setMilestones}
                 saveMilestone={saveMilestone}
+                setMilestoneBox={setMilestoneBox}
+                milestoneBox={milestoneBox}
               />
             </Box>
           </Box>
@@ -213,7 +226,12 @@ const Producto = () => {
           <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
             {!product?.qrcode && <canvas id="canvas"></canvas>}
-            <Image src={product?.qrcode} width={148} height={148} />
+            <Image
+              src={product?.qrcode}
+              width={148}
+              height={148}
+              alt="profile image"
+            />
           </Box>
 
           <Box sx={{ display: "flex", gap: 2 }}>

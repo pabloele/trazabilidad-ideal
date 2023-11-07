@@ -175,7 +175,7 @@ const HomePage = () => {
   useEffect(() => {
     if (!user) router.push('/');
     handleGetProducts(user?.uid);
-  }, [user]);
+  }, [user, router]);
 
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
   return (
