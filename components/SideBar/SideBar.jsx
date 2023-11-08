@@ -39,28 +39,28 @@ export const SideBar = ({ drawerWidth = 240 }) => {
       <Toolbar sx={{ backgroundColor: "primary.main" }}>
         <Image src={logo} alt="logo" />
       </Toolbar>
-      <Divider />
-      <Box
-        sx={{
-          backgroundColor: "primary.main",
-          padding: 1,
-        }}
-      >
-        <Typography
-          sx={{
-            color: "#fff",
-            display: "flex",
-            gap: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          Configuracion
-        </Typography>
-      </Box>
-      <Divider />
+
       <List sx={{ backgroundColor: "primary.main", flexGrow: 1 }}>
         <Box style={{}}>
+          <Divider sx={{ backgroundColor: "#fff", marginY: 1 }} />
+          <Box
+            sx={{
+              backgroundColor: "primary.main",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#fff",
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              Producción
+            </Typography>
+          </Box>
+          <Divider sx={{ backgroundColor: "#fff", marginY: 1 }} />
           <Accordion sx={{ background: "transparent" }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -75,8 +75,8 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                   alignItems: "center",
                 }}
               >
-                <SettingsIcon sx={{ fontSize: 15 }} />
-                General
+                <AssignmentIcon sx={{ fontSize: 15 }} />
+                Producción
               </Typography>
             </AccordionSummary>
             <AccordionDetails
@@ -88,63 +88,21 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                 gap: 2,
               }}
             >
-              <Link className={Styles.link} href={"/"}>
-                Proovedores
+              <Link className={Styles.link} href={"/nueva-produccion"}>
+                Nueva
               </Link>
-              <Link className={Styles.link} href={"/"}>
-                Clientes
-              </Link>
-
-              <Link className={Styles.link} href={"/"}>
-                Configuraciones
-              </Link>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion sx={{ background: "transparent" }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography
-                sx={{
-                  color: "#fff",
-                  display: "flex",
-                  gap: 1,
-                  alignItems: "center",
-                }}
-              >
-                <FactoryIcon sx={{ fontSize: 15 }} />
-                Administracion
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                border: "none",
-                backgroundColor: "#fff",
-                gap: 2,
-              }}
-            >
-              <Link className={Styles.link} href={"/materias-primas"}>
-                Materias primas
-              </Link>
-              <Link className={Styles.link} href={"/"}>
-                Insumos
+              <Link className={Styles.link} href={"/productos/pendiente"}>
+                En curso
               </Link>
 
-              <Link className={Styles.link} href={"/"}>
-                Produccion
-              </Link>
-              <Link className={Styles.link} href={"/"}>
-                Producto Final
+              <Link className={Styles.link} href={"/productos/realizado"}>
+                Realizadas
               </Link>
             </AccordionDetails>
           </Accordion>
         </Box>
-
         <Divider sx={{ backgroundColor: "#fff", marginY: 1 }} />
+
         <Box
           sx={{
             backgroundColor: "primary.main",
@@ -159,11 +117,12 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               justifyContent: "center",
             }}
           >
-            Registros
+            Configuración
           </Typography>
         </Box>
         <Divider sx={{ backgroundColor: "#fff", marginY: 1 }} />
-        <Accordion sx={{ background: "transparent" }}>
+
+        {/* <Accordion sx={{ background: "transparent" }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
             aria-controls="panel1a-content"
@@ -201,8 +160,8 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               Baja de stock
             </Link>
           </AccordionDetails>
-        </Accordion>
-        <Accordion sx={{ background: "transparent" }}>
+        </Accordion> */}
+        {/* <Accordion sx={{ background: "transparent" }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
             aria-controls="panel1a-content"
@@ -240,6 +199,45 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               Baja de stock
             </Link>
           </AccordionDetails>
+        </Accordion> */}
+        <Accordion sx={{ background: "transparent" }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography
+              sx={{
+                color: "#fff",
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+              }}
+            >
+              <SettingsIcon sx={{ fontSize: 15 }} />
+              General
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              border: "none",
+              backgroundColor: "#fff",
+              gap: 2,
+            }}
+          >
+            <Link className={Styles.link} href={"/"}>
+              Proovedores
+            </Link>
+            <Link className={Styles.link} href={"/"}>
+              Clientes
+            </Link>
+
+            <Link className={Styles.link} href={"/"}>
+              Configuraciones
+            </Link>
+          </AccordionDetails>
         </Accordion>
         <Accordion sx={{ background: "transparent" }}>
           <AccordionSummary
@@ -255,8 +253,8 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                 alignItems: "center",
               }}
             >
-              <AssignmentIcon sx={{ fontSize: 15 }} />
-              Produccion
+              <FactoryIcon sx={{ fontSize: 15 }} />
+              Administracion
             </Typography>
           </AccordionSummary>
           <AccordionDetails
@@ -268,15 +266,18 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               gap: 2,
             }}
           >
-            <Link className={Styles.link} href={"/nueva-produccion"}>
-              Nueva
+            <Link className={Styles.link} href={"/materias-primas"}>
+              Materias primas
             </Link>
-            <Link className={Styles.link} href={"/productos/pendiente"}>
-              En curso
+            <Link className={Styles.link} href={"/"}>
+              Insumos
             </Link>
 
-            <Link className={Styles.link} href={"/productos/realizado"}>
-              Realizadas
+            <Link className={Styles.link} href={"/"}>
+              Produccion
+            </Link>
+            <Link className={Styles.link} href={"/"}>
+              Producto Final
             </Link>
           </AccordionDetails>
         </Accordion>

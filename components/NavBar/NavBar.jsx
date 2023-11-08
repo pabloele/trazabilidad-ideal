@@ -38,7 +38,7 @@ export const NavBar = ({ drawerWidth }) => {
           alignItems="center"
         >
           <Typography variant="h6" noWrap component="div">
-            Bodega 1
+            {user?.displayName}
           </Typography>
           <IconButton onClick={handleLogout}>
             <LogoutOutlined color="secondary" />

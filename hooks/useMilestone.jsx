@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 const useMilestone = () => {
-  const [milestone, setMilestone] = useState({
-    image: "",
-    description: "",
-  });
+  const [milestones, setMilestones] = useState([
+    { image: "", description: "" },
+  ]);
 
-  const [fileUri, setFileUri] = useState();
+  const [fileUri, setFileUri] = useState([]);
 
   const { uploadFile, getFile } = useAuth();
 
-  const handleImageUpload = async () => {
+  const handleImageUpload = async (index) => {
     try {
       const input = document.createElement("input");
       input.type = "file";
@@ -23,12 +22,20 @@ const useMilestone = () => {
           const firebaseFullPath = response.metadata.fullPath;
           const urlImage = await getFile(firebaseFullPath);
 
-          setFileUri(urlImage);
+          setFileUri((prevFileUri) => {
+            const newFileUri = [...prevFileUri];
+            newFileUri[index] = urlImage;
+            return newFileUri;
+          });
 
-          // Establece el valor de image en milestone después de que fileUri esté listo
-          setMilestone({ ...milestone, image: urlImage });
+          // Establece el valor de image en el milestone actual
+          setMilestones((prevMilestones) => {
+            const newMilestones = [...prevMilestones];
+            newMilestones[index].image = urlImage;
+            return newMilestones;
+          });
 
-          console.log(milestone);
+          console.log(milestones);
         }
       };
 
@@ -39,14 +46,14 @@ const useMilestone = () => {
   };
 
   useEffect(() => {
-    console.log("Milestone updated:", milestone);
-  }, [milestone]);
+    console.log("Milestones updated:", milestones);
+  }, [milestones]);
 
   return {
     setFileUri,
     fileUri,
-    milestone,
-    setMilestone,
+    milestones,
+    setMilestones,
     handleImageUpload,
   };
 };

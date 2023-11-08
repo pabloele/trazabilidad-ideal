@@ -1,101 +1,126 @@
-import React, { useState } from 'react';
-import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
-import { HomeLayout } from '../../layout';
-import { Box, Typography, IconButton, Tab, Tabs } from '@mui/material';
-import useProduct from '../../hooks/useProduct';
-import { useRouter } from 'next/router';
-import Modal from '@mui/material/Modal';
-import { AddOutlined } from '@mui/icons-material';
-import Trazability from '../../components/Trazability/Trazability';
-import TabPanel from '../../components/TabPanel/TabPanel';
-import useMilestone from '../../hooks/useMilestone';
+import React, { useState, useEffect } from "react";
+import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
+import { HomeLayout } from "../../layout";
+import { Box, Typography, IconButton, Tab, Tabs, Button } from "@mui/material";
+import useProduct from "../../hooks/useProduct";
+import { useRouter } from "next/router";
+import Modal from "@mui/material/Modal";
+import { AddOutlined } from "@mui/icons-material";
+import Trazability from "../../components/Trazability/Trazability";
+import TabPanel from "../../components/TabPanel/TabPanel";
+import useMilestone from "../../hooks/useMilestone";
+import QRCode from "qrcode";
+import Image from "next/image";
 const Producto = () => {
   const router = useRouter();
 
   const [tabActive, setTabActive] = useState(0);
   const [open, setOpen] = useState(false);
 
+  const [milestoneBox, setMilestoneBox] = useState([1]);
+
   const [subprocessSelected, setSubprocessSelected] = useState();
 
-  const { milestone, setMilestone, handleImageUpload, fileUri, setFileUri } =
+  const { milestones, setMilestones, handleImageUpload, fileUri, setFileUri } =
     useMilestone();
 
-  const { product, setProduct, uploadProduct } = useProduct(router.query.id);
+  const { product, setProduct, uploadProduct, uploadQr } = useProduct(
+    router.query.id
+  );
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setTabActive(0);
+    setSubprocessSelected(null)
+    setOpen(true);
+  };
 
   const handleClose = () => setOpen(false);
   const handleClickSubprocess = (event) => {
-    const subprocess = event.target.getAttribute('name');
+    const subprocess = event.target.getAttribute("name");
     setSubprocessSelected(subprocess);
   };
   const handleChange = (event, newValue) => {
     setTabActive(newValue);
   };
 
-  const saveMilestone = async () => {
-    if (!milestone.image || !milestone.description) {
-      alert('Por favor, completa la imagen y la descripción del hito.');
+  const saveMilestone = async (index) => {
+    let milestonesValid = true;
+
+    milestones.forEach((element, index) => {
+      if (element.image === "" || element.description === "") {
+        const number = index + 1;
+        alert(`Faltan completar datos en el hito número ${number}`);
+        milestonesValid = false;
+      }
+    });
+
+    if (!milestonesValid) {
       return;
     }
 
     if (!subprocessSelected || tabActive === null) {
-      alert('Por favor, selecciona un proceso y un subproceso.');
+      alert("Por favor, selecciona un proceso y un subproceso.");
       return;
     }
 
     try {
-
       const selectedStage = product.trazability[tabActive];
       const selectedSubprocess = selectedStage.line.find(
         (sub) => sub.name === subprocessSelected
       );
-      selectedSubprocess.milestones.push(milestone);
+
+      milestones.forEach((element, index) => {
+        selectedSubprocess.milestones.push(element);
+      });
 
       const updateProduct = { ...product };
-      updateProduct.trazability[tabActive] = selectedStage;
-      setProduct(updateProduct);
-      const response = await uploadProduct(updateProduct);
 
+      console.log(updateProduct);
+
+      uploadProduct(updateProduct);
 
       // Restablecer estados y cerrar el modal
-      setMilestone({
-        image: "",
-        description: "",
-      });
+      setMilestoneBox([0]);
+      setMilestones([{ description: "", image: "" }]);
+      setFileUri("");
       setSubprocessSelected(null);
       setTabActive(null);
       setOpen(false); // Cierra el modal
-
-      setMilestone({
-        image: "",
-        description: "",
-      });
-
-      setFileUri("");
     } catch (error) {
       console.log(error);
     }
   };
 
+  const createQRcode = () => {
+    const QRdata = `${process.env.NEXT_PUBLIC_PAGE_URL}/history/${router.query.id}`;
+
+    const canvas = document.getElementById("canvas");
+
+    QRCode.toCanvas(canvas, QRdata, async function (err, url) {
+      const qrUrl = canvas.toDataURL("image/png");
+
+      const response = await uploadQr(product, qrUrl);
+    });
+  };
+
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '80vw',
-    height: '90vh',
-    overflowY: 'auto', // Habilita el desplazamiento vertical
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80vw",
+    height: "90vh",
+    overflowY: "auto", // Habilita el desplazamiento vertical
+    bgcolor: "background.paper",
+    border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-    textAlign: 'center',
+    textAlign: "center",
   };
   if (!product) {
     return (
       <HomeLayout>
-        <Box container sx={{ height: '90vh' }}>
+        <Box container sx={{ height: "90vh" }}>
           <p>Loading...</p>
         </Box>
       </HomeLayout>
@@ -108,7 +133,7 @@ const Producto = () => {
             <Box>
               <Typography
                 sx={{
-                  color: 'primary.main',
+                  color: "primary.main",
                   fontSize: 24,
                 }}
               >
@@ -123,7 +148,7 @@ const Producto = () => {
                   <Tab
                     label={element.name}
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                     }}
                     key={element.name}
                   />
@@ -133,7 +158,7 @@ const Producto = () => {
             {product.trazability.map((element, index) => (
               <Box key={element.name}>
                 <TabPanel
-                  sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                  sx={{ display: "flex", flexDirection: "row", gap: 2 }}
                   value={tabActive}
                   index={index}
                   key={index}
@@ -145,9 +170,9 @@ const Producto = () => {
                         marginTop: 1,
                         backgroundColor:
                           subprocessSelected === subprocess.name
-                            ? 'primary.main'
-                            : 'transparent',
-                        transition: 'background-color 0.3s ease',
+                            ? "primary.main"
+                            : "transparent",
+                        transition: "background-color 0.3s ease",
                       }}
                     >
                       <Typography
@@ -156,13 +181,13 @@ const Producto = () => {
                         sx={{
                           color:
                             subprocessSelected === subprocess.name
-                              ? 'white'
-                              : 'primary.main',
+                              ? "white"
+                              : "primary.main",
                           marginY: 2,
                           fontSize: 12,
-                          textTransform: 'uppercase',
-                          ':hover': {
-                            cursor: 'pointer',
+                          textTransform: "uppercase",
+                          ":hover": {
+                            cursor: "pointer",
                           },
                         }}
                       >
@@ -173,36 +198,60 @@ const Producto = () => {
                 </TabPanel>
               </Box>
             ))}
-            <Trazability
-              fileUri={fileUri}
-              handleImageUpload={handleImageUpload}
-              product={product}
-              subprocessSelected={subprocessSelected}
-              milestone={milestone}
-              setMilestone={setMilestone}
-              saveMilestone={saveMilestone}
-            />
+            <Box>
+              <Trazability
+                fileUri={fileUri}
+                handleImageUpload={handleImageUpload}
+                product={product}
+                subprocessSelected={subprocessSelected}
+                milestones={milestones}
+                setMilestones={setMilestones}
+                saveMilestone={saveMilestone}
+                setMilestoneBox={setMilestoneBox}
+                milestoneBox={milestoneBox}
+              />
+            </Box>
           </Box>
         </Modal>
 
-        <Box sx={{ height: '90vh' }}>
+        <Box>
           <Typography
             sx={{
-              color: 'primary.main',
+              color: "primary.main",
               fontSize: 24,
             }}
           >
             Cadena de produccion para : {product.name}
           </Typography>
-          <TrazabilityLine protocol={product.trazability} />
+          <Box sx={{ display: "flex" }}>
+            <TrazabilityLine protocol={product.trazability} />
+            {!product?.qrcode && <canvas id="canvas"></canvas>}
+            <Image
+              src={product?.qrcode}
+              width={148}
+              height={148}
+              alt="profile image"
+            />
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              onClick={createQRcode}
+              disabled={product?.qrcode ? true : false}
+            >
+              Crear QR
+            </Button>
+            <Button variant="contained">Certificar en blockchain</Button>
+          </Box>
         </Box>
         <IconButton
           size="large"
           sx={{
-            color: 'white',
-            backgroundColor: 'error.main',
-            ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
-            position: 'fixed',
+            color: "white",
+            backgroundColor: "error.main",
+            ":hover": { backgroundColor: "error.main", opacity: 0.9 },
+            position: "fixed",
             right: 50,
             bottom: 50,
           }}
