@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, useMediaQuery, Paper, Modal } from '@mui/material';
+import {
+  Box,
+  Typography,
+  useMediaQuery,
+  Paper,
+  Modal,
+  Grid,
+} from '@mui/material';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -78,7 +85,7 @@ export default function TrazabilityLine({ protocol }) {
       <Modal open={isModalOpen} onClose={closeModal}>
         <Box sx={style}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="h6">Contenido del Milestone</Typography>
+            {/* <Typography variant="h6">Contenido del Milestone</Typography> */}
 
             <Timeline
               sx={{
@@ -109,7 +116,7 @@ export default function TrazabilityLine({ protocol }) {
                         <Box
                           sx={{
                             borderRadius: '10px',
-                            border: '1px solid black',
+                            background: `linear-gradient(to right, #55555545, #0330ab60)`,
                             width: '100%',
                             height: '100%',
                             padding: '20px',
@@ -118,41 +125,49 @@ export default function TrazabilityLine({ protocol }) {
                             gap: 2,
                           }}
                         >
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 10,
-                            }}
+                          <Grid
+                            container
+                            direction={'row'}
+                            width={'100%'}
+                            spacing={2}
                           >
-                            <Box
-                              sx={{
-                                ':hover': {
-                                  cursor: 'pointer',
-                                },
-                                bgcolor: '#e7e7e6',
-                                width: '200px',
-                                height: '120px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginTop: 2,
-                                padding: 0.5,
-                              }}
-                            >
-                              <Box>
+                            <Grid item xs={4} sm={4} md={4} lg={4}>
+                              <Box
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                height="100%"
+                              >
                                 <Image
                                   src={element.image}
                                   width={200}
-                                  height={150}
+                                  height={200}
                                   alt="image"
+                                  style={{
+                                    objectFit: 'cover',
+                                    borderRadius: '10px',
+                                  }}
                                 />
                               </Box>
-                            </Box>
-                          </Box>
-
-                          <Typography>{element.description}</Typography>
+                            </Grid>
+                            <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
+                            <Grid item xs={6} sm={6} md={6} lg={6}>
+                              {/* <Paper
+                                elevation={4}
+                                sx={{
+                                  p: 2,
+                                  borderRadius: 1,
+                                  bgcolor: '#6c7aa111',
+                                  height: '200px',
+                                  boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)',
+                                }}
+                              > */}
+                              <Typography variant="body1" color="GrayText">
+                                {element.description}
+                              </Typography>
+                              {/* </Paper> */}
+                            </Grid>
+                          </Grid>
                         </Box>
                       </TimelineContent>
                     </TimelineItem>
@@ -162,6 +177,7 @@ export default function TrazabilityLine({ protocol }) {
           </Paper>
         </Box>
       </Modal>
+
       <Box
         sx={{
           height: '100%',
