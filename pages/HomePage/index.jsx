@@ -170,7 +170,6 @@ const HomePage = () => {
   const { user, logout } = useAuth();
 
   const router = useRouter();
-  // user ? console.log('USER    :', user) : console.log('Not logged in');
 
   useEffect(() => {
     if (!user) router.push('/');

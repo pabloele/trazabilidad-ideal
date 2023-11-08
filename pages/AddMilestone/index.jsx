@@ -65,9 +65,9 @@ const AddMilestone = () => {
         xs={4}
         sx={{ width: '100%', height: '400px', objectFit: 'cover' }}
       >
-        {/* <Box mb={2}> */}
-        <Image src={mintImg} alt="Preview" style={{ objectFit: 'cover' }} />
-        {/* </Box> */}
+        <Box mb={2}>
+          <Image src={mintImg} alt="Preview" style={{ objectFit: 'cover' }} />
+        </Box>
       </Grid>
       <Grid item xs={4}>
         <FormControl fullWidth>
