@@ -1,17 +1,18 @@
-import React from "react";
-import { useRouter } from "next/router";
-import useProduct from "../../hooks/useProduct";
-import { HomeLayout } from "../../layout";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
+import React from 'react';
+import { useRouter } from 'next/router';
+import useProduct from '../../hooks/useProduct';
+import { HomeLayout } from '../../layout';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineOppositeContent, {
   timelineOppositeContentClasses,
-} from "@mui/lab/TimelineOppositeContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
+} from '@mui/lab/TimelineOppositeContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import Image from 'next/image';
 
 const ViewProduct = () => {
   const router = useRouter();
@@ -36,9 +37,9 @@ const ViewProduct = () => {
 
             if (hasMilestones) {
               return (
-                <TimelineItem>
+                <TimelineItem key={index}>
                   <TimelineOppositeContent
-                    sx={{ m: "auto 0" }}
+                    sx={{ m: 'auto 0' }}
                     align="right"
                     variant="body2"
                     color="text.secondary"
@@ -50,7 +51,7 @@ const ViewProduct = () => {
                     <TimelineConnector />
                   </TimelineSeparator>
                   <TimelineContent
-                    sx={{ backgroundColor: "#fff", color: "primary.main" }}
+                    sx={{ backgroundColor: '#fff', color: 'primary.main' }}
                   >
                     <h1>{trazability.name}</h1>
                     <ul>
@@ -63,7 +64,7 @@ const ViewProduct = () => {
                                 {line.milestones.map(
                                   (milestone, milestoneIndex) => (
                                     <li key={milestoneIndex}>
-                                      <img
+                                      <Image
                                         src={milestone.image}
                                         alt={milestone.description}
                                       />
