@@ -45,9 +45,6 @@ const useMilestone = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Milestones updated:", milestones);
-  }, [milestones]);
 
   return {
     setFileUri,

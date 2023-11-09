@@ -13,7 +13,7 @@ export const NavBar = ({ drawerWidth }) => {
   };
   const { user, logout } = useAuth();
   useEffect(() => {
-    user ? console.log("USER    :", user) : console.log("Not logged in");
+    //user ? console.log("USER    :", user) : console.log("Not logged in");
   }, [user]);
   return (
     <AppBar
