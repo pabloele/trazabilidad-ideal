@@ -1,10 +1,11 @@
 import { LogoutOutlined, MenuOutlined } from "@mui/icons-material";
-import { AppBar, Grid, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Grid, IconButton, Toolbar, Typography, Box } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
+import { ConnectWallet } from "@thirdweb-dev/react";
 
 export const NavBar = ({ drawerWidth }) => {
-  const handleLogout = (e) => {
+  const handleLogout = (e) => { 
     try {
       logout();
     } catch (error) {
@@ -13,7 +14,7 @@ export const NavBar = ({ drawerWidth }) => {
   };
   const { user, logout } = useAuth();
   useEffect(() => {
-    user ? console.log("USER    :", user) : console.log("Not logged in");
+    //user ? console.log("USER    :", user) : console.log("Not logged in");
   }, [user]);
   return (
     <AppBar
@@ -40,10 +41,17 @@ export const NavBar = ({ drawerWidth }) => {
           <Typography variant="h6" noWrap component="div">
             {user?.displayName}
           </Typography>
-          <IconButton onClick={handleLogout}>
+
+          <Box>
+
+        <ConnectWallet />
+<IconButton onClick={handleLogout}>
             <LogoutOutlined color="secondary" />
           </IconButton>
+          </Box>
+          
         </Grid>
+
       </Toolbar>
     </AppBar>
   );
