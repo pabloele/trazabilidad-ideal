@@ -68,7 +68,7 @@ export const addUserProduct = async (uid, product) => {
     console.log('Documento agregado con éxito', docRef.id);
 
     return docRef.id;
-  } catch {
+  } catch(error) {
     console.log(error);
   }
 };

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import Modal from '@mui/material/Modal';
-import CloseIcon from '@mui/icons-material/Close';
-import { useRouter } from 'next/router';
-import { addUserProduct } from '../../firebase/controllers/firestoreControllers';
-import { useAuth } from '../../context/AuthContext';
-import useProtocols from '../../hooks/useProtocols';
+import React, { useState } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import Modal from "@mui/material/Modal";
+import CloseIcon from "@mui/icons-material/Close";
+import { useRouter } from "next/router";
+import { addUserProduct } from "../../firebase/controllers/firestoreControllers";
+import { useAuth } from "../../context/AuthContext";
+import useProtocols from "../../hooks/useProtocols";
 
 const Protocols = () => {
   const { user } = useAuth();
@@ -16,29 +16,29 @@ const Protocols = () => {
 
   const [open, setOpen] = useState(false);
 
-  const [productName, setProductName] = useState('');
+  const [productName, setProductName] = useState("");
   const [protocolSelected, setProtocolSelected] = useState();
   const [loading, setLoading] = useState(false);
 
   const [trazabilitySelected, setTrazability] = useState();
 
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
+    bgcolor: "background.paper",
+    border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-    textAlign: 'center',
+    textAlign: "center",
   };
 
   const handleClose = () => setOpen(false);
 
   const handleClickProtocol = async (event) => {
-    const nameProtocol = event.target.getAttribute('name');
+    const nameProtocol = event.target.getAttribute("name");
 
     const trazability = protocols.find(
       (protocol) => protocol.name === nameProtocol
@@ -57,12 +57,12 @@ const Protocols = () => {
       const docRef = await addUserProduct(user.uid, {
         name: productName,
         trazability: trazabilitySelected,
-        status: 'en curso',
+        status: "en curso",
         protocolName: protocolSelected,
       });
       router.push(`/producto/${docRef}`);
     } catch (error) {
-      console.error('Error al agregar el documento', error);
+      console.error("Error al agregar el documento", error);
     } finally {
       setLoading(false);
     }
@@ -78,16 +78,16 @@ const Protocols = () => {
         <Box sx={style}>
           <Box
             sx={{
-              color: '#000',
-              display: 'flex',
-              justifyContent: 'flex-end',
+              color: "#000",
+              display: "flex",
+              justifyContent: "flex-end",
               marginBottom: 2,
             }}
           >
             <CloseIcon
               sx={{
-                ':hover': {
-                  cursor: 'pointer',
+                ":hover": {
+                  cursor: "pointer",
                 },
               }}
               onClick={handleClose}
@@ -95,27 +95,27 @@ const Protocols = () => {
           </Box>
 
           <Box>
-            <Typography sx={{ color: 'primary.main' }}>
+            <Typography sx={{ color: "primary.main" }}>
               Seleccionaste el protocolo:
             </Typography>
 
             <Typography
               sx={{
-                color: 'primary.main',
+                color: "primary.main",
                 marginY: 1,
-                fontWeight: 'bold',
-                textTransform: 'capitalize',
+                fontWeight: "bold",
+                textTransform: "capitalize",
               }}
             >
               {protocolSelected}
             </Typography>
 
-            <Typography sx={{ color: 'primary.main' }}>
+            <Typography sx={{ color: "primary.main" }}>
               Ingrese el nombre del producto
             </Typography>
           </Box>
 
-          <Box sx={{ marginY: 2, display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ marginY: 2, display: "flex", flexDirection: "column" }}>
             <TextField value={productName} onChange={handleInputChange} />
 
             <Button
@@ -132,10 +132,10 @@ const Protocols = () => {
       <Box
         sx={{
           marginTop: 5,
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Box sx={{ marginBottom: 2 }}>
@@ -143,32 +143,34 @@ const Protocols = () => {
         </Box>
 
         <Box>
-          <Box container sx={{ display: 'flex', gap: 2 }}>
+          <Box container sx={{ display: "flex", gap: 2 }}>
             {protocols?.map((protocol, index) => (
               <Box
                 data={protocol.trazability}
                 key={index}
                 name={protocol.name}
-                onClick={handleClickProtocol}
+                onClick={() =>
+                  router.push(`/nueva-produccion/${protocol.name}`)
+                }
                 item
                 sx={{
-                  backgroundColor: '#e1e1e1',
+                  backgroundColor: "#e1e1e1",
                   padding: 2,
                   width: 200,
                   height: 100,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  '&:hover': {
-                    cursor: 'pointer',
-                    color: '#fff',
-                    backgroundColor: 'primary.main',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "&:hover": {
+                    cursor: "pointer",
+                    color: "#fff",
+                    backgroundColor: "primary.main",
                   },
-                  transition: 'all ease .3s',
+                  transition: "all ease .3s",
                 }}
               >
                 <Typography
-                  sx={{ textTransform: 'capitalize' }}
+                  sx={{ textTransform: "capitalize" }}
                   name={protocol.name}
                   data={protocol.trazability}
                 >
