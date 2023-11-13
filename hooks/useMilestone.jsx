@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import IPFS from "ipfs-mini";
-
+import { create } from "ipfs-http-client";
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
     { image: "", description: "" },
@@ -11,15 +10,24 @@ const useMilestone = () => {
 
   const { uploadFile, getFile } = useAuth();
 
-  const handleImageUpload = async (index) => {
-    const ipfs = new IPFS({
-      host: "ipfs.infura.io",
-      port: 5001,
-      protocol: "https",
-      key: "2UrrpLL3Im3ATvqSRLI8EEwB25F",
-      secret: "b9678eacd899ae478394e33bf2aa602d",
-    });
+  const auth =
+    "Basic " +
+    Buffer.from(
+      process.env.NEXT_PUBLIC_IPFS_API_KEY +
+        ":" +
+        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
+    ).toString("base64");
 
+  const ipfs = create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: "https",
+    headers: {
+      authorization: auth,
+    },
+  });
+
+  const handleImageUpload = async (index) => {
     try {
       const input = document.createElement("input");
       input.type = "file";
@@ -28,38 +36,26 @@ const useMilestone = () => {
       input.onchange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-          const reader = new FileReader();
+          // Sube el archivo a IPFS
 
-          reader.onloadend = async () => {
-            const buffer = Buffer.from(reader.result);
+          const result = await ipfs.add(file);
+          const ipfsHash = result.path;
+          const urlImage = `https://ipfs.io/ipfs/${ipfsHash}`;
 
-            // Sube el archivo a IPFS
-            ipfs.add(buffer, async (err, result) => {
-              if (err) {
-                console.error("Error al subir el archivo a IPFS:", err);
-              } else {
-                const ipfsHash = result;
-                const urlImage = `https://ipfs.infura.io/ipfs/${ipfsHash}`;
+          setFileUri((prevFileUri) => {
+            const newFileUri = [...prevFileUri];
+            newFileUri[index] = urlImage;
+            return newFileUri;
+          });
 
-                setFileUri((prevFileUri) => {
-                  const newFileUri = [...prevFileUri];
-                  newFileUri[index] = urlImage;
-                  return newFileUri;
-                });
+          // Establece el valor de image en el milestone actual
+          setMilestones((prevMilestones) => {
+            const newMilestones = [...prevMilestones];
+            newMilestones[index].image = urlImage;
+            return newMilestones;
+          });
 
-                // Establece el valor de image en el milestone actual
-                setMilestones((prevMilestones) => {
-                  const newMilestones = [...prevMilestones];
-                  newMilestones[index].image = urlImage;
-                  return newMilestones;
-                });
-
-                console.log(milestones);
-              }
-            });
-          };
-
-          reader.readAsArrayBuffer(file);
+          console.log(milestones);
         }
       };
 

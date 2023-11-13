@@ -121,6 +121,7 @@ const Trazability = ({
                             src={fileUri[index]}
                             width={200}
                             height={150}
+                            alt="imagen trazabilidad"
                           />
                         ) : (
                           <Box
