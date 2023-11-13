@@ -137,7 +137,7 @@ const Producto = () => {
                   fontSize: 24,
                 }}
               >
-                ¿A que categoria te gustaria agregar una etapa?
+                ¿A que categoría te gustaria agregar una etapa?
               </Typography>
               <Tabs
                 variant="scrollable"
