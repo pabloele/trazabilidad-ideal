@@ -5,21 +5,21 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
-import { Google } from '@mui/icons-material';
-import axios from 'axios';
-import { AuthLayout } from '../../layout';
-import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { createUser } from '../../firebase/controllers/firestoreControllers';
+} from "@mui/material";
+import { Google } from "@mui/icons-material";
+import axios from "axios";
+import { AuthLayout } from "../../layout";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { createUser } from "../../firebase/controllers/firestoreControllers";
 
 const LoginPage = () => {
   const { loginWithGoogle, login } = useAuth();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onUserEmailChange = (e) => {
     setEmail(e.target.value);
@@ -32,8 +32,8 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     try {
       const response = await login(email, password);
-      console.log('Login successful: ', response);
-      router.push('/home');
+      console.log("Login successful: ", response);
+      router.push("/home");
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +48,7 @@ const LoginPage = () => {
         data: { name: res.user.displayName, email: res.user.email },
         products: [],
       });
-      if (res.user) router.push('/home');
+      if (res.user) router.push("/home");
     });
   };
 

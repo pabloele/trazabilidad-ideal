@@ -13,13 +13,16 @@ import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import Image from 'next/image';
-
+import { Typography } from '@mui/material';
 const ViewProduct = () => {
   const router = useRouter();
   const { product } = useProduct(router.query.id);
 
   return (
     <HomeLayout>
+      <Typography sx={{color:"primary.main", fontSize:24}}>
+        Conoce la historia
+      </Typography>
       <Timeline
         sx={{
           [`& .${timelineOppositeContentClasses.root}`]: {
@@ -65,6 +68,8 @@ const ViewProduct = () => {
                                   (milestone, milestoneIndex) => (
                                     <li key={milestoneIndex}>
                                       <Image
+                                      width={200}
+                                      height={200}
                                         src={milestone.image}
                                         alt={milestone.description}
                                       />

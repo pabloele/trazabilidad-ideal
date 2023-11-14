@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { create } from "ipfs-http-client";
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
     { image: "", description: "" },
@@ -8,6 +9,23 @@ const useMilestone = () => {
   const [fileUri, setFileUri] = useState([]);
 
   const { uploadFile, getFile } = useAuth();
+
+  const auth =
+    "Basic " +
+    Buffer.from(
+      process.env.NEXT_PUBLIC_IPFS_API_KEY +
+        ":" +
+        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
+    ).toString("base64");
+
+  const ipfs = create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: "https",
+    headers: {
+      authorization: auth,
+    },
+  });
 
   const handleImageUpload = async (index) => {
     try {
@@ -18,9 +36,11 @@ const useMilestone = () => {
       input.onchange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-          const response = await uploadFile(file);
-          const firebaseFullPath = response.metadata.fullPath;
-          const urlImage = await getFile(firebaseFullPath);
+          // Sube el archivo a IPFS
+
+          const result = await ipfs.add(file);
+          const ipfsHash = result.path;
+          const urlImage = `https://ipfs.io/ipfs/${ipfsHash}`;
 
           setFileUri((prevFileUri) => {
             const newFileUri = [...prevFileUri];
@@ -44,10 +64,6 @@ const useMilestone = () => {
       console.error("Error al subir la imagen:", error);
     }
   };
-
-  useEffect(() => {
-    console.log("Milestones updated:", milestones);
-  }, [milestones]);
 
   return {
     setFileUri,
