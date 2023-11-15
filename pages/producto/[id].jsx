@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
 import { HomeLayout } from "../../layout";
 import { Box, Typography, IconButton, Tab, Tabs, Button } from "@mui/material";
@@ -9,17 +9,29 @@ import { AddOutlined } from "@mui/icons-material";
 import Trazability from "../../components/Trazability/Trazability";
 import TabPanel from "../../components/TabPanel/TabPanel";
 import useMilestone from "../../hooks/useMilestone";
-import QRCode from "qrcode";
-import Image from "next/image";
-import { create } from "ipfs-http-client";
 import { ethers } from "ethers";
 import { contractAddress, contractAbi } from "../../contract/contract";
 import { useAuth } from "../../context/AuthContext";
+import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
+import ModalDialog from "../../components/Modals/ModalDialog";
 const Producto = () => {
   const router = useRouter();
   const { user } = useAuth();
 
-  console.log(user);
+  const [loading, setLoading] = useState(true);
+
+  const [txHash, setTxHash] = useState();
+
+  const {
+    DialogModal,
+    open: openDialog,
+    setOpen: setOpenDialog,
+  } = ModalDialog();
+
+  const [qrcode, setQrCode] = useState();
+
+  const ref = useRef(null);
+
   const [tabActive, setTabActive] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -34,22 +46,34 @@ const Producto = () => {
     router.query.id
   );
 
-  const auth =
-    "Basic " +
-    Buffer.from(
-      process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ":" +
-        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString("base64");
+  useEffect(() => {
+    // Verifica que el código se esté ejecutando en el lado del cliente
+    if (typeof window !== "undefined") {
+      // Importa la biblioteca solo en el lado del cliente
+      import("qr-code-styling").then((module) => {
+        const QRCodeStyling = module.default;
 
-  const ipfs = create({
-    host: "ipfs.infura.io",
-    port: 5001,
-    protocol: "https",
-    headers: {
-      authorization: auth,
-    },
-  });
+        // Usa la biblioteca aquí
+        const qrCodeInstance = new QRCodeStyling({
+          width: 180,
+          height: 180,
+          image: "/images/cropped-logo-ideal-2.png",
+          dotsOptions: { type: "extra-rounded", color: "#000000" },
+          imageOptions: {
+            hideBackgroundDots: true,
+            imageSize: 0.4,
+            margin: 0,
+          },
+        });
+
+        setQrCode(qrCodeInstance);
+        if (product?.qrcode) {
+          qrCodeInstance.append(ref.current);
+          qrCodeInstance.update({ data: product.qrcode });
+        }
+      });
+    }
+  }, [product?.qrcode]);
 
   const handleOpen = () => {
     setTabActive(0);
@@ -98,8 +122,6 @@ const Producto = () => {
 
       const updateProduct = { ...product };
 
-      console.log(updateProduct);
-
       uploadProduct(updateProduct);
 
       // Restablecer estados y cerrar el modal
@@ -116,40 +138,10 @@ const Producto = () => {
 
   const uploadToBlockChain = async () => {
     try {
-      console.log("Iniciando la función uploadToBlockChain");
-      const trazabilidadAgrupada = [];
+      setLoading(true);
+      const trazabilidadAgrupada = agroupMilestones(product);
 
-      // Iterar sobre las líneas de trazabilidad
-      for (const linea of product.trazability) {
-        const etapa = {
-          name: linea.name,
-          milestones: [],
-        };
-
-        // Iterar sobre las etapas de la línea
-        for (const etapaItem of linea.line) {
-          // Filtrar milestones vacíos
-          const milestonesNoVacios = etapaItem.milestones.filter(
-            (milestone) => milestone.description.trim() !== ""
-          );
-
-          // Agregar etapa solo si tiene milestones no vacíos
-          if (milestonesNoVacios.length > 0) {
-            etapa.milestones.push({
-              path: etapaItem.path,
-              name: etapaItem.name,
-              milestones: milestonesNoVacios,
-            });
-          }
-        }
-
-        // Agregar etapa solo si tiene milestones no vacíos
-        if (etapa.milestones.length > 0) {
-          trazabilidadAgrupada.push(etapa);
-        }
-      }
-
-      const trazability = await ipfs.add(JSON.stringify(trazabilidadAgrupada));
+      const trazability = await uploadIPFS(trazabilidadAgrupada);
 
       const formatProduct = {
         //id hardcoded
@@ -173,15 +165,13 @@ const Producto = () => {
           ownerUid: product.ownerUid,
           status: "realizado",
           expirationDate: product.expirationDate,
+          trazability: trazability.path,
         },
 
         image: product.productImage,
       };
 
-      const toIPFS = JSON.stringify(tokenData);
-      const added = await ipfs.add(toIPFS);
-      const url = `https://ipfs.io/ipfs/${added.path}`;
-      console.log("Operación IPFS completada");
+      const tokenDataIPFS = await uploadIPFS(tokenData);
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -193,42 +183,45 @@ const Producto = () => {
       );
 
       await window.ethereum.enable();
-
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
       const userAddress = accounts[0];
 
+      console.log(userAddress, formatProduct, 1, tokenDataIPFS.url);
+
       try {
-        console.log(
-          "Datos para safeMint:",
+        const response = await trazabilityContract.safeMint(
           userAddress,
-          url,
           formatProduct,
-          product.lotNumber
+          1,
+          tokenDataIPFS.url
         );
-        await trazabilityContract.safeMint(userAddress, formatProduct, 1, url);
+
+        console.log(response);
+
+        setTxHash(response.hash);
       } catch (error) {
         console.log(error);
       }
-
-      console.log("Operación Ethereum completada");
     } catch (error) {
       console.error(error.stack);
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const createQRcode = () => {
+  const createQRcode = async () => {
+    qrcode.append(ref.current);
+
     const QRdata = `${process.env.NEXT_PUBLIC_PAGE_URL}/history/${router.query.id}`;
-
-    const canvas = document.getElementById("canvas");
-
-    QRCode.toCanvas(canvas, QRdata, async function (err, url) {
-      const qrUrl = canvas.toDataURL("image/png");
-
-      const response = await uploadQr(product, qrUrl);
+    qrcode.update({
+      data: QRdata,
     });
+    const response = await uploadQr(product, QRdata);
+
+    setProduct({ ...product, qrcode: QRdata });
   };
   const style = {
     position: "absolute",
@@ -255,6 +248,11 @@ const Producto = () => {
   } else {
     return (
       <HomeLayout>
+        <DialogModal
+          txHash={txHash}
+          uploadToBlockChain={uploadToBlockChain}
+          loading={loading}
+        />
         <Modal open={open} onClose={handleClose}>
           <Box sx={style}>
             <Box>
@@ -352,13 +350,8 @@ const Producto = () => {
           </Typography>
           <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
-            {!product?.qrcode && <canvas id="canvas"></canvas>}
-            <Image
-              src={product?.qrcode}
-              width={148}
-              height={148}
-              alt="profile image"
-            />
+
+            <Box ref={ref}></Box>
           </Box>
 
           <Box sx={{ display: "flex", gap: 2 }}>
@@ -369,11 +362,15 @@ const Producto = () => {
             >
               Crear QR
             </Button>
-            <Button variant="contained" onClick={uploadToBlockChain}>
+            <Button
+              variant="contained"
+              onClick={() => setOpenDialog(!openDialog)}
+            >
               Certificar en blockchain
             </Button>
           </Box>
         </Box>
+
         <IconButton
           size="large"
           sx={{

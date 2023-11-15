@@ -1,4 +1,4 @@
-export const contractAddress = "0x2AE37997C24612a2f3507A43E9F7CA88feB6bfE6";
+export const contractAddress = "0xDaDE6b608A256587B936Cc8f85125e3Fad018b4A";
 
 export const contractAbi = [
   {
@@ -195,67 +195,11 @@ export const contractAbi = [
     inputs: [
       {
         internalType: "string",
-        name: "id",
+        name: "productId",
         type: "string",
       },
     ],
-    name: "getProductDataByProductId",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "string",
-            name: "id",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "lotNumber",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "protocolName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "status",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "ownerUid",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "trazability",
-            type: "string",
-          },
-        ],
-        internalType: "struct Trazability.ProductData",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "getProductDataByTokenId",
+    name: "getProductData",
     outputs: [
       {
         components: [
