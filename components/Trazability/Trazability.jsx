@@ -25,6 +25,7 @@ import AttachmentIcon from '@mui/icons-material/Attachment';
 import styled from 'styled-components';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import ClassIcon from '@mui/icons-material/Class';
+import { v4 } from 'uuid';
 const CustomTextField = styled.textarea`
   width: 100%;
   height: 150px;
@@ -36,6 +37,7 @@ const CustomTextField = styled.textarea`
   overflow-y: auto;
   resize: none;
 `;
+
 const Trazability = ({
   subprocessSelected,
   handleImageUpload,
@@ -45,10 +47,14 @@ const Trazability = ({
   saveMilestone,
   milestoneBox,
   setMilestoneBox,
+  handleAddMilestone,
 }) => {
   const addMilestoneBox = () => {
     setMilestoneBox([...milestoneBox, 1]);
-    setMilestones([...milestones, { description: '', image: '' }]);
+    setMilestones([
+      ...milestones,
+      { description: '', image: '', path: '', milestoneUid: v4() },
+    ]);
   };
 
   const deleteMilestone = (index) => {
@@ -62,14 +68,31 @@ const Trazability = ({
     setMilestones(updatedMilestones);
     setMilestoneBox(updateBoxs);
   };
+
   const [showTextField, setShowTextField] = useState(false);
   const handleTextClick = () => {
     setShowTextField(true);
   };
   const [showAtatchmentField, setShowAtatchmentField] = useState(false);
+
   const handleShowAtatchment = () => {
     setShowAtatchmentField(true);
   };
+
+  const [description, setDescription] = useState('');
+
+  const handleSaveClick = () => {
+    setMilestones((prevMilestones) => {
+      const newMilestones = [...prevMilestones];
+      newMilestones[index].description = description;
+      return newMilestones;
+    });
+  };
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
   return (
     <Box sx={{ padding: 4 }} width="100%">
       {milestoneBox.map((elemen, index) => (
@@ -124,9 +147,10 @@ const Trazability = ({
                 {fileUri?.length > 0 && fileUri[index] ? (
                   <Image
                     src={fileUri[index]}
-                    width={200}
+                    width={150}
                     height={150}
                     alt={fileUri[index]}
+                    style={{ objectFit: 'cover', borderRadius: '20px' }}
                   />
                 ) : (
                   <Box
@@ -153,30 +177,11 @@ const Trazability = ({
                 bgcolor="whitesmoke"
                 borderRadius={4}
               >
-                {/* <TextField
-                  label="Descripción"
-                  variant="filled"
-                  value={milestones[index].description}
-                  onChange={(e) => {
-                    const newMilestones = [...milestones];
-                    newMilestones[index].description = e.target.value;
-                    setMilestones(newMilestones);
-                  }}
-                  multiline
-                  rows={6}
-                  fullWidth
-           
-                /> */}
-
                 {showTextField ? (
                   <CustomTextField
                     borderRadius={4}
-                    value={milestones[index].description}
-                    onChange={(e) => {
-                      const newMilestones = [...milestones];
-                      newMilestones[index].description = e.target.value;
-                      setMilestones(newMilestones);
-                    }}
+                    value={description}
+                    onChange={handleDescriptionChange}
                   />
                 ) : (
                   <Box
@@ -311,7 +316,8 @@ const Trazability = ({
               >
                 <DeleteIcon
                   sx={{ color: 'black', textAlign: 'right' }}
-                  onClick={() => deleteMilestone(index)}
+                  onClick={handleAddMilestone()}
+                  // onClick={() => deleteMilestone(index)}
                 />
               </Grid>
             </Grid>
@@ -367,72 +373,72 @@ const Trazability = ({
   );
 };
 
-const EditableField = ({
-  label,
-  value,
-  onSave,
-  size = 24,
-  milestones,
-  setMilestones,
-  index,
-}) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedValue, setEditedValue] = useState(value);
+// const EditableField = ({
+//   label,
+//   value,
+//   onSave,
+//   size = 24,
+//   milestones,
+//   setMilestones,
+//   index,
+// }) => {
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [editedValue, setEditedValue] = useState(value);
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+//   const handleEditClick = () => {
+//     setIsEditing(true);
+//   };
 
-  const handleSaveClick = () => {
-    setMilestones((prevMilestones) => {
-      const newMilestones = [...prevMilestones];
-      newMilestones[index].description = editedValue;
-      return newMilestones;
-    });
+//   const handleSaveClick = () => {
+//     setMilestones((prevMilestones) => {
+//       const newMilestones = [...prevMilestones];
+//       newMilestones[index].description = editedValue;
+//       return newMilestones;
+//     });
 
-    setIsEditing(false);
-  };
+//     setIsEditing(false);
+//   };
 
-  return (
-    <>
-      <Box
-        sx={{
-          color: 'primary.main',
-          display: 'flex',
-          gap: 1,
-          alignItems: 'center',
-          marginY: 2,
-        }}
-      >
-        {value !== '' && (
-          <Typography sx={{ fontSize: size, marginRight: 1 }}>
-            {label}
-          </Typography>
-        )}
-        {/* Mostrar el label aquí */}
-        {isEditing ? (
-          <TextareaAutosize
-            minRows={5}
-            maxRows={15}
-            value={editedValue}
-            onChange={(e) => setEditedValue(e.target.value)}
-          />
-        ) : (
-          <Typography sx={{ fontSize: size }}>{editedValue}</Typography>
-        )}
-        {isEditing ? (
-          <Button variant="contained" onClick={handleSaveClick}>
-            Guardar
-          </Button>
-        ) : (
-          <ModeEditIcon
-            sx={{ fontSize: size, cursor: 'pointer' }}
-            onClick={handleEditClick}
-          />
-        )}
-      </Box>
-    </>
-  );
-};
+//   return (
+//     <>
+//       <Box
+//         sx={{
+//           color: 'primary.main',
+//           display: 'flex',
+//           gap: 1,
+//           alignItems: 'center',
+//           marginY: 2,
+//         }}
+//       >
+//         {value !== '' && (
+//           <Typography sx={{ fontSize: size, marginRight: 1 }}>
+//             {label}
+//           </Typography>
+//         )}
+//         {/* Mostrar el label aquí */}
+//         {isEditing ? (
+//           <TextareaAutosize
+//             minRows={5}
+//             maxRows={15}
+//             value={editedValue}
+//             onChange={(e) => setEditedValue(e.target.value)}
+//           />
+//         ) : (
+//           <Typography sx={{ fontSize: size }}>{editedValue}</Typography>
+//         )}
+//         {isEditing ? (
+//           <Button variant="contained" onClick={handleSaveClick}>
+//             Guardar
+//           </Button>
+//         ) : (
+//           <ModeEditIcon
+//             sx={{ fontSize: size, cursor: 'pointer' }}
+//             onClick={handleEditClick}
+//           />
+//         )}
+//       </Box>
+//     </>
+//   );
+// };
 
 export default Trazability;
