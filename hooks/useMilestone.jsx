@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { create } from 'ipfs-http-client';
-
+import { v4 } from 'uuid';
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
-    { image: '', description: '', milestoneId: '', path: '' },
+    { image: '', description: '', milestoneId: '', path: '', atachments: [] },
   ]);
 
-  const handleAddMilestone = ({ newMilestone, path }) => {
-    setMilestones({ ...newMilestones, newMilestone });
+  const handleAddMilestone = () => {
+    // setMilestones({ ...newMilestones, newMilestone });
   };
 
   const [fileUri, setFileUri] = useState([]);
@@ -67,6 +67,46 @@ const useMilestone = () => {
     }
   };
 
+  const handleFileUpload = async (index) => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const extension = file.name.split('.').pop();
+          const uniqueId = v4().substr(0, 8);
+          const randomName = `${uniqueId}.${extension}`;
+
+          const result = await ipfs.add(file);
+          const ipfsHash = result.path;
+          const urlFile = `https://ipfs.io/ipfs/${ipfsHash}`;
+
+          setMilestones((prevMilestones) => {
+            const newMilestones = prevMilestones.map((milestone, i) => {
+              if (i === index) {
+                const atachments = [
+                  ...milestone.atachments,
+                  { name: randomName, url: urlFile },
+                ];
+                return { ...milestone, atachments };
+              }
+              return milestone;
+            });
+            return newMilestones;
+          });
+
+          console.log(milestones);
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      console.error('Error al subir el archivo', error);
+    }
+  };
+
   return {
     setFileUri,
     fileUri,
@@ -74,6 +114,17 @@ const useMilestone = () => {
     setMilestones,
     handleImageUpload,
     handleAddMilestone,
+    handleFileUpload,
+  };
+
+  return {
+    setFileUri,
+    fileUri,
+    milestones,
+    setMilestones,
+    handleImageUpload,
+    handleAddMilestone,
+    handleFileUpload,
   };
 };
 

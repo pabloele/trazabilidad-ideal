@@ -47,6 +47,7 @@ const Producto = () => {
     fileUri,
     setFileUri,
     handleAddMilestone,
+    handleFileUpload,
   } = useMilestone();
 
   const { product, setProduct, uploadProduct, uploadQr } = useProduct(
@@ -89,14 +90,14 @@ const Producto = () => {
   };
 
   const handleClose = () => setOpen(false);
+
   const handleClickSubprocess = ({ name, path }) => {
-    // const subprocess = event.target.getAttribute('path');
-    console.log(path, '//////////////////', name);
     const subprocess = name;
 
     setSubprocessSelected(subprocess);
     setPath(path);
   };
+
   const handleChange = (event, newValue) => {
     setTabActive(newValue);
   };
@@ -352,6 +353,8 @@ const Producto = () => {
                 setMilestoneBox={setMilestoneBox}
                 milestoneBox={milestoneBox}
                 handleAddMilestone={handleAddMilestone}
+                path={path}
+                handleFileUpload={handleFileUpload}
               />
             </Box>
           </Box>

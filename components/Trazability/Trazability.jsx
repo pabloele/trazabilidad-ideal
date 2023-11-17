@@ -6,6 +6,7 @@ import {
   TextareaAutosize,
   Grid,
   TextField,
+  Paper,
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -26,6 +27,7 @@ import styled from 'styled-components';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import ClassIcon from '@mui/icons-material/Class';
 import { v4 } from 'uuid';
+
 const CustomTextField = styled.textarea`
   width: 100%;
   height: 150px;
@@ -48,12 +50,19 @@ const Trazability = ({
   milestoneBox,
   setMilestoneBox,
   handleAddMilestone,
+  handleFileUpload,
 }) => {
   const addMilestoneBox = () => {
     setMilestoneBox([...milestoneBox, 1]);
     setMilestones([
       ...milestones,
-      { description: '', image: '', path: '', milestoneUid: v4() },
+      {
+        description: '',
+        image: '',
+        path: '',
+        milestoneUid: v4(),
+        atachments: [],
+      },
     ]);
   };
 
@@ -70,13 +79,20 @@ const Trazability = ({
   };
 
   const [showTextField, setShowTextField] = useState(false);
+
   const handleTextClick = () => {
     setShowTextField(true);
   };
-  const [showAtatchmentField, setShowAtatchmentField] = useState(false);
 
-  const handleShowAtatchment = () => {
-    setShowAtatchmentField(true);
+  const [showAtachmentFields, setShowAtachmentFields] = useState([]);
+
+  const handleClickAtachment = (index) => {
+    setShowAtachmentFields((prevAttachmentFields) => {
+      const updatedFields = [...prevAttachmentFields];
+      updatedFields[index] = true;
+      return updatedFields;
+    });
+    handleFileUpload(index);
   };
 
   const [description, setDescription] = useState('');
@@ -87,10 +103,6 @@ const Trazability = ({
       newMilestones[index].description = description;
       return newMilestones;
     });
-  };
-
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
   };
 
   return (
@@ -180,8 +192,12 @@ const Trazability = ({
                 {showTextField ? (
                   <CustomTextField
                     borderRadius={4}
-                    value={description}
-                    onChange={handleDescriptionChange}
+                    value={milestones[index].description}
+                    onChange={(e) => {
+                      const newMilestones = [...milestones];
+                      newMilestones[index].description = e.target.value;
+                      setMilestones(newMilestones);
+                    }}
                   />
                 ) : (
                   <Box
@@ -211,31 +227,80 @@ const Trazability = ({
                   </Box>
                 )}
               </Grid>
-              {/* sx=
-              {{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: '#16161526',
-                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                height: '150px',
-                width: '150px',
-                borderRadius: '20px',
-              }} */}
+
               {/* Atatchment */}
-              {showAtatchmentField ? (
+              {showAtachmentFields[index] ? (
                 <Grid
                   item
                   width="150px"
                   height="150px"
                   display="flex"
-                  justifyContent="center"
+                  justifyContent="space-between"
                   alignItems="center"
                   bgcolor="#16161526"
                   borderRadius="20px"
-                  onClick={handleShowAtatchment}
-                ></Grid>
+                  direction="column"
+                  // onClick={() => handleFileUpload(index)}
+                >
+                  <Paper
+                    sx={{ marginTop: 3, height: '5rem', overflowY: 'auto' }}
+                  >
+                    {milestones[index].atachments.map((e, i) => (
+                      <Box key={i} display={'flex'} flexDirection={'row'}>
+                        {/* <Box></Box> */}
+                        <Typography
+                          sx={{
+                            color: '#000',
+                            fontSize: '12px',
+                            textAlign: 'center',
+                          }}
+                          key={i}
+                        >
+                          {e.name}
+                        </Typography>
+                        <Typography
+                          key={i}
+                          style={{
+                            color: 'red',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            marginLeft: '0.2rem',
+                            textAlign: 'center',
+                          }}
+                          // onClick={() => handleRemoveAttachment(index, i)}
+                        >
+                          x
+                        </Typography>
+                        {/* <Box> */}
+
+                        {/* <span
+                          style={{
+                            color: 'red',
+                            cursor: 'pointer',
+                            marginLeft: '0.2rem',
+                            textAlign: 'center',
+                          }}
+                          // onClick={() => handleRemoveAttachment(index, i)}
+                        >
+                          x
+                        </span> */}
+                        {/* </Box> */}
+                      </Box>
+                    ))}
+                  </Paper>
+
+                  <AddBoxIcon
+                    onClick={() => handleFileUpload(index)}
+                    sx={{
+                      color: 'primary.main',
+                      ':hover': {
+                        cursor: 'pointer',
+                      },
+                      marginBottom: 2,
+                    }}
+                  />
+                </Grid>
               ) : (
                 <Grid
                   item
@@ -246,33 +311,12 @@ const Trazability = ({
                   alignItems="center"
                   bgcolor="#16161526"
                   borderRadius="20px"
-                  onClick={handleShowAtatchment}
+                  onClick={() => handleClickAtachment(index)}
                 >
                   <AttachmentIcon sx={{ fontSize: '6rem', color: '#0330ab' }} />
                 </Grid>
               )}
-              {/* <TextField
-              label="Descripción"
-              variant="filled"
-              value={milestones[index].description}
-              onChange={(e) => {
-                const newMilestones = [...milestones];
-                newMilestones[index].description = e.target.value;
-                setMilestones(newMilestones);
-              }}
-              multiline
-              rows={4}
-              fullWidth
-            /> */}
-              {/* <Grid item>
-                <EditableField
-                  label={'Descripción'}
-                  size={15}
-                  index={index}
-                  milestones={milestones}
-                  setMilestones={setMilestones}
-                />
-              </Grid> */}
+
               {subprocessSelected ? (
                 <Typography
                   sx={{
@@ -298,7 +342,7 @@ const Trazability = ({
                   alignItems="center"
                   bgcolor="#16161526"
                   borderRadius="20px"
-                  onClick={handleShowAtatchment}
+                  onClick={() => handleShowAtachment(index)}
                 >
                   <ClassIcon sx={{ fontSize: '6rem', color: '#0330ab' }} />
                 </Grid>
@@ -316,8 +360,7 @@ const Trazability = ({
               >
                 <DeleteIcon
                   sx={{ color: 'black', textAlign: 'right' }}
-                  onClick={handleAddMilestone()}
-                  // onClick={() => deleteMilestone(index)}
+                  onClick={() => deleteMilestone(index)}
                 />
               </Grid>
             </Grid>
