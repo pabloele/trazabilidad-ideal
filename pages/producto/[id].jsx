@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
 import { HomeLayout } from '../../layout';
-import { Box, Typography, IconButton, Tab, Tabs, Button } from '@mui/material';
+import {
+  Box,
+  Typography,
+  IconButton,
+  Tab,
+  Tabs,
+  Button,
+  Grid,
+} from '@mui/material';
 import useProduct from '../../hooks/useProduct';
 import { useRouter } from 'next/router';
 import Modal from '@mui/material/Modal';
@@ -14,6 +22,9 @@ import { contractAddress, contractAbi } from '../../contract/contract';
 import { useAuth } from '../../context/AuthContext';
 import { agroupMilestones, uploadIPFS } from '../../contract/toBlockChain';
 import ModalDialog from '../../components/Modals/ModalDialog';
+import { display } from '@mui/system';
+import Image from 'next/image';
+
 const Producto = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -39,6 +50,7 @@ const Producto = () => {
   const [milestoneBox, setMilestoneBox] = useState([1]);
 
   const [subprocessSelected, setSubprocessSelected] = useState();
+  const [showCategories, setShowCategories] = useState(false);
 
   const {
     milestones,
@@ -267,80 +279,86 @@ const Producto = () => {
         />
         <Modal open={open} onClose={handleClose}>
           <Box sx={style}>
-            <Box>
-              <Typography
-                sx={{
-                  color: 'primary.main',
-                  fontSize: 24,
-                }}
-              >
-                ¿A que categoría te gustaria agregar una etapa?
-              </Typography>
-              <Tabs
-                variant="scrollable"
-                onChange={handleChange}
-                value={tabActive}
-              >
-                {product.trazability.map((element, index) => (
-                  <Tab
-                    label={element.name}
-                    sx={{
-                      color: 'primary.main',
-                    }}
-                    key={element.name}
-                  />
-                ))}
-              </Tabs>
-            </Box>
-
-            {product.trazability.map((element, index) => (
-              <Box key={element.name}>
-                <TabPanel
-                  sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
-                  value={tabActive}
-                  index={index}
-                  key={index}
+            {showCategories && (
+              <React.Fragment>
+                {/* <Typography
+                  sx={{
+                    color: 'primary.main',
+                    fontSize: 24,
+                  }}
                 >
-                  {element.line.map((subprocess, subprocessIndex) => (
-                    <Box
-                      key={subprocessIndex}
-                      sx={{
-                        marginTop: 1,
-                        backgroundColor:
-                          subprocessSelected === subprocess.name
-                            ? 'primary.main'
-                            : 'transparent',
-                        transition: 'background-color 0.3s ease',
-                      }}
-                    >
-                      <Typography
-                        onClick={() => {
-                          handleClickSubprocess({
-                            path: element.path,
-                            name: subprocess.name,
-                          });
-                        }}
-                        name={subprocess.name}
+                  Clasifica este hito
+                </Typography> */}
+                <Grid display="flex" justifyContent="center">
+                  <Tabs
+                    variant="scrollable"
+                    onChange={handleChange}
+                    value={tabActive}
+                  >
+                    {product.trazability.map((element, index) => (
+                      <Tab
+                        label={element.name}
                         sx={{
-                          color:
-                            subprocessSelected === subprocess.name
-                              ? 'white'
-                              : 'primary.main',
-                          marginY: 2,
-                          fontSize: 12,
-                          textTransform: 'uppercase',
-                          ':hover': {
-                            cursor: 'pointer',
-                          },
+                          color: 'primary.main',
                         }}
-                      >
-                        {subprocess.name}
-                      </Typography>
-                    </Box>
-                  ))}
-                </TabPanel>
-              </Box>
-            ))}
+                        key={element.name}
+                      />
+                    ))}
+                  </Tabs>
+                </Grid>
+
+                {product.trazability.map((element, index) => (
+                  <Box key={element.name}>
+                    <TabPanel
+                      sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                      value={tabActive}
+                      index={index}
+                      key={index}
+                    >
+                      {element.line.map((subprocess, subprocessIndex) => (
+                        <Box
+                          key={subprocessIndex}
+                          sx={{
+                            marginTop: 1,
+                            backgroundColor:
+                              subprocessSelected === subprocess.name
+                                ? 'primary.main'
+                                : 'transparent',
+                            transition: 'gray 0.3s ease',
+                            borderRadius: '40px',
+                          }}
+                        >
+                          <Typography
+                            onClick={() => {
+                              handleClickSubprocess({
+                                path: element.path,
+                                name: subprocess.name,
+                              });
+                            }}
+                            name={subprocess.name}
+                            sx={{
+                              color:
+                                subprocessSelected === subprocess.name
+                                  ? 'white'
+                                  : 'primary.main',
+                              marginY: 1,
+                              marginX: 1,
+                              fontSize: 12,
+                              textTransform: 'uppercase',
+                              ':hover': {
+                                cursor: 'pointer',
+                              },
+                            }}
+                          >
+                            {subprocess.name}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </TabPanel>
+                  </Box>
+                ))}
+              </React.Fragment>
+            )}
             <Box>
               <Trazability
                 fileUri={fileUri}
@@ -355,6 +373,7 @@ const Producto = () => {
                 handleAddMilestone={handleAddMilestone}
                 path={path}
                 handleFileUpload={handleFileUpload}
+                setShowCategories={setShowCategories}
               />
             </Box>
           </Box>
