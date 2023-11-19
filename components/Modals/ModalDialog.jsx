@@ -9,7 +9,7 @@ import { Box } from "@mui/material";
 import Spinner from "../Spinner/Spinner";
 import Link from "next/link";
 const ModalDialog = () => {
-  const [open, setOpen] = React.useState(true); // Cambiado de openDialog a open
+  const [open, setOpen] = React.useState(false); // Cambiado de openDialog a open
   const handleClickOpen = () => {
     setOpen(true);
   };

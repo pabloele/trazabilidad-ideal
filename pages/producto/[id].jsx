@@ -18,7 +18,7 @@ const Producto = () => {
   const router = useRouter();
   const { user } = useAuth();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [txHash, setTxHash] = useState();
 
