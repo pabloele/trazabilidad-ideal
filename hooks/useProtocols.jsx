@@ -4,9 +4,11 @@ import { db } from "../firebase/config";
 
 const useProtocols = () => {
   const [protocols, setProtocols] = useState();
+  const [loading, setLoading] = useState(false);
 
   const fetchProtocols = async () => {
     try {
+      setLoading(true);
       const protocols = collection(db, "protocols");
 
       const q = query(protocols);
@@ -23,6 +25,8 @@ const useProtocols = () => {
       setProtocols(protocolData);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,6 +35,7 @@ const useProtocols = () => {
   }, []);
   return {
     protocols,
+    loading,
   };
 };
 

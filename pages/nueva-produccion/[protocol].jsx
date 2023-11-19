@@ -24,6 +24,8 @@ const ProtocolPage = () => {
   const [expirationDate, setExpirationDate] = useState(null);
   const [fileUri, setFileUri] = useState("");
   const [loading, setLoading] = useState(false);
+  const [missingFields, setMissingFields] = useState([]);
+
   useEffect(() => {
     if (protocols) {
       const findProtocol = protocols.find(
@@ -50,6 +52,33 @@ const ProtocolPage = () => {
       authorization: auth,
     },
   });
+
+  const validateFields = () => {
+    const missing = [];
+
+    if (!productName.trim()) {
+      missing.push("Nombre del producto");
+    }
+
+    if (!lotNumber.trim()) {
+      missing.push("Número de lote");
+    }
+
+    if (!expeditionDate) {
+      missing.push("Fecha de expedición");
+    }
+
+    if (!expirationDate) {
+      missing.push("Fecha de vencimiento");
+    }
+
+    if (fileUri === "") {
+      missing.push("Imagen del producto");
+    }
+
+    setMissingFields(missing);
+    return missing.length === 0;
+  };
 
   const handleImageUpload = async () => {
     try {
@@ -98,127 +127,128 @@ const ProtocolPage = () => {
   };
 
   const handleSubmit = async () => {
-    const product = {
-      productName,
-      lotNumber,
-      expeditionDate,
-      expirationDate,
-      fileUri,
-      trazability: protocolSelected,
-    };
+    const isValid = validateFields();
 
-    console.log(product);
+    if (isValid) {
+      setLoading(true);
 
-    setLoading(true);
-
-    try {
-      const docRef = await addUserProduct(user.uid, {
-        name: productName,
-        trazability: protocolSelected.trazability,
-        status: "en curso",
-        protocolName: protocolSelected.name,
-        lotNumber,
-        expeditionDate: expeditionDate.toISOString(),
-        expirationDate: expirationDate.toISOString(),
-        productImage: fileUri,
-      });
-      router.push(`/producto/${docRef}`);
-    } catch (error) {
-      console.error("Error al agregar el documento", error);
-    } finally {
-      setLoading(false);
+      try {
+        const docRef = await addUserProduct(user.uid, {
+          name: productName,
+          trazability: protocolSelected.trazability,
+          status: "en curso",
+          protocolName: protocolSelected.name,
+          lotNumber,
+          expeditionDate: expeditionDate.toISOString(),
+          expirationDate: expirationDate.toISOString(),
+          productImage: fileUri,
+        });
+        router.push(`/producto/${docRef}`);
+      } catch (error) {
+        console.error("Error al agregar el documento", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <HomeLayout>
       <Box sx={{ paddingY: 2 }}>
-        <Box>
+        <Box component={"form"}>
           <Typography sx={{ color: "primary.main", fontSize: 24 }}>
             Crea tu producto
           </Typography>
 
           <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-            Protocolo seleccionado: {""}
+            Protocolo seleccionado:
             <span style={{ fontWeight: "bold" }}>{protocolSelected?.name}</span>
           </Typography>
         </Box>
-
-        <Box sx={{ marginTop: 2 }}>
-          <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-            Nombre del producto
+        {missingFields.length > 0 && (
+          <Typography sx={{ color: "error.main", fontSize: 16 }}>
+            Por favor, completa los siguientes campos:
+            {missingFields.join(", ")}
           </Typography>
-          <TextField
-            label="Nombre"
-            value={productName}
-            onChange={(e) => handleChange("productName", e.target.value)}
-          />
-        </Box>
-
-        <Box sx={{ marginTop: 2 }}>
-          <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-            Numero de lote
-          </Typography>
-          <TextField
-            label="Nro de lote"
-            value={lotNumber}
-            onChange={(e) => handleChange("lotNumber", e.target.value)}
-          />
-        </Box>
-
-        <Box sx={{ marginTop: 2 }}>
-          <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-            Fecha de expedición
-          </Typography>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={expeditionDate}
-              onChange={(date) => handleChange("expeditionDate", date)}
+        )}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+              Nombre del producto
+            </Typography>
+            <TextField
+              autoComplete="off"
+              label="Nombre"
+              value={productName}
+              onChange={(e) => handleChange("productName", e.target.value)}
             />
-          </LocalizationProvider>
-        </Box>
+          </Box>
 
-        <Box sx={{ marginTop: 2 }}>
-          <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-            Fecha de vencimiento
-          </Typography>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={expirationDate}
-              onChange={(date) => handleChange("expirationDate", date)}
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+              Numero de lote
+            </Typography>
+            <TextField
+              autoComplete="off"
+              label="Nro de lote"
+              value={lotNumber}
+              onChange={(e) => handleChange("lotNumber", e.target.value)}
             />
-          </LocalizationProvider>
-        </Box>
+          </Box>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+              Fecha de expedición
+            </Typography>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={expeditionDate}
+                onChange={(date) => handleChange("expeditionDate", date)}
+              />
+            </LocalizationProvider>
+          </Box>
 
-        <Box sx={{ marginTop: 2 }}>
-          <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-            Imagen del producto
-          </Typography>
-          <Box
-            onClick={handleImageUpload}
-            sx={{
-              backgroundColor: "#e1e1e1",
-              width: 240,
-              height: 120,
-              color: "#000",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 2,
-              marginTop: 2,
-            }}
-          >
-            {fileUri ? (
-              <Image src={fileUri} width={240} height={120} />
-            ) : (
-              <>
-                <ImageIcon />
-                <Typography>Selecciona una imagen</Typography>{" "}
-              </>
-            )}
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+              Fecha de vencimiento
+            </Typography>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={expirationDate}
+                onChange={(date) => handleChange("expirationDate", date)}
+              />
+            </LocalizationProvider>
+          </Box>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+              Imagen del producto
+            </Typography>
+            <Box
+              onClick={handleImageUpload}
+              sx={{
+                backgroundColor: "#e1e1e1",
+                width: 240,
+                height: 120,
+                color: "#000",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 2,
+                marginTop: 2,
+              }}
+            >
+              {fileUri ? (
+                <Image src={fileUri} width={240} height={120} />
+              ) : (
+                <>
+                  <ImageIcon />
+                  <Typography>Selecciona una imagen</Typography>{" "}
+                </>
+              )}
+            </Box>
           </Box>
         </Box>
+
         <Button
           sx={{ marginTop: 5 }}
           variant="contained"

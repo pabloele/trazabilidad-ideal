@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -7,13 +8,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Google } from "@mui/icons-material";
-import axios from "axios";
 import { AuthLayout } from "../../layout";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { createUser } from "../../firebase/controllers/firestoreControllers";
-
+import { FirebaseAuth } from "../../firebase/config";
+import { getRedirectResult } from "firebase/auth";
 const LoginPage = () => {
   const { loginWithGoogle, login } = useAuth();
   const router = useRouter();
@@ -51,6 +52,22 @@ const LoginPage = () => {
       if (res.user) router.push("/home");
     });
   };
+
+  const handleRedirectResult = async () => {
+    try {
+      const result = await getRedirectResult(FirebaseAuth);
+
+      if (result.user) {
+        router.push("/home");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    handleRedirectResult();
+  }, []);
 
   return (
     <>

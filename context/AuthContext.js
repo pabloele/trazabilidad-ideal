@@ -1,23 +1,24 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   signInWithPopup,
+  signInWithRedirect,
   // signUpWithGoogle,
   GoogleAuthProvider,
   loginWithEmailPassword,
-} from 'firebase/auth';
-import { FirebaseAuth, FirebaseStorage } from '../firebase/config';
-import { v4 } from 'uuid';
+} from "firebase/auth";
+import { FirebaseAuth, FirebaseStorage } from "../firebase/config";
+import { v4 } from "uuid";
 import {
   ref,
   uploadBytes,
   getStorage,
   getMetadata,
   getDownloadURL,
-} from 'firebase/storage';
+} from "firebase/storage";
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -53,10 +54,10 @@ export const AuthContextProvider = ({ children }) => {
         email,
         password
       );
-      console.log('Login successful: ', response);
+      console.log("Login successful: ", response);
       return response;
     } catch (error) {
-      console.error('Login error: ', error);
+      console.error("Login error: ", error);
       throw error;
     }
   };
@@ -66,13 +67,23 @@ export const AuthContextProvider = ({ children }) => {
     await signOut(FirebaseAuth);
   };
 
+  // const loginWithGoogle = async () => {
+  //   console.log('hola');
+  //   try {
+  //     const googleAuthProvider = new GoogleAuthProvider();
+  //     const respuesta = await signInWithPopup(FirebaseAuth, googleAuthProvider);
+  //     console.log(respuesta);
+  //     return respuesta;
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
+
   const loginWithGoogle = async () => {
-    console.log('hola');
+    console.log("hola");
     try {
       const googleAuthProvider = new GoogleAuthProvider();
-      const respuesta = await signInWithPopup(FirebaseAuth, googleAuthProvider);
-      console.log(respuesta);
-      return respuesta;
+      await signInWithRedirect(FirebaseAuth, googleAuthProvider);
     } catch (error) {
       console.log(error.message);
     }
@@ -94,7 +105,7 @@ export const AuthContextProvider = ({ children }) => {
       const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
-      console.error('Error obtaining image URL', error);
+      console.error("Error obtaining image URL", error);
       throw error;
     }
   };

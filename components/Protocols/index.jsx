@@ -6,11 +6,12 @@ import { useRouter } from "next/router";
 import { addUserProduct } from "../../firebase/controllers/firestoreControllers";
 import { useAuth } from "../../context/AuthContext";
 import useProtocols from "../../hooks/useProtocols";
+import Spinner from "../Spinner/Spinner";
 
 const Protocols = () => {
   const { user } = useAuth();
 
-  const { protocols } = useProtocols();
+  const { protocols, loading: loadingProtocols } = useProtocols();
 
   const router = useRouter();
 
@@ -36,19 +37,6 @@ const Protocols = () => {
   };
 
   const handleClose = () => setOpen(false);
-
-  const handleClickProtocol = async (event) => {
-    const nameProtocol = event.target.getAttribute("name");
-
-    const trazability = protocols.find(
-      (protocol) => protocol.name === nameProtocol
-    );
-
-    setTrazability(trazability.trazability);
-
-    setProtocolSelected(nameProtocol);
-    setOpen(true);
-  };
 
   const handleSaveProduct = async () => {
     setLoading(true);
@@ -144,6 +132,7 @@ const Protocols = () => {
 
         <Box>
           <Box container sx={{ display: "flex", gap: 2 }}>
+            {loadingProtocols && <Spinner />}
             {protocols?.map((protocol, index) => (
               <Box
                 data={protocol.trazability}
