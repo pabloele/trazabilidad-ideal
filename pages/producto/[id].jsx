@@ -1,24 +1,38 @@
-import React, { useState, useEffect, useRef } from "react";
-import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
-import { HomeLayout } from "../../layout";
-import { Box, Typography, IconButton, Tab, Tabs, Button } from "@mui/material";
-import useProduct from "../../hooks/useProduct";
-import { useRouter } from "next/router";
-import Modal from "@mui/material/Modal";
-import { AddOutlined } from "@mui/icons-material";
-import Trazability from "../../components/Trazability/Trazability";
-import TabPanel from "../../components/TabPanel/TabPanel";
-import useMilestone from "../../hooks/useMilestone";
-import { ethers } from "ethers";
-import { contractAddress, contractAbi } from "../../contract/contract";
-import { useAuth } from "../../context/AuthContext";
-import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
-import ModalDialog from "../../components/Modals/ModalDialog";
+import React, { useState, useEffect, useRef } from 'react';
+import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
+import { HomeLayout } from '../../layout';
+import {
+  Box,
+  Typography,
+  IconButton,
+  Tab,
+  Tabs,
+  Button,
+  Grid,
+} from '@mui/material';
+import useProduct from '../../hooks/useProduct';
+import { useRouter } from 'next/router';
+import Modal from '@mui/material/Modal';
+import { AddOutlined } from '@mui/icons-material';
+import Trazability from '../../components/Trazability/Trazability';
+import TabPanel from '../../components/TabPanel/TabPanel';
+import useMilestone from '../../hooks/useMilestone';
+import { ethers } from 'ethers';
+import { contractAddress, contractAbi } from '../../contract/contract';
+import { useAuth } from '../../context/AuthContext';
+import { agroupMilestones, uploadIPFS } from '../../contract/toBlockChain';
+import ModalDialog from '../../components/Modals/ModalDialog';
+import { display } from '@mui/system';
+import Image from 'next/image';
+
 const Producto = () => {
   const router = useRouter();
   const { user } = useAuth();
 
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [path, setPath] = useState('');
+
 
   const [txHash, setTxHash] = useState();
 
@@ -34,13 +48,22 @@ const Producto = () => {
 
   const [tabActive, setTabActive] = useState(0);
   const [open, setOpen] = useState(false);
+  const [boxIndex, setBoxIndex] = useState(0);
 
   const [milestoneBox, setMilestoneBox] = useState([1]);
 
   const [subprocessSelected, setSubprocessSelected] = useState();
+  const [showCategories, setShowCategories] = useState(false);
 
-  const { milestones, setMilestones, handleImageUpload, fileUri, setFileUri } =
-    useMilestone();
+  const {
+    milestones,
+    setMilestones,
+    handleImageUpload,
+    fileUri,
+    setFileUri,
+    handleAddMilestone,
+    handleFileUpload,
+  } = useMilestone();
 
   const { product, setProduct, uploadProduct, uploadQr } = useProduct(
     router.query.id
@@ -48,17 +71,17 @@ const Producto = () => {
 
   useEffect(() => {
     // Verifica que el código se esté ejecutando en el lado del cliente
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       // Importa la biblioteca solo en el lado del cliente
-      import("qr-code-styling").then((module) => {
+      import('qr-code-styling').then((module) => {
         const QRCodeStyling = module.default;
 
         // Usa la biblioteca aquí
         const qrCodeInstance = new QRCodeStyling({
           width: 180,
           height: 180,
-          image: "/images/cropped-logo-ideal-2.png",
-          dotsOptions: { type: "extra-rounded", color: "#000000" },
+          image: '/images/cropped-logo-ideal-2.png',
+          dotsOptions: { type: 'extra-rounded', color: '#000000' },
           imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
@@ -82,11 +105,27 @@ const Producto = () => {
   };
 
   const handleClose = () => setOpen(false);
-  const handleClickSubprocess = (event) => {
-    const subprocess = event.target.getAttribute("name");
+
+  const handleClickSubprocess = ({ name, path }) => {
+    const updatedMilestones = [...milestones];
+
+    updatedMilestones[boxIndex] = {
+      ...updatedMilestones[boxIndex],
+      name: name,
+      path: path,
+    };
+
+    const subprocess = name;
+
     setSubprocessSelected(subprocess);
+    setPath(path);
+    setMilestones([...updatedMilestones]);
+    setShowCategories(false);
   };
+
   const handleChange = (event, newValue) => {
+    console.log('event', event.target.value);
+    console.log('value', newValue);
     setTabActive(newValue);
   };
 
@@ -94,7 +133,7 @@ const Producto = () => {
     let milestonesValid = true;
 
     milestones.forEach((element, index) => {
-      if (element.image === "" || element.description === "") {
+      if (element.image === '' || element.description === '') {
         const number = index + 1;
         alert(`Faltan completar datos en el hito número ${number}`);
         milestonesValid = false;
@@ -106,7 +145,7 @@ const Producto = () => {
     }
 
     if (!subprocessSelected || tabActive === null) {
-      alert("Por favor, selecciona un proceso y un subproceso.");
+      alert('Por favor, selecciona un proceso y un subproceso.');
       return;
     }
 
@@ -126,8 +165,8 @@ const Producto = () => {
 
       // Restablecer estados y cerrar el modal
       setMilestoneBox([0]);
-      setMilestones([{ description: "", image: "" }]);
-      setFileUri("");
+      setMilestones([{ description: '', image: '' }]);
+      setFileUri('');
       setSubprocessSelected(null);
       setTabActive(null);
       setOpen(false); // Cierra el modal
@@ -144,12 +183,11 @@ const Producto = () => {
       const trazability = await uploadIPFS(trazabilidadAgrupada);
 
       const formatProduct = {
-        //id hardcoded
         id: router.query.id,
         lotNumber: product.lotNumber,
         protocolName: product.protocolName,
         name: product.name,
-        status: "realizado",
+        status: 'realizado',
         ownerUid: user.uid,
         trazability: trazability.path,
       };
@@ -163,7 +201,7 @@ const Producto = () => {
           name: product.name,
           lotNumber: product.lotNumber,
           ownerUid: product.ownerUid,
-          status: "realizado",
+          status: 'realizado',
           expirationDate: product.expirationDate,
           trazability: trazability.path,
         },
@@ -184,7 +222,7 @@ const Producto = () => {
 
       await window.ethereum.enable();
       const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
+        method: 'eth_requestAccounts',
       });
       const userAddress = accounts[0];
 
@@ -224,23 +262,24 @@ const Producto = () => {
     setProduct({ ...product, qrcode: QRdata });
   };
   const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80vw",
-    height: "90vh",
-    overflowY: "auto",
-    bgcolor: "background.paper",
-    border: "2px solid #000",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '80vw',
+    height: '90vh',
+    overflowY: 'auto',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-    textAlign: "center",
+    textAlign: 'center',
   };
+
   if (!product) {
     return (
       <HomeLayout>
-        <Box container sx={{ height: "90vh" }}>
+        <Box container sx={{ height: '90vh' }}>
           <p>Loading...</p>
         </Box>
       </HomeLayout>
@@ -255,75 +294,88 @@ const Producto = () => {
         />
         <Modal open={open} onClose={handleClose}>
           <Box sx={style}>
-            <Box>
-              <Typography
-                sx={{
-                  color: "primary.main",
-                  fontSize: 24,
-                }}
-              >
-                ¿A que categoria te gustaria agregar una etapa?
-              </Typography>
-              <Tabs
-                variant="scrollable"
-                onChange={handleChange}
-                value={tabActive}
-              >
-                {product.trazability.map((element, index) => (
-                  <Tab
-                    label={element.name}
-                    sx={{
-                      color: "primary.main",
-                    }}
-                    key={element.name}
-                  />
-                ))}
-              </Tabs>
-            </Box>
-            {product.trazability.map((element, index) => (
-              <Box key={element.name}>
-                <TabPanel
-                  sx={{ display: "flex", flexDirection: "row", gap: 2 }}
-                  value={tabActive}
-                  index={index}
-                  key={index}
+            {showCategories && (
+              <React.Fragment>
+                {/* <Typography
+                  sx={{
+                    color: 'primary.main',
+                    fontSize: 24,
+                  }}
                 >
-                  {element.line.map((subprocess, subprocessIndex) => (
-                    <Box
-                      key={subprocessIndex}
-                      sx={{
-                        marginTop: 1,
-                        backgroundColor:
-                          subprocessSelected === subprocess.name
-                            ? "primary.main"
-                            : "transparent",
-                        transition: "background-color 0.3s ease",
-                      }}
-                    >
-                      <Typography
-                        onClick={handleClickSubprocess}
-                        name={subprocess.name}
+                  Clasifica este hito
+                </Typography> */}
+                <Grid display="flex" justifyContent="center">
+                  <Tabs
+                    variant="scrollable"
+                    onChange={handleChange}
+                    value={tabActive}
+                  >
+                    {product.trazability.map((element, index) => (
+                      <Tab
+                        label={element.name}
                         sx={{
-                          color:
-                            subprocessSelected === subprocess.name
-                              ? "white"
-                              : "primary.main",
-                          marginY: 2,
-                          fontSize: 12,
-                          textTransform: "uppercase",
-                          ":hover": {
-                            cursor: "pointer",
-                          },
+                          color: 'primary.main',
                         }}
-                      >
-                        {subprocess.name}
-                      </Typography>
-                    </Box>
-                  ))}
-                </TabPanel>
-              </Box>
-            ))}
-            <Box>
+                        key={element.name}
+                      />
+                    ))}
+                  </Tabs>
+                </Grid>
+
+                {product.trazability.map((element, index) => (
+                  // categoría
+                  <Box key={element.name}>
+                    <TabPanel
+                      sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                      value={tabActive}
+                      index={index}
+                      key={index}
+                    >
+                      {element.line.map((subprocess, subprocessIndex) => (
+                        <Box
+                          key={subprocessIndex}
+                          sx={{
+                            marginTop: 1,
+                            backgroundColor:
+                              subprocessSelected === subprocess.name
+                                ? 'primary.main'
+                                : 'transparent',
+                            transition: 'gray 0.3s ease',
+                            borderRadius: '40px',
+                          }}
+                        >
+                          <Typography
+                            onClick={() => {
+                              handleClickSubprocess({
+                                path: element.path,
+                                name: subprocess.name,
+                              });
+                            }}
+                            name={subprocess.name}
+                            sx={{
+                              color:
+                                subprocessSelected === subprocess.name
+                                  ? 'white'
+                                  : 'primary.main',
+                              marginY: 1,
+                              marginX: 1,
+                              fontSize: 12,
+                              textTransform: 'uppercase',
+                              ':hover': {
+                                cursor: 'pointer',
+                              },
+                            }}
+                          >
+                            {subprocess.name}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </TabPanel>
+                  </Box>
+                ))}
+              </React.Fragment>
+            )}
+            <Box key={boxIndex}>
               <Trazability
                 fileUri={fileUri}
                 handleImageUpload={handleImageUpload}
@@ -334,6 +386,12 @@ const Producto = () => {
                 saveMilestone={saveMilestone}
                 setMilestoneBox={setMilestoneBox}
                 milestoneBox={milestoneBox}
+                handleAddMilestone={handleAddMilestone}
+                path={path}
+                handleFileUpload={handleFileUpload}
+                setShowCategories={setShowCategories}
+                setBoxIndex={setBoxIndex}
+                boxIndex={boxIndex}
               />
             </Box>
           </Box>
@@ -342,19 +400,19 @@ const Producto = () => {
         <Box>
           <Typography
             sx={{
-              color: "primary.main",
+              color: 'primary.main',
               fontSize: 24,
             }}
           >
             Cadena de produccion para : {product.name}
           </Typography>
-          <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: 'flex' }}>
             <TrazabilityLine protocol={product.trazability} />
 
             <Box ref={ref}></Box>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
               variant="contained"
               onClick={createQRcode}
@@ -374,10 +432,10 @@ const Producto = () => {
         <IconButton
           size="large"
           sx={{
-            color: "white",
-            backgroundColor: "error.main",
-            ":hover": { backgroundColor: "error.main", opacity: 0.9 },
-            position: "fixed",
+            color: 'white',
+            backgroundColor: 'error.main',
+            ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
+            position: 'fixed',
             right: 50,
             bottom: 50,
           }}
