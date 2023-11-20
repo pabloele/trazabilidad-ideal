@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { create } from 'ipfs-http-client';
 import { v4 } from 'uuid';
+
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
-    { image: '', description: '', milestoneId: '', path: '', atachments: [] },
+    {
+      name: '',
+      path: '',
+      image: '',
+      description: '',
+      milestoneId: '',
+      atachments: [],
+    },
   ]);
-
-  const handleAddMilestone = () => {
-    // setMilestones({ ...newMilestones, newMilestone });
-  };
 
   const [fileUri, setFileUri] = useState([]);
 
@@ -113,17 +117,6 @@ const useMilestone = () => {
     milestones,
     setMilestones,
     handleImageUpload,
-    handleAddMilestone,
-    handleFileUpload,
-  };
-
-  return {
-    setFileUri,
-    fileUri,
-    milestones,
-    setMilestones,
-    handleImageUpload,
-    handleAddMilestone,
     handleFileUpload,
   };
 };

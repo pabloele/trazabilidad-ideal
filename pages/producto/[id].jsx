@@ -46,6 +46,7 @@ const Producto = () => {
 
   const [tabActive, setTabActive] = useState(0);
   const [open, setOpen] = useState(false);
+  const [boxIndex, setBoxIndex] = useState(0);
 
   const [milestoneBox, setMilestoneBox] = useState([1]);
 
@@ -104,13 +105,25 @@ const Producto = () => {
   const handleClose = () => setOpen(false);
 
   const handleClickSubprocess = ({ name, path }) => {
+    const updatedMilestones = [...milestones];
+
+    updatedMilestones[boxIndex] = {
+      ...updatedMilestones[boxIndex],
+      name: name,
+      path: path,
+    };
+
     const subprocess = name;
 
     setSubprocessSelected(subprocess);
     setPath(path);
+    setMilestones([...updatedMilestones]);
+    setShowCategories(false);
   };
 
   const handleChange = (event, newValue) => {
+    console.log('event', event.target.value);
+    console.log('value', newValue);
     setTabActive(newValue);
   };
 
@@ -308,6 +321,7 @@ const Producto = () => {
                 </Grid>
 
                 {product.trazability.map((element, index) => (
+                  // categoría
                   <Box key={element.name}>
                     <TabPanel
                       sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
@@ -359,7 +373,7 @@ const Producto = () => {
                 ))}
               </React.Fragment>
             )}
-            <Box>
+            <Box key={boxIndex}>
               <Trazability
                 fileUri={fileUri}
                 handleImageUpload={handleImageUpload}
@@ -374,6 +388,8 @@ const Producto = () => {
                 path={path}
                 handleFileUpload={handleFileUpload}
                 setShowCategories={setShowCategories}
+                setBoxIndex={setBoxIndex}
+                boxIndex={boxIndex}
               />
             </Box>
           </Box>

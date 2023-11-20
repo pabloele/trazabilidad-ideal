@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -42,6 +42,7 @@ const CustomTextField = styled.textarea`
 
 const Trazability = ({
   subprocessSelected,
+  path,
   handleImageUpload,
   fileUri,
   milestones,
@@ -53,6 +54,8 @@ const Trazability = ({
   handleFileUpload,
   showCategories,
   setShowCategories,
+  boxIndex,
+  setBoxIndex,
 }) => {
   const addMilestoneBox = () => {
     setMilestones([
@@ -66,6 +69,8 @@ const Trazability = ({
       },
     ]);
   };
+
+  // useEffect(() => {}, [subprocessSelected, path]);}
 
   const deleteMilestone = (index) => {
     console.log('eskere');
@@ -106,8 +111,9 @@ const Trazability = ({
     });
   };
 
-  const handleOpenCategories = () => {
-    setShowCategories((prev) => !prev);
+  const handleOpenCategories = (index) => {
+    setShowCategories(true);
+    setBoxIndex(index);
   };
 
   return (
@@ -143,7 +149,7 @@ const Trazability = ({
           />
         </Box>
       </Box>
-      {milestones.map((e, i) => {
+      {milestones?.map((e, i) => {
         const index = milestones.length - 1 - i;
         return (
           <React.Fragment key={i}>
@@ -360,7 +366,7 @@ const Trazability = ({
                     </Grid>
                   )}
 
-                  {subprocessSelected ? (
+                  {milestones[index].name ? (
                     <Grid
                       item
                       width="150px"
@@ -370,7 +376,7 @@ const Trazability = ({
                       alignItems="center"
                       bgcolor="#16161526"
                       borderRadius="20px"
-                      onClick={handleOpenCategories}
+                      onClick={() => handleOpenCategories(index)}
                     >
                       <Paper
                         sx={{
@@ -389,7 +395,7 @@ const Trazability = ({
                             flex: '1',
                           }}
                         >
-                          {subprocessSelected}
+                          {milestones[index].name}
                         </Typography>
                       </Paper>
                     </Grid>
@@ -403,7 +409,7 @@ const Trazability = ({
                       alignItems="center"
                       bgcolor="#16161526"
                       borderRadius="20px"
-                      onClick={handleOpenCategories}
+                      onClick={() => handleOpenCategories(index)}
                     >
                       <ClassIcon sx={{ fontSize: '6rem', color: '#0330ab' }} />
                     </Grid>
