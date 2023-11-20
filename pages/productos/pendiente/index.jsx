@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../../context/AuthContext";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
+import { deleteProduct } from "../../../firebase/controllers/firestoreControllers";
 const Products = () => {
   const { user } = useAuth();
 
@@ -37,17 +38,21 @@ const Products = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Estoy seguro",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         const productFiltter = products.filter((product) => product.id !== id);
 
-        setProducts(productFiltter);
+        try {
+          await deleteProduct(id);
 
-        Swal.fire({
-          title: "Producto eliminado",
+          setProducts(productFiltter);
 
-          icon: "success",
-        });
+          Swal.fire({
+            title: "Producto eliminado",
+
+            icon: "success",
+          });
+        } catch (error) {}
       }
     });
   };
@@ -61,7 +66,12 @@ const Products = () => {
             Productos pendientes
           </Typography>
 
-          <Button variant="contained">Agregar producto</Button>
+          <Button
+            variant="contained"
+            onClick={() => router.push("/nueva-produccion")}
+          >
+            Agregar producto
+          </Button>
         </Box>
 
         <Box>

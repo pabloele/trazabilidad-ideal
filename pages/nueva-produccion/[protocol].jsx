@@ -93,7 +93,7 @@ const ProtocolPage = () => {
             const result = await ipfs.add(file);
             const ipfsHash = result.path;
             const urlImage = `https://ipfs.io/ipfs/${ipfsHash}`;
-
+            console.log(urlImage);
             setFileUri(urlImage);
           } catch (error) {
             console.error("Error al subir la imagen a IPFS:", error);
@@ -242,7 +242,7 @@ const ProtocolPage = () => {
               ) : (
                 <>
                   <ImageIcon />
-                  <Typography>Selecciona una imagen</Typography>{" "}
+                  <Typography>Selecciona una imagen</Typography>
                 </>
               )}
             </Box>
