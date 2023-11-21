@@ -25,6 +25,10 @@ import ModalDialog from "../../components/Modals/ModalDialog";
 import Spinner from "../../components/Spinner/Spinner";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
+import {
+  addProtocol,
+  updateProduct,
+} from "../../firebase/controllers/firestoreControllers";
 const Producto = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -236,9 +240,9 @@ const Producto = () => {
           tokenDataIPFS.url
         );
 
-        console.log(response);
-
         setTxHash(response.hash);
+
+        const updated = await updateProduct(router.query.id, "realizado");
       } catch (error) {
         setError(error.reason);
 
@@ -302,6 +306,8 @@ const Producto = () => {
     return (
       <HomeLayout>
         <DialogModal txHash={txHash} loading={loading} />
+        {console.log(product)}
+        {/* <Button onClick={addProtocol}>agregar</Button> */}
 
         <Modal open={open} onClose={handleClose}>
           <Box
@@ -443,7 +449,11 @@ const Producto = () => {
             >
               Crear QR
             </Button>
-            <Button variant="contained" onClick={handleOpenModal}>
+            <Button
+              variant="contained"
+              onClick={handleOpenModal}
+              disabled={product?.status !== "en curso"}
+            >
               Certificar en blockchain
             </Button>
           </Box>

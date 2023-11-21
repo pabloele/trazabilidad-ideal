@@ -162,93 +162,27 @@ export const addProtocol = async () => {
   const protocolRef = collection(db, "protocols");
 
   await addDoc(protocolRef, {
-    name: "agroalimentario",
+    name: "Protocolo general",
     trazability: [
       {
-        name: "Producción",
+        name: "Cataracteristicas",
         line: [
           {
-            name: "Origen de la producción",
-            milestones: [],
-          },
-          {
-            name: "Características fenológicas / ciclos",
-            milestones: [],
-          },
-          {
-            name: "Métodos de cultivo / cría",
-            milestones: [],
-          },
-          {
-            name: "Registros fitosanitarios / sanidad",
-            milestones: [],
-          },
-          {
-            name: "Caracteristicas adicionales",
-            milestones: [],
-          },
-        ],
-      },
-      {
-        name: "Elaboracion / Procesamiento",
-        line: [
-          {
-            name: "Procesos de elaboración",
-            milestones: [],
-          },
-          {
-            name: "Etiquetado y empaque",
-            milestones: [],
-          },
-          {
-            name: "Normativa aplicable",
-            milestones: [],
-          },
-          {
-            name: "Capacitación del personal",
-            milestones: [],
-          },
-          {
-            name: "Auditorías y verificaciones",
-            milestones: [],
-          },
-          {
-            name: "Caracteristicas adicionales",
-            milestones: [],
-          },
-        ],
-      },
-      {
-        name: "Despacho / Distribución",
-        line: [
-          {
-            name: "Transporte",
-            milestones: [],
-          },
-          {
-            name: "Almacenamiento",
-            milestones: [],
-          },
-          {
-            name: "Caracteristicas adicionales",
-            milestones: [],
-          },
-        ],
-      },
-      {
-        name: "Comercialización",
-        line: [
-          {
-            name: "Trazabilidad del producto",
-            milestones: [],
-            path: "/vino1/comercializacion/etapa1",
-          },
-          {
-            name: "Caracteristicas adicionales",
+            name: "Caracteristicas generales",
             milestones: [],
           },
         ],
       },
     ],
   });
+};
+
+export const updateProduct = async (id, status) => {
+  try {
+    const productRef = doc(db, "products", id);
+
+    const response = await updateDoc(productRef, { status: status });
+  } catch (error) {
+    console.log(error);
+  }
 };
