@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,26 +7,26 @@ import {
   Grid,
   TextField,
   Paper,
-} from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
+} from "@mui/material";
+import ImageIcon from "@mui/icons-material/Image";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineOppositeContent, {
   timelineOppositeContentClasses,
-} from '@mui/lab/TimelineOppositeContent';
-import Image from 'next/image';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AttachmentIcon from '@mui/icons-material/Attachment';
-import styled from 'styled-components';
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-import ClassIcon from '@mui/icons-material/Class';
-import { v4 } from 'uuid';
+} from "@mui/lab/TimelineOppositeContent";
+import Image from "next/image";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AttachmentIcon from "@mui/icons-material/Attachment";
+import styled from "styled-components";
+import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import ClassIcon from "@mui/icons-material/Class";
+import { v4 } from "uuid";
 
 const CustomTextField = styled.textarea`
   width: 100%;
@@ -61,9 +61,9 @@ const Trazability = ({
     setMilestones([
       ...milestones,
       {
-        description: '',
-        image: '',
-        path: '',
+        description: "",
+        image: "",
+        path: "",
         milestoneUid: v4(),
         atachments: [],
       },
@@ -73,7 +73,7 @@ const Trazability = ({
   // useEffect(() => {}, [subprocessSelected, path]);}
 
   const deleteMilestone = (index) => {
-    console.log('eskere');
+    console.log("eskere");
     const updatedMilestones = [...milestones];
 
     const updateBoxs = [...milestoneBox];
@@ -101,7 +101,7 @@ const Trazability = ({
     handleFileUpload(index);
   };
 
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState("");
 
   const handleSaveClick = () => {
     setMilestones((prevMilestones) => {
@@ -120,16 +120,16 @@ const Trazability = ({
     <Box sx={{ padding: 4 }} width="100%">
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
+          display: "flex",
+          justifyContent: "center",
           marginTop: 3,
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
             marginBottom: 2,
             gap: 2,
           }}
@@ -141,9 +141,9 @@ const Trazability = ({
           <AddBoxIcon
             onClick={addMilestoneBox}
             sx={{
-              color: 'primary.main',
-              ':hover': {
-                cursor: 'pointer',
+              color: "primary.main",
+              ":hover": {
+                cursor: "pointer",
               },
             }}
           />
@@ -157,15 +157,15 @@ const Trazability = ({
               {/* left */}
               <Box
                 sx={{
-                  borderRadius: '120px 0 0 120px',
-                  border: '15px solid',
-                  borderColor: 'gray',
-                  borderRight: 'none',
-                  width: '140px',
-                  height: '240px',
-                  padding: '20px',
-                  display: 'flex',
-                  bgcolor: '#e7e7e67a',
+                  borderRadius: "120px 0 0 120px",
+                  border: "2px solid",
+                  borderColor: "gray",
+                  borderRight: "none",
+                  width: "140px",
+                  height: "240px",
+                  padding: "20px",
+                  display: "flex",
+                  bgcolor: "#e7e7e67a",
                 }}
               ></Box>
               {/* center */}
@@ -174,31 +174,31 @@ const Trazability = ({
                 direction="row"
                 gap={4}
                 sx={{
-                  border: '15px solid',
-                  borderColor: 'gray',
-                  borderLeft: 'none',
-                  borderRight: 'none',
-                  width: '100%',
-                  height: '240px',
-                  bgcolor: '#e7e7e67a',
+                  border: "2px solid",
+                  borderColor: "gray",
+                  borderLeft: "none",
+                  borderRight: "none",
+                  width: "100%",
+                  height: "240px",
+                  bgcolor: "#e7e7e67a",
                 }}
               >
-                <Grid container alignContent="center" gap={2} direction={'row'}>
+                <Grid container alignContent="center" gap={2} direction={"row"}>
                   {/* image */}
                   <Grid
                     item
                     onClick={() => handleImageUpload(index)}
                     borderRadius={4}
                     sx={{
-                      ':hover': {
-                        cursor: 'pointer',
+                      ":hover": {
+                        cursor: "pointer",
                       },
-                      bgcolor: '#16161526',
-                      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                      width: '150px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      bgcolor: "#16161526",
+                      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                      width: "150px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     {fileUri?.length > 0 && fileUri[index] ? (
@@ -207,18 +207,18 @@ const Trazability = ({
                         width={150}
                         height={150}
                         alt={fileUri[index]}
-                        style={{ objectFit: 'cover', borderRadius: '20px' }}
+                        style={{ objectFit: "cover", borderRadius: "20px" }}
                       />
                     ) : (
                       <Box
                         sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
                         }}
                       >
                         <ImageIcon
-                          sx={{ fontSize: '6rem', color: '#0330ab' }}
+                          sx={{ fontSize: "6rem", color: "#0330ab" }}
                         />
                         {/* <Typography sx={{ color: '#000' }}>
                       Añadir imagen
@@ -250,25 +250,25 @@ const Trazability = ({
                       <Box
                         onClick={handleTextClick}
                         sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          bgcolor: '#16161526',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                          height: '150px',
-                          width: '150px',
-                          borderRadius: '20px',
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "#16161526",
+                          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                          height: "150px",
+                          width: "150px",
+                          borderRadius: "20px",
                         }}
                       >
                         <EditNoteOutlinedIcon
                           sx={{
-                            fontSize: '3rem',
-                            color: '#0330ab',
-                            display: 'flex',
+                            fontSize: "3rem",
+                            color: "#0330ab",
+                            display: "flex",
                           }}
                         />
-                        <Typography sx={{ color: '#000' }}>
+                        <Typography sx={{ color: "#000" }}>
                           Añadir descripción
                         </Typography>
                       </Box>
@@ -290,16 +290,16 @@ const Trazability = ({
                       // onClick={() => handleFileUpload(index)}
                     >
                       <Paper
-                        sx={{ marginTop: 3, height: '5rem', overflowY: 'auto' }}
+                        sx={{ marginTop: 3, height: "5rem", overflowY: "auto" }}
                       >
                         {milestones[index].atachments.map((e, i) => (
-                          <Box key={i} display={'flex'} flexDirection={'row'}>
+                          <Box key={i} display={"flex"} flexDirection={"row"}>
                             {/* <Box></Box> */}
                             <Typography
                               sx={{
-                                color: '#000',
-                                fontSize: '12px',
-                                textAlign: 'center',
+                                color: "#000",
+                                fontSize: "12px",
+                                textAlign: "center",
                               }}
                               key={i}
                             >
@@ -308,12 +308,12 @@ const Trazability = ({
                             <Typography
                               key={i}
                               style={{
-                                color: 'red',
-                                cursor: 'pointer',
-                                fontSize: '12px',
-                                fontWeight: 'bold',
-                                marginLeft: '0.2rem',
-                                textAlign: 'center',
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                                marginLeft: "0.2rem",
+                                textAlign: "center",
                               }}
                               // onClick={() => handleRemoveAttachment(index, i)}
                             >
@@ -340,9 +340,9 @@ const Trazability = ({
                       <AddBoxIcon
                         onClick={() => handleFileUpload(index)}
                         sx={{
-                          color: 'primary.main',
-                          ':hover': {
-                            cursor: 'pointer',
+                          color: "primary.main",
+                          ":hover": {
+                            cursor: "pointer",
                           },
                           marginBottom: 2,
                         }}
@@ -361,7 +361,7 @@ const Trazability = ({
                       onClick={() => handleClickAtachment(index)}
                     >
                       <AttachmentIcon
-                        sx={{ fontSize: '6rem', color: '#0330ab' }}
+                        sx={{ fontSize: "6rem", color: "#0330ab" }}
                       />
                     </Grid>
                   )}
@@ -385,14 +385,14 @@ const Trazability = ({
                       >
                         <Typography
                           sx={{
-                            textAlign: 'center',
+                            textAlign: "center",
                             maxWidth: 120,
-                            backgroundColor: '#e1e1e1',
+                            backgroundColor: "#e1e1e1",
                             borderRadius: 4,
-                            padding: '5px',
+                            padding: "5px",
                             fontSize: 12,
-                            color: 'primary.main',
-                            flex: '1',
+                            color: "primary.main",
+                            flex: "1",
                           }}
                         >
                           {milestones[index].name}
@@ -411,7 +411,7 @@ const Trazability = ({
                       borderRadius="20px"
                       onClick={() => handleOpenCategories(index)}
                     >
-                      <ClassIcon sx={{ fontSize: '6rem', color: '#0330ab' }} />
+                      <ClassIcon sx={{ fontSize: "6rem", color: "#0330ab" }} />
                     </Grid>
                   )}
                   {/* card actions */}
@@ -420,13 +420,13 @@ const Trazability = ({
                     sx={{
                       padding: 0,
                       margin: 0,
-                      ':hover': {
-                        cursor: 'pointer',
+                      ":hover": {
+                        cursor: "pointer",
                       },
                     }}
                   >
                     <DeleteIcon
-                      sx={{ color: 'black', textAlign: 'right' }}
+                      sx={{ color: "black", textAlign: "right" }}
                       onClick={() => deleteMilestone(index)}
                     />
                   </Grid>
@@ -436,15 +436,15 @@ const Trazability = ({
               {/* right */}
               <Box
                 sx={{
-                  borderRadius: '0 120px 120px 0',
-                  border: '15px solid',
-                  borderColor: 'gray',
-                  borderLeft: 'none',
-                  width: '140px',
-                  height: '240px',
-                  padding: '20px',
-                  display: 'flex',
-                  bgcolor: '#e7e7e67a',
+                  borderRadius: "0 120px 120px 0",
+                  border: "2px solid",
+                  borderColor: "gray",
+                  borderLeft: "none",
+                  width: "140px",
+                  height: "240px",
+                  padding: "20px",
+                  display: "flex",
+                  bgcolor: "#e7e7e67a",
                 }}
               ></Box>
             </Box>
@@ -452,7 +452,7 @@ const Trazability = ({
               <Image
                 width={50}
                 height={50}
-                src={'/images/chainlink.svg'}
+                src={"/images/chainlink.svg"}
                 alt="Chainlink Logo"
               />
             )}

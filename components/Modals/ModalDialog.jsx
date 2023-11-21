@@ -5,14 +5,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Spinner from "../Spinner/Spinner";
 import Link from "next/link";
 const ModalDialog = () => {
-  const [open, setOpen] = React.useState(false); // Cambiado de openDialog a open
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const [open, setOpen] = React.useState(true); // Cambiado de openDialog a open
 
   const handleClose = () => {
     setOpen(false);
@@ -20,7 +17,27 @@ const ModalDialog = () => {
   const DialogModal = ({ uploadToBlockChain, loading, txHash }) => {
     return (
       <Box>
-        {txHash ? (
+        {loading && (
+          <Dialog open={true}>
+            <DialogTitle>Certificando con tecnologia blockchain</DialogTitle>
+
+            <DialogContent>
+              <DialogContentText></DialogContentText>
+              <Box
+                sx={{
+                  height: 200,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Spinner />
+              </Box>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {txHash && (
           <Dialog
             open={open}
             onClose={handleClose}
@@ -31,8 +48,10 @@ const ModalDialog = () => {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Puedes revisar el estado de la trazabilidad en el explorador de
-                bloques:
+                <Typography>
+                  Puedes revisar el estado de la trazabilidad en el explorador
+                  de bloques:
+                </Typography>
                 <Link
                   target="_blank"
                   rel="noopener noreferrer "
@@ -42,40 +61,6 @@ const ModalDialog = () => {
                 </Link>
               </DialogContentText>
             </DialogContent>
-          </Dialog>
-        ) : (
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="draggable-dialog-title"
-          >
-            <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
-              ¿Seguro que deseas certificar este proceso productivo en la
-              blockchain?
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Este proceso no podra ser modificado, una vez ejecutado la
-                acción las etapas de la produccion seran públicas e inmutables,
-                asegurate de realizar bien la trazabilidad del producto
-              </DialogContentText>
-
-              {loading && (
-                <Box
-                  sx={{ display: "flex", justifyContent: "center", marginY: 5 }}
-                >
-                  <Spinner />
-                </Box>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button autoFocus onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button variant="contained" onClick={uploadToBlockChain}>
-                Certificar
-              </Button>
-            </DialogActions>
           </Dialog>
         )}
       </Box>
