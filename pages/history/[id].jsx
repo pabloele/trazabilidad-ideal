@@ -1,16 +1,16 @@
-import React from "react";
-import { useRouter } from "next/router";
-import useProduct from "../../hooks/useProduct";
+import React from 'react';
+import { useRouter } from 'next/router';
+import useProduct from '../../hooks/useProduct';
 
-import Image from "next/image";
-import { Typography, Box, Button } from "@mui/material";
+import Image from 'next/image';
+import { Typography, Box, Button } from '@mui/material';
 
-import UserNavBar from "../../components/NavBar/UserNavBar";
+import UserNavBar from '../../components/NavBar/UserNavBar';
 
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const ViewProduct = () => {
   const router = useRouter();
@@ -21,25 +21,26 @@ const ViewProduct = () => {
     <>
       <UserNavBar />
 
-      <Box sx={{ padding: 2, display: "flex", gap: 5 }}>
+      <Box sx={{ padding: 2, display: 'flex', gap: 5 }}>
         <Box>
           <Image
             style={{ borderRadius: 60 }}
             src={product?.productImage}
             width={630}
             height={630}
+            alt="Product Image"
           />
         </Box>
 
         <Box sx={{ marginTop: 4 }}>
           <Typography
-            sx={{ fontSize: 55, fontWeight: "bold", color: "primary.main" }}
+            sx={{ fontSize: 55, fontWeight: 'bold', color: 'primary.main' }}
           >
             {product?.name}
 
             <hr />
-            <Box sx={{ backgroundColor: "#f5f5f5", padding: 2 }}>
-              <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
+            <Box sx={{ backgroundColor: '#f5f5f5', padding: 2 }}>
+              <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
                 Producto certificado
               </Typography>
               <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -50,15 +51,15 @@ const ViewProduct = () => {
               <Button
                 variant="contained"
                 sx={{
-                  display: "flex",
+                  display: 'flex',
                   gap: 1,
-                  alignItems: "center",
+                  alignItems: 'center',
                   marginTop: 2,
                 }}
               >
                 Ver trazabilidad
                 <Image
-                  src={"/images/logo-ideal.png"}
+                  src={'/images/logo-ideal.png'}
                   width={50}
                   height={20}
                   alt="logo"
@@ -77,13 +78,13 @@ const ViewProduct = () => {
 
             if (hasMilestones) {
               return (
-                <Accordion sx={{ backgroundColor: "primary.main" }}>
+                <Accordion sx={{ backgroundColor: 'primary.main' }} key={index}>
                   <AccordionSummary
-                    expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+                    expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <Typography sx={{ color: "#fff", fontSize: 20 }}>
+                    <Typography sx={{ color: '#fff', fontSize: 20 }}>
                       {trazability.name}
                     </Typography>
                   </AccordionSummary>
@@ -94,13 +95,16 @@ const ViewProduct = () => {
                           return (
                             <Typography
                               key={lineIndex}
-                              sx={{ color: "#fff", fontSize: 20 }}
+                              sx={{ color: '#fff', fontSize: 20 }}
                             >
                               <h2>{line.name}</h2>
                               <Box>
                                 {line.milestones.map(
                                   (milestone, milestoneIndex) => (
-                                    <Box sx={{ display: "flex", gap: 2 }}>
+                                    <Box
+                                      sx={{ display: 'flex', gap: 2 }}
+                                      key={milestoneIndex}
+                                    >
                                       <Image
                                         style={{ borderRadius: 20 }}
                                         width={200}

@@ -129,7 +129,7 @@ export default function TrazabilityLine({ protocol }) {
                         <Box
                           sx={{
                             borderRadius: '10px',
-                            background: `linear-gradient(to right, #55555545, #0330ab60)`,
+                            background: `linear-gradient(to right, #55555545, #0330ab28)`,
                             width: '100%',
                             height: '100%',
                             padding: '20px',
@@ -165,16 +165,6 @@ export default function TrazabilityLine({ protocol }) {
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
                             <Grid item xs={6} sm={6} md={6} lg={6}>
-                              {/* <Paper
-                                elevation={4}
-                                sx={{
-                                  p: 2,
-                                  borderRadius: 1,
-                                  bgcolor: '#6c7aa111',
-                                  height: '200px',
-                                  boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)',
-                                }}
-                              > */}
                               <Typography
                                 variant="body1"
                                 fontSize={20}
@@ -324,7 +314,6 @@ export default function TrazabilityLine({ protocol }) {
                                   },
                                 }}
                               >
-                                {/* todo map multiple milestones*/}
                                 {item.name}
                               </Typography>
                             </Box>
