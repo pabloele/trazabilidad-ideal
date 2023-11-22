@@ -186,3 +186,26 @@ export const updateProduct = async (id, status) => {
     console.log(error);
   }
 };
+
+export const switchNetwork = async (userProvider) => {
+  const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
+  await userProvider.send("eth_requestAccounts", []);
+
+  const userNetwork = await userProvider.getNetwork();
+
+  const networkToAdd = {
+    chainId: process.env.NEXT_PUBLIC_NETWORK_TARGET_ID,
+    chainName: process.env.NEXT_PUBLIC_NETWORK_NAME,
+    rpcUrls: [process.env.NEXT_PUBLIC_NETWORK_RPC] /* ... */,
+  };
+
+  if (userNetwork.chainId !== Number(chainId)) {
+    // El usuario no está en la red correcta, esperar cambio de red
+    await userProvider.send("wallet_addEthereumChain", [networkToAdd]);
+  } else {
+    // El proveedor está listo, cambiar de red si es necesario
+    await userProvider.send("wallet_switchEthereumChain", [
+      { chainId: process.env.NEXT_PUBLIC_NETWORK_TARGET_ID },
+    ]);
+  }
+};

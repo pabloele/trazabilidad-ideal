@@ -27,9 +27,14 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 import {
   addProtocol,
+  switchNetwork,
   updateProduct,
 } from "../../firebase/controllers/firestoreControllers";
+import { useAddress } from "@thirdweb-dev/react";
+
 const Producto = () => {
+  const address = useAddress();
+
   const router = useRouter();
   const { user } = useAuth();
 
@@ -73,6 +78,18 @@ const Producto = () => {
     router.query.id
   );
 
+  let provider = new ethers.providers.Web3Provider(window.ethereum);
+
+  
+  provider.on("network", (newNetwork, oldNetwork) => {
+    if (oldNetwork) {
+      // La red ha cambiado
+      console.log("Network changed:", oldNetwork.name, "->", newNetwork.name);
+
+      // Aquí puedes llamar a la lógica necesaria para manejar el cambio de red
+      // por ejemplo, actualizando la interfaz de usuario o recargando la página
+    }
+  });
   useEffect(() => {
     // Verifica que el código se esté ejecutando en el lado del cliente
     if (typeof window !== "undefined") {
@@ -181,6 +198,11 @@ const Producto = () => {
 
   const uploadToBlockChain = async () => {
     try {
+      if (!address)
+        throw new Error(
+          "Conecte una billetera para certificar la trazabilidad"
+        );
+
       setLoading(true);
       const trazabilidadAgrupada = agroupMilestones(product);
 
@@ -201,12 +223,6 @@ const Producto = () => {
         description: {
           expeditionDate: product.expeditionDate,
           productImage: product.productImage,
-          protocolName: product.protocolName,
-          name: product.name,
-          lotNumber: product.lotNumber,
-          ownerUid: product.ownerUid,
-          status: "realizado",
-          expirationDate: product.expirationDate,
           trazability: trazability.path,
         },
 
@@ -215,7 +231,8 @@ const Producto = () => {
 
       const tokenDataIPFS = await uploadIPFS(tokenData);
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await switchNetwork(provider);
+
       const signer = provider.getSigner();
 
       const trazabilityContract = new ethers.Contract(
@@ -224,17 +241,9 @@ const Producto = () => {
         signer
       );
 
-      await window.ethereum.enable();
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const userAddress = accounts[0];
-
-      console.log(userAddress, formatProduct, 1, tokenDataIPFS.url);
-
       try {
         const response = await trazabilityContract.safeMint(
-          userAddress,
+          address,
           formatProduct,
           1,
           tokenDataIPFS.url
@@ -249,9 +258,7 @@ const Producto = () => {
         console.log(error);
       }
     } catch (error) {
-      console.error(error.stack);
       console.error(error);
-
       setError(error.message);
     } finally {
       setLoading(false);
@@ -306,7 +313,7 @@ const Producto = () => {
     return (
       <HomeLayout>
         <DialogModal txHash={txHash} loading={loading} />
-        {console.log(product)}
+
         {/* <Button onClick={addProtocol}>agregar</Button> */}
 
         <Modal open={open} onClose={handleClose}>
