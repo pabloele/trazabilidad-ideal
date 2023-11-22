@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { create } from "ipfs-http-client";
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { create } from 'ipfs-http-client';
+import { v4 } from 'uuid';
+
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
-    { image: "", description: "" },
+    {
+      name: '',
+      path: '',
+      image: '',
+      description: '',
+      milestoneId: '',
+      atachments: [],
+    },
   ]);
 
   const [fileUri, setFileUri] = useState([]);
@@ -11,17 +20,17 @@ const useMilestone = () => {
   const { uploadFile, getFile } = useAuth();
 
   const auth =
-    "Basic " +
+    'Basic ' +
     Buffer.from(
       process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ":" +
+        ':' +
         process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString("base64");
+    ).toString('base64');
 
   const ipfs = create({
-    host: "ipfs.infura.io",
+    host: 'ipfs.infura.io',
     port: 5001,
-    protocol: "https",
+    protocol: 'https',
     headers: {
       authorization: auth,
     },
@@ -29,15 +38,13 @@ const useMilestone = () => {
 
   const handleImageUpload = async (index) => {
     try {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
 
       input.onchange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-          // Sube el archivo a IPFS
-
           const result = await ipfs.add(file);
           const ipfsHash = result.path;
           const urlImage = `https://ipfs.io/ipfs/${ipfsHash}`;
@@ -48,7 +55,6 @@ const useMilestone = () => {
             return newFileUri;
           });
 
-          // Establece el valor de image en el milestone actual
           setMilestones((prevMilestones) => {
             const newMilestones = [...prevMilestones];
             newMilestones[index].image = urlImage;
@@ -61,7 +67,47 @@ const useMilestone = () => {
 
       input.click();
     } catch (error) {
-      console.error("Error al subir la imagen:", error);
+      console.error('Error al subir la imagen:', error);
+    }
+  };
+
+  const handleFileUpload = async (index) => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const extension = file.name.split('.').pop();
+          const uniqueId = v4().substr(0, 8);
+          const randomName = `${uniqueId}.${extension}`;
+
+          const result = await ipfs.add(file);
+          const ipfsHash = result.path;
+          const urlFile = `https://ipfs.io/ipfs/${ipfsHash}`;
+
+          setMilestones((prevMilestones) => {
+            const newMilestones = prevMilestones.map((milestone, i) => {
+              if (i === index) {
+                const atachments = [
+                  ...milestone.atachments,
+                  { name: randomName, url: urlFile },
+                ];
+                return { ...milestone, atachments };
+              }
+              return milestone;
+            });
+            return newMilestones;
+          });
+
+          console.log(milestones);
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      console.error('Error al subir el archivo', error);
     }
   };
 
@@ -71,6 +117,7 @@ const useMilestone = () => {
     milestones,
     setMilestones,
     handleImageUpload,
+    handleFileUpload,
   };
 };
 

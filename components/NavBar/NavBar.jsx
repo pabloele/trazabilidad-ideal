@@ -8,9 +8,8 @@ import {
   Box,
 } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
-import { useEffect } from "react";
 import { ConnectWallet } from "@thirdweb-dev/react";
-
+import sideBarStore from "../../store/sideBarStore";
 export const NavBar = ({ drawerWidth }) => {
   const handleLogout = (e) => {
     try {
@@ -20,9 +19,9 @@ export const NavBar = ({ drawerWidth }) => {
     }
   };
   const { user, logout } = useAuth();
-  useEffect(() => {
-    //user ? console.log("USER    :", user) : console.log("Not logged in");
-  }, [user]);
+
+  const { onOpen } = sideBarStore();
+
   return (
     <AppBar
       position="fixed"
@@ -36,7 +35,7 @@ export const NavBar = ({ drawerWidth }) => {
           edge="start"
           sx={{ mr: 2, color: "secondary.main", display: { sm: "none" } }}
         >
-          <MenuOutlined />
+          <MenuOutlined onClick={onOpen} />
         </IconButton>
 
         <Grid

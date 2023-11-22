@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -20,6 +20,7 @@ import TimelineOppositeContent, {
 } from '@mui/lab/TimelineOppositeContent';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Image from 'next/image';
+import Link from 'next/link';
 export default function TrazabilityLine({ protocol }) {
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
   const timelineWidth = isMediumScreen ? '900px' : '500px';
@@ -113,6 +114,18 @@ export default function TrazabilityLine({ protocol }) {
                         <TimelineConnector />
                       </TimelineSeparator>
                       <TimelineContent>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: 24,
+                              textAlign: 'center',
+                              marginBottom: 2,
+                              color: 'primary.main',
+                            }}
+                          >
+                            {element.name}
+                          </Typography>
+                        </Box>
                         <Box
                           sx={{
                             borderRadius: '10px',
@@ -162,9 +175,36 @@ export default function TrazabilityLine({ protocol }) {
                                   boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)',
                                 }}
                               > */}
-                              <Typography variant="body1" color="GrayText">
+                              <Typography
+                                variant="body1"
+                                fontSize={20}
+                                color="BlackText"
+                              >
                                 {element.description}
                               </Typography>
+
+                              {element.atachments && (
+                                <>
+                                  <Typography
+                                    variant="body1"
+                                    fontSize={18}
+                                    color="BlackText"
+                                  >
+                                    Archivos adjuntos
+                                  </Typography>
+                                  {element.atachments.map((element, index) => (
+                                    <React.Fragment key={index}>
+                                      <Link
+                                        target="_blank"
+                                        rel="noopener noreferrer "
+                                        href={element.url}
+                                      >
+                                        {element.name}
+                                      </Link>
+                                    </React.Fragment>
+                                  ))}
+                                </>
+                              )}
                               {/* </Paper> */}
                             </Grid>
                           </Grid>

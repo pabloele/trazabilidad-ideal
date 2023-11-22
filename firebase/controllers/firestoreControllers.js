@@ -8,11 +8,28 @@ import {
   getDoc,
   query,
   where,
-} from 'firebase/firestore/lite';
-import { db } from '../config';
-import { v4 as uuidv4 } from 'uuid';
+} from "firebase/firestore/lite";
+import { db } from "../config";
+import { v4 as uuidv4 } from "uuid";
 
-export const usersCollectionRef = collection(db, 'users');
+export const usersCollectionRef = collection(db, "users");
+
+export const deleteProduct = async (uid) => {
+  try {
+    const productDoc = doc(db, "products", uid);
+
+    const docSnapshot = await getDoc(productDoc);
+
+    if (docSnapshot.exists()) {
+      await deleteDoc(productDoc);
+      console.log("Documento eliminado correctamente.");
+    } else {
+      console.log("El documento no existe en la base de datos.");
+    }
+  } catch (error) {
+    console.error("Error al intentar eliminar el documento:", error.message);
+  }
+};
 
 export const getUsers = async () => {
   try {
@@ -29,16 +46,16 @@ export const createUser = async (payload) => {
   const { uid } = payload;
 
   // Verificar si el usuario ya existe en la colección de usuarios
-  const usersQuery = query(usersCollectionRef, where('uid', '==', uid));
+  const usersQuery = query(usersCollectionRef, where("uid", "==", uid));
   const userDocs = await getDocs(usersQuery);
 
   if (userDocs.empty) {
     // El usuario no existe, entonces podemos crearlo
     await addDoc(usersCollectionRef, { ...payload });
-    console.log('Usuario creado exitosamente.');
+    console.log("Usuario creado exitosamente.");
   } else {
     // El usuario ya existe, muestra un mensaje de error o realiza alguna otra acción
-    console.log('El usuario ya existe en la base de datos.');
+    console.log("El usuario ya existe en la base de datos.");
   }
 };
 
@@ -59,23 +76,23 @@ export const getDocId = async (uid) => {
 
 export const addUserProduct = async (uid, product) => {
   try {
-    const productsCollection = collection(db, 'products');
+    const productsCollection = collection(db, "products");
     console.log(product);
     const docRef = await addDoc(productsCollection, {
       ...product,
       ownerUid: uid,
     });
-    console.log('Documento agregado con éxito', docRef.id);
+    console.log("Documento agregado con éxito", docRef.id);
 
     return docRef.id;
-  } catch(error) {
+  } catch (error) {
     console.log(error);
   }
 };
 export const addMilestone = async (uid, path, milestone) => {
   const milestoneId = uuidv4();
   const id = await getDocId(uid);
-  const userDocumentRef = await doc(db, 'users', id);
+  const userDocumentRef = await doc(db, "users", id);
   const documentSnapshot = await getDoc(userDocumentRef);
   const userData = await documentSnapshot.data();
 
@@ -116,7 +133,7 @@ export const addMilestone = async (uid, path, milestone) => {
 
 export const deleteUserDoc = async (uid) => {
   const id = await getDocId(uid);
-  const userDoc = doc(db, 'users', id);
+  const userDoc = doc(db, "users", id);
   await deleteDoc(userDoc);
 };
 
@@ -124,7 +141,7 @@ export const getUserProducts = async (uid) => {
   const id = await getDocId(uid);
 
   try {
-    const userDocumentRef = doc(db, 'users', id);
+    const userDocumentRef = doc(db, "users", id);
     const userDocumentSnapshot = await getDoc(userDocumentRef);
 
     if (userDocumentSnapshot.exists()) {
@@ -132,106 +149,40 @@ export const getUserProducts = async (uid) => {
       const userProducts = userData.products || [];
       return userProducts;
     } else {
-      console.log('User document does not exist.');
+      console.log("User document does not exist.");
       return [];
     }
   } catch (error) {
-    console.error('Error fetching user products:', error);
+    console.error("Error fetching user products:", error);
     return [];
   }
 };
 
 export const addProtocol = async () => {
-  const protocolRef = collection(db, 'protocols');
+  const protocolRef = collection(db, "protocols");
 
   await addDoc(protocolRef, {
-    name: 'agroalimentario',
+    name: "Protocolo general",
     trazability: [
       {
-        name: 'Producción',
+        name: "Cataracteristicas",
         line: [
           {
-            name: 'Origen de la producción',
-            milestones: [],
-          },
-          {
-            name: 'Características fenológicas / ciclos',
-            milestones: [],
-          },
-          {
-            name: 'Métodos de cultivo / cría',
-            milestones: [],
-          },
-          {
-            name: 'Registros fitosanitarios / sanidad',
-            milestones: [],
-          },
-          {
-            name: 'Caracteristicas adicionales',
-            milestones: [],
-          },
-        ],
-      },
-      {
-        name: 'Elaboracion / Procesamiento',
-        line: [
-          {
-            name: 'Procesos de elaboración',
-            milestones: [],
-          },
-          {
-            name: 'Etiquetado y empaque',
-            milestones: [],
-          },
-          {
-            name: 'Normativa aplicable',
-            milestones: [],
-          },
-          {
-            name: 'Capacitación del personal',
-            milestones: [],
-          },
-          {
-            name: 'Auditorías y verificaciones',
-            milestones: [],
-          },
-          {
-            name: 'Caracteristicas adicionales',
-            milestones: [],
-          },
-        ],
-      },
-      {
-        name: 'Despacho / Distribución',
-        line: [
-          {
-            name: 'Transporte',
-            milestones: [],
-          },
-          {
-            name: 'Almacenamiento',
-            milestones: [],
-          },
-          {
-            name: 'Caracteristicas adicionales',
-            milestones: [],
-          },
-        ],
-      },
-      {
-        name: 'Comercialización',
-        line: [
-          {
-            name: 'Trazabilidad del producto',
-            milestones: [],
-            path: '/vino1/comercializacion/etapa1',
-          },
-          {
-            name: 'Caracteristicas adicionales',
+            name: "Caracteristicas generales",
             milestones: [],
           },
         ],
       },
     ],
   });
+};
+
+export const updateProduct = async (id, status) => {
+  try {
+    const productRef = doc(db, "products", id);
+
+    const response = await updateDoc(productRef, { status: status });
+  } catch (error) {
+    console.log(error);
+  }
 };

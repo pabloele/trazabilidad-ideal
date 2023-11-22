@@ -1,21 +1,9 @@
-import {
-  FormControl,
-  FormHelperText,
-  Grid,
-  Input,
-  InputLabel,
-  Button,
-  Box,
-  Typography,
-} from "@mui/material";
+import { Grid, Box, Typography } from "@mui/material";
 import React from "react";
 import mintImg from "../../public/images/milestone.png";
-import Image from "next/image";
 import { HomeLayout } from "../../layout";
 import Protocols from "../../components/Protocols";
 const AddMilestone = () => {
-  const [image, setImage] = React.useState(mintImg);
-
   return (
     <HomeLayout>
       <Box sx={{ color: "primary.main", width: "90%", marginX: "auto" }}>
