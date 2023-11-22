@@ -252,56 +252,11 @@ export const SideBar = ({ drawerWidth = 240 }) => {
             }}
           >
             <Link className={Styles.link} href={"/"}>
-              Proovedores
-            </Link>
-            <Link className={Styles.link} href={"/"}>
-              Clientes
+              Certificados
             </Link>
 
             <Link className={Styles.link} href={"/"}>
-              Configuraciones
-            </Link>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion sx={{ background: "transparent" }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography
-              sx={{
-                color: "#fff",
-                display: "flex",
-                gap: 1,
-                alignItems: "center",
-              }}
-            >
-              <FactoryIcon sx={{ fontSize: 15 }} />
-              Administracion
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              border: "none",
-              backgroundColor: "#fff",
-              gap: 2,
-            }}
-          >
-            <Link className={Styles.link} href={"/materias-primas"}>
-              Materias primas
-            </Link>
-            <Link className={Styles.link} href={"/"}>
-              Insumos
-            </Link>
-
-            <Link className={Styles.link} href={"/"}>
-              Produccion
-            </Link>
-            <Link className={Styles.link} href={"/"}>
-              Producto Final
+              Documentacion de la empresa
             </Link>
           </AccordionDetails>
         </Accordion>
