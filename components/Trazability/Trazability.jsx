@@ -3,32 +3,18 @@ import {
   Box,
   Button,
   Typography,
-  TextareaAutosize,
   Grid,
-  TextField,
   Paper,
   useMediaQuery,
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import TimelineOppositeContent, {
-  timelineOppositeContentClasses,
-} from '@mui/lab/TimelineOppositeContent';
 import Image from 'next/image';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import styled from 'styled-components';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import ClassIcon from '@mui/icons-material/Class';
 import { v4 } from 'uuid';
-// import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 const CustomTextField = styled.textarea`
   width: 100%;
@@ -43,8 +29,6 @@ const CustomTextField = styled.textarea`
 `;
 
 const Trazability = ({
-  subprocessSelected,
-  path,
   handleImageUpload,
   fileUri,
   milestones,
@@ -52,11 +36,8 @@ const Trazability = ({
   saveMilestone,
   milestoneBox,
   setMilestoneBox,
-  handleAddMilestone,
   handleFileUpload,
-  showCategories,
   setShowCategories,
-  boxIndex,
   setBoxIndex,
 }) => {
   const addMilestoneBox = () => {
