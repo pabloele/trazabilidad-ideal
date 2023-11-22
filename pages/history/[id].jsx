@@ -1,37 +1,74 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import useProduct from '../../hooks/useProduct';
-import { HomeLayout } from '../../layout';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
-import TimelineOppositeContent, {
-  timelineOppositeContentClasses,
-} from '@mui/lab/TimelineOppositeContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import Image from 'next/image';
-import { Typography } from '@mui/material';
+import React from "react";
+import { useRouter } from "next/router";
+import useProduct from "../../hooks/useProduct";
+
+import Image from "next/image";
+import { Typography, Box, Button } from "@mui/material";
+
+import UserNavBar from "../../components/NavBar/UserNavBar";
+
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 const ViewProduct = () => {
   const router = useRouter();
   const { product } = useProduct(router.query.id);
 
+  console.log(product);
   return (
-    <HomeLayout>
-      <Typography sx={{color:"primary.main", fontSize:24}}>
-        Conoce la historia
-      </Typography>
-      <Timeline
-        sx={{
-          [`& .${timelineOppositeContentClasses.root}`]: {
-            flex: 0,
-            padding: 0,
-            margin: 0,
-          },
-        }}
-      >
+    <>
+      <UserNavBar />
+
+      <Box sx={{ padding: 2, display: "flex", gap: 5 }}>
+        <Box>
+          <Image
+            style={{ borderRadius: 60 }}
+            src={product?.productImage}
+            width={630}
+            height={630}
+          />
+        </Box>
+
+        <Box sx={{ marginTop: 4 }}>
+          <Typography
+            sx={{ fontSize: 55, fontWeight: "bold", color: "primary.main" }}
+          >
+            {product?.name}
+
+            <hr />
+            <Box sx={{ backgroundColor: "#f5f5f5", padding: 2 }}>
+              <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
+                Producto certificado
+              </Typography>
+              <Typography sx={{ fontSize: 20, marginTop: 2 }}>
+                La trazabilidad de este producto fue certificada con tecnología
+                blockchain
+              </Typography>
+
+              <Button
+                variant="contained"
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  marginTop: 2,
+                }}
+              >
+                Ver trazabilidad
+                <Image
+                  src={"/images/logo-ideal.png"}
+                  width={50}
+                  height={20}
+                  alt="logo"
+                />
+              </Button>
+            </Box>
+          </Typography>
+        </Box>
+      </Box>
+      <Box sx={{ paddingX: 2, marginY: 10 }}>
         {product &&
           product.trazability.map((trazability, index) => {
             const hasMilestones = trazability.line.some(
@@ -40,58 +77,59 @@ const ViewProduct = () => {
 
             if (hasMilestones) {
               return (
-                <TimelineItem key={index}>
-                  <TimelineOppositeContent
-                    sx={{ m: 'auto 0' }}
-                    align="right"
-                    variant="body2"
-                    color="text.secondary"
-                  ></TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot>
-                      <ModeEditIcon />
-                    </TimelineDot>
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent
-                    sx={{ backgroundColor: '#fff', color: 'primary.main' }}
+                <Accordion sx={{ backgroundColor: "primary.main" }}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
                   >
-                    <h1>{trazability.name}</h1>
-                    <ul>
+                    <Typography sx={{ color: "#fff", fontSize: 20 }}>
+                      {trazability.name}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Box>
                       {trazability.line.map((line, lineIndex) => {
                         if (line.milestones.length > 0) {
                           return (
-                            <li key={lineIndex}>
+                            <Typography
+                              key={lineIndex}
+                              sx={{ color: "#fff", fontSize: 20 }}
+                            >
                               <h2>{line.name}</h2>
-                              <ul>
+                              <Box>
                                 {line.milestones.map(
                                   (milestone, milestoneIndex) => (
-                                    <li key={milestoneIndex}>
+                                    <Box sx={{ display: "flex", gap: 2 }}>
                                       <Image
-                                      width={200}
-                                      height={200}
+                                        style={{ borderRadius: 20 }}
+                                        width={200}
+                                        height={200}
                                         src={milestone.image}
                                         alt={milestone.description}
                                       />
-                                      <p>{milestone.description}</p>
-                                    </li>
+
+                                      <Typography key={milestoneIndex}>
+                                        {milestone.description}
+                                      </Typography>
+                                    </Box>
                                   )
                                 )}
-                              </ul>
-                            </li>
+                              </Box>
+                            </Typography>
                           );
                         }
                         return null;
                       })}
-                    </ul>
-                  </TimelineContent>
-                </TimelineItem>
+                    </Box>
+                  </AccordionDetails>
+                </Accordion>
               );
             }
             return null;
           })}
-      </Timeline>
-    </HomeLayout>
+      </Box>
+    </>
   );
 };
 
