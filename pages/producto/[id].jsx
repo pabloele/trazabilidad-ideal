@@ -9,6 +9,7 @@ import {
   Tabs,
   Button,
   Grid,
+  useMediaQuery,
 } from '@mui/material';
 import useProduct from '../../hooks/useProduct';
 import { useRouter } from 'next/router';
@@ -23,16 +24,16 @@ import { useAuth } from '../../context/AuthContext';
 import { agroupMilestones, uploadIPFS } from '../../contract/toBlockChain';
 import ModalDialog from '../../components/Modals/ModalDialog';
 import { display } from '@mui/system';
+
 import Image from 'next/image';
 
 const Producto = () => {
+  const isSmallScreen = useMediaQuery('(min-width: 600px)');
   const router = useRouter();
   const { user } = useAuth();
 
-
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState('');
-
 
   const [txHash, setTxHash] = useState();
 
@@ -70,13 +71,10 @@ const Producto = () => {
   );
 
   useEffect(() => {
-    // Verifica que el código se esté ejecutando en el lado del cliente
     if (typeof window !== 'undefined') {
-      // Importa la biblioteca solo en el lado del cliente
       import('qr-code-styling').then((module) => {
         const QRCodeStyling = module.default;
 
-        // Usa la biblioteca aquí
         const qrCodeInstance = new QRCodeStyling({
           width: 180,
           height: 180,
@@ -163,13 +161,12 @@ const Producto = () => {
 
       uploadProduct(updateProduct);
 
-      // Restablecer estados y cerrar el modal
       setMilestoneBox([0]);
       setMilestones([{ description: '', image: '' }]);
       setFileUri('');
       setSubprocessSelected(null);
       setTabActive(null);
-      setOpen(false); // Cierra el modal
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -261,19 +258,21 @@ const Producto = () => {
 
     setProduct({ ...product, qrcode: QRdata });
   };
+
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '80vw',
+    width: isSmallScreen ? '95%' : '95%',
     height: '90vh',
     overflowY: 'auto',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    p: 4,
+    margin: isSmallScreen ? '0' : 'auto',
     textAlign: 'center',
+    justifyContent: 'center',
   };
 
   if (!product) {
@@ -292,8 +291,26 @@ const Producto = () => {
           uploadToBlockChain={uploadToBlockChain}
           loading={loading}
         />
-        <Modal open={open} onClose={handleClose}>
-          <Box sx={style}>
+
+        <Modal open={open} onClose={handleClose} sx={{ width: '100%' }}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: isSmallScreen ? '95%' : '95%',
+              height: '90vh',
+              overflowY: 'auto',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              margin: isSmallScreen ? '0' : 'auto',
+              textAlign: 'center',
+              justifyContent: 'center',
+              p: 4,
+            }}
+          >
             {showCategories && (
               <React.Fragment>
                 {/* <Typography
@@ -375,6 +392,7 @@ const Producto = () => {
                 ))}
               </React.Fragment>
             )}
+
             <Box key={boxIndex}>
               <Trazability
                 fileUri={fileUri}
