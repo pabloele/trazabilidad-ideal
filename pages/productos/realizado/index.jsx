@@ -91,7 +91,7 @@ const Products = () => {
           <TableBody>
             {ownerProducts &&
               ownerProducts?.map((product) => {
-                if (product.status === "en curso") {
+                if (product.status === "realizado") {
                   return (
                     <TableRow key={product.id}>
                       <TableCell>{product.lotNumber}</TableCell>

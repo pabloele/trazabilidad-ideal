@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
-import { HomeLayout } from '../../layout';
+import React, { useState, useEffect, useRef } from "react";
+import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
+import { HomeLayout } from "../../layout";
 import {
   Box,
   Typography,
@@ -36,6 +36,8 @@ const Producto = () => {
   const [path, setPath] = useState('');
 
   const [txHash, setTxHash] = useState();
+
+  const [error, setError] = useState();
 
   const {
     DialogModal,
@@ -78,8 +80,8 @@ const Producto = () => {
         const qrCodeInstance = new QRCodeStyling({
           width: 180,
           height: 180,
-          image: '/images/cropped-logo-ideal-2.png',
-          dotsOptions: { type: 'extra-rounded', color: '#000000' },
+          image: "/images/cropped-logo-ideal-2.png",
+          dotsOptions: { type: "extra-rounded", color: "#000000" },
           imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
@@ -122,8 +124,8 @@ const Producto = () => {
   };
 
   const handleChange = (event, newValue) => {
-    console.log('event', event.target.value);
-    console.log('value', newValue);
+    console.log("event", event.target.value);
+    console.log("value", newValue);
     setTabActive(newValue);
   };
 
@@ -131,7 +133,7 @@ const Producto = () => {
     let milestonesValid = true;
 
     milestones.forEach((element, index) => {
-      if (element.image === '' || element.description === '') {
+      if (element.image === "" || element.description === "") {
         const number = index + 1;
         alert(`Faltan completar datos en el hito número ${number}`);
         milestonesValid = false;
@@ -143,7 +145,7 @@ const Producto = () => {
     }
 
     if (!subprocessSelected || tabActive === null) {
-      alert('Por favor, selecciona un proceso y un subproceso.');
+      alert("Por favor, selecciona un proceso y un subproceso.");
       return;
     }
 
@@ -162,8 +164,8 @@ const Producto = () => {
       uploadProduct(updateProduct);
 
       setMilestoneBox([0]);
-      setMilestones([{ description: '', image: '' }]);
-      setFileUri('');
+      setMilestones([{ description: "", image: "" }]);
+      setFileUri("");
       setSubprocessSelected(null);
       setTabActive(null);
       setOpen(false);
@@ -184,7 +186,7 @@ const Producto = () => {
         lotNumber: product.lotNumber,
         protocolName: product.protocolName,
         name: product.name,
-        status: 'realizado',
+        status: "realizado",
         ownerUid: user.uid,
         trazability: trazability.path,
       };
@@ -198,7 +200,7 @@ const Producto = () => {
           name: product.name,
           lotNumber: product.lotNumber,
           ownerUid: product.ownerUid,
-          status: 'realizado',
+          status: "realizado",
           expirationDate: product.expirationDate,
           trazability: trazability.path,
         },
@@ -219,7 +221,7 @@ const Producto = () => {
 
       await window.ethereum.enable();
       const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
+        method: "eth_requestAccounts",
       });
       const userAddress = accounts[0];
 
@@ -233,15 +235,19 @@ const Producto = () => {
           tokenDataIPFS.url
         );
 
-        console.log(response);
-
         setTxHash(response.hash);
+
+        const updated = await updateProduct(router.query.id, "realizado");
       } catch (error) {
+        setError(error.reason);
+
         console.log(error);
       }
     } catch (error) {
       console.error(error.stack);
       console.error(error);
+
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -273,13 +279,36 @@ const Producto = () => {
     margin: isSmallScreen ? '0' : 'auto',
     textAlign: 'center',
     justifyContent: 'center',
+
+  const handleOpenModal = async () => {
+    Swal.fire({
+      title:
+        "¿Seguro que deseas certificar este proceso productivo en la blockchain?",
+      text: "Esta acción no es reversible y sera información pública",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Certificar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpenDialog(true);
+
+        try {
+          const response = await uploadToBlockChain();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
   };
 
   if (!product) {
     return (
       <HomeLayout>
-        <Box container sx={{ height: '90vh' }}>
-          <p>Loading...</p>
+        <Box container sx={{ height: "90vh" }}>
+          <Spinner />
         </Box>
       </HomeLayout>
     );
@@ -313,14 +342,6 @@ const Producto = () => {
           >
             {showCategories && (
               <React.Fragment>
-                {/* <Typography
-                  sx={{
-                    color: 'primary.main',
-                    fontSize: 24,
-                  }}
-                >
-                  Clasifica este hito
-                </Typography> */}
                 <Grid display="flex" justifyContent="center">
                   <Tabs
                     variant="scrollable"
@@ -331,7 +352,7 @@ const Producto = () => {
                       <Tab
                         label={element.name}
                         sx={{
-                          color: 'primary.main',
+                          color: "primary.main",
                         }}
                         key={element.name}
                       />
@@ -343,7 +364,7 @@ const Producto = () => {
                   // categoría
                   <Box key={element.name}>
                     <TabPanel
-                      sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                      sx={{ display: "flex", flexDirection: "row", gap: 2 }}
                       value={tabActive}
                       index={index}
                       key={index}
@@ -355,10 +376,10 @@ const Producto = () => {
                             marginTop: 1,
                             backgroundColor:
                               subprocessSelected === subprocess.name
-                                ? 'primary.main'
-                                : 'transparent',
-                            transition: 'gray 0.3s ease',
-                            borderRadius: '40px',
+                                ? "primary.main"
+                                : "transparent",
+                            transition: "gray 0.3s ease",
+                            borderRadius: "40px",
                           }}
                         >
                           <Typography
@@ -372,14 +393,14 @@ const Producto = () => {
                             sx={{
                               color:
                                 subprocessSelected === subprocess.name
-                                  ? 'white'
-                                  : 'primary.main',
+                                  ? "white"
+                                  : "primary.main",
                               marginY: 1,
                               marginX: 1,
                               fontSize: 12,
-                              textTransform: 'uppercase',
-                              ':hover': {
-                                cursor: 'pointer',
+                              textTransform: "uppercase",
+                              ":hover": {
+                                cursor: "pointer",
                               },
                             }}
                           >
@@ -418,19 +439,24 @@ const Producto = () => {
         <Box>
           <Typography
             sx={{
-              color: 'primary.main',
+              color: "primary.main",
               fontSize: 24,
             }}
           >
             Cadena de produccion para : {product.name}
           </Typography>
-          <Box sx={{ display: 'flex' }}>
+          {error && (
+            <Typography sx={{ color: "#FF0000", fontSize: 20 }}>
+              {error}
+            </Typography>
+          )}
+          <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
 
             <Box ref={ref}></Box>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Button
               variant="contained"
               onClick={createQRcode}
@@ -440,7 +466,8 @@ const Producto = () => {
             </Button>
             <Button
               variant="contained"
-              onClick={() => setOpenDialog(!openDialog)}
+              onClick={handleOpenModal}
+              disabled={product?.status !== "en curso"}
             >
               Certificar en blockchain
             </Button>
@@ -450,10 +477,10 @@ const Producto = () => {
         <IconButton
           size="large"
           sx={{
-            color: 'white',
-            backgroundColor: 'error.main',
-            ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
-            position: 'fixed',
+            color: "white",
+            backgroundColor: "error.main",
+            ":hover": { backgroundColor: "error.main", opacity: 0.9 },
+            position: "fixed",
             right: 50,
             bottom: 50,
           }}

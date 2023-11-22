@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -14,6 +15,20 @@ const ModalDialog = () => {
   const handleClickOpen = () => {
     setOpen(true);
   };
+=======
+import React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Box, Typography } from "@mui/material";
+import Spinner from "../Spinner/Spinner";
+import Link from "next/link";
+const ModalDialog = () => {
+  const [open, setOpen] = React.useState(true); // Cambiado de openDialog a open
+>>>>>>> b67a5fe858bd213a49373f2f7650130ff741d4bb
 
   const handleClose = () => {
     setOpen(false);
@@ -21,7 +36,27 @@ const ModalDialog = () => {
   const DialogModal = ({ uploadToBlockChain, loading, txHash }) => {
     return (
       <Box>
-        {txHash ? (
+        {loading && (
+          <Dialog open={true}>
+            <DialogTitle>Certificando con tecnologia blockchain</DialogTitle>
+
+            <DialogContent>
+              <DialogContentText></DialogContentText>
+              <Box
+                sx={{
+                  height: 200,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Spinner />
+              </Box>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {txHash && (
           <Dialog
             open={open}
             onClose={handleClose}
@@ -32,8 +67,10 @@ const ModalDialog = () => {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Puedes revisar el estado de la trazabilidad en el explorador de
-                bloques:
+                <Typography>
+                  Puedes revisar el estado de la trazabilidad en el explorador
+                  de bloques:
+                </Typography>
                 <Link
                   target="_blank"
                   rel="noopener noreferrer "
@@ -44,6 +81,7 @@ const ModalDialog = () => {
               </DialogContentText>
             </DialogContent>
           </Dialog>
+<<<<<<< HEAD
         ) : (
           <Dialog
             open={open}
@@ -78,6 +116,8 @@ const ModalDialog = () => {
               </Button>
             </DialogActions>
           </Dialog>
+=======
+>>>>>>> b67a5fe858bd213a49373f2f7650130ff741d4bb
         )}
       </Box>
     );
