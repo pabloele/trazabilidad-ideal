@@ -26,6 +26,7 @@ const ProtocolPage = () => {
   const { user } = useAuth();
   const [protocolSelected, setProtocolSelected] = useState();
   const [productName, setProductName] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [fileUri, setFileUri] = useState("");
   const [loading, setLoading] = useState(false);
   const [missingFields, setMissingFields] = useState([]);
@@ -122,25 +123,18 @@ const ProtocolPage = () => {
     } catch (error) {
       console.error("Error al subir la imagen:", error);
     }
-    // Puedes hacer lo que necesites con los archivos, por ejemplo, mostrar una vista previa o guardarlos en el estado
-    // Aquí, simplemente estamos actualizando el valor del campo con la información del archivo
   };
 
   const handleRemoveField = (index) => {
     setDynamicFields((prevFields) => {
       const updatedFields = [...prevFields];
-      updatedFields.splice(index, 1); // Elimina el elemento en la posición 'index'
+      updatedFields.splice(index, 1);
       return updatedFields;
     });
   };
 
   const handleFileChange = (index, event) => {
     const files = event.target.files;
-
-    console.log(files);
-
-    // Puedes hacer lo que necesites con los archivos, por ejemplo, guardarlos en el estado
-    // Aquí, simplemente estamos actualizando el valor del campo con la información del archivo
     setDynamicFields((prevFields) => {
       const updatedFields = [...prevFields];
       updatedFields[index] = { ...updatedFields[index], value: files };
@@ -167,11 +161,20 @@ const ProtocolPage = () => {
       missing.push("Nombre del producto");
     }
 
+    if (!companyName.trim()) {
+      missing.push("Empresa");
+    }
+
     if (fileUri === "") {
       missing.push("Imagen del producto");
     }
 
     setMissingFields(missing);
+
+    setTimeout(() => {
+      setMissingFields([]);
+    }, 3000);
+
     return missing.length === 0;
   };
 
@@ -208,8 +211,8 @@ const ProtocolPage = () => {
       case "productName":
         setProductName(value);
         break;
-      case "lotNumber":
-        setLotNumber(value);
+      case "company":
+        setCompanyName(value);
         break;
       default:
         break;
@@ -220,8 +223,17 @@ const ProtocolPage = () => {
     const isValid = validateFields();
 
     if (isValid) {
-      setLoading(true);
+      //setLoading(true);
 
+      console.log({
+        name: productName,
+        trazability: protocolSelected.trazability,
+        status: "en curso",
+        protocolName: protocolSelected.name,
+        productImage: fileUri,
+        company: companyName,
+        additionalFields: dynamicFields,
+      });
       try {
         const docRef = await addUserProduct(user.uid, {
           name: productName,
@@ -229,6 +241,8 @@ const ProtocolPage = () => {
           status: "en curso",
           protocolName: protocolSelected.name,
           productImage: fileUri,
+          company: companyName,
+          additionalFields: dynamicFields,
         });
         router.push(`/producto/${docRef}`);
       } catch (error) {
@@ -279,6 +293,18 @@ const ProtocolPage = () => {
 
           <Box sx={{ marginTop: 2 }}>
             <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+              Nombre de la empresa / compania
+            </Typography>
+            <TextField
+              autoComplete="off"
+              label="Empresa"
+              value={companyName}
+              onChange={(e) => handleChange("company", e.target.value)}
+            />
+          </Box>
+
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
               Imagen del producto
             </Typography>
             <Box
@@ -312,7 +338,9 @@ const ProtocolPage = () => {
               {dynamicFields.map((field, index) => (
                 <Box key={index}>
                   {/* Mostrar el nombre del campo */}
-                  <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+                  <Typography
+                    sx={{ color: "primary.main", fontSize: 20, marginY: 2 }}
+                  >
                     {field.name}
                   </Typography>
 
@@ -338,7 +366,6 @@ const ProtocolPage = () => {
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 2,
-                        marginTop: 2,
                       }}
                     >
                       {field.value ? (
@@ -376,9 +403,6 @@ const ProtocolPage = () => {
         </Box>
 
         <Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
-          <Button variant="contained" onClick={handleSubmit} disabled={loading}>
-            Comenzar la trazabilidad
-          </Button>
           <Dropdown>
             <MenuButton>Agregar un nuevo campo</MenuButton>
             <Menu slots={{ listbox: Listbox }}>
@@ -414,6 +438,9 @@ const ProtocolPage = () => {
               </MenuItem>
             </Menu>
           </Dropdown>
+          <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+            Comenzar la trazabilidad
+          </Button>
         </Box>
       </Box>
     </HomeLayout>
@@ -510,7 +537,6 @@ const MenuButton = styled(BaseMenuButton)(
     font-size: 0.875rem;
     line-height: 1.5;
     padding: 8px 16px;
-    border-radius: 8px;
     color: white;
     transition: all 150ms ease;
     cursor: pointer;
