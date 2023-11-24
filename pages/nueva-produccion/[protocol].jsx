@@ -4,13 +4,20 @@ import { useRouter } from "next/router";
 import useProtocols from "../../hooks/useProtocols";
 import { HomeLayout } from "../../layout";
 import ImageIcon from "@mui/icons-material/Image";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { create } from "ipfs-http-client";
 import Image from "next/image";
 import { addUserProduct } from "../../firebase/controllers/firestoreControllers";
 import { useAuth } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner/Spinner";
+import { Dropdown } from "@mui/base/Dropdown";
+import { Menu } from "@mui/base/Menu";
+import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
+import { MenuItem as BaseMenuItem, menuItemClasses } from "@mui/base/MenuItem";
+import { styled } from "@mui/system";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { uplaodImageIPFS, uploadIPFS } from "../../contract/toBlockChain";
+import Swal from "sweetalert2";
 
 const ProtocolPage = () => {
   const router = useRouter();
@@ -19,12 +26,129 @@ const ProtocolPage = () => {
   const { user } = useAuth();
   const [protocolSelected, setProtocolSelected] = useState();
   const [productName, setProductName] = useState("");
-  const [lotNumber, setLotNumber] = useState("");
-  const [expeditionDate, setExpeditionDate] = useState(null);
-  const [expirationDate, setExpirationDate] = useState(null);
   const [fileUri, setFileUri] = useState("");
   const [loading, setLoading] = useState(false);
   const [missingFields, setMissingFields] = useState([]);
+  const [loadingImage, setLoadingImage] = useState(false);
+  const [dynamicFields, setDynamicFields] = useState([]);
+
+  const [error, setError] = useState("");
+
+  const handleFieldChange = (index, value) => {
+    setDynamicFields((prevFields) => {
+      const updatedFields = [...prevFields];
+      updatedFields[index] = { ...updatedFields[index], value: value };
+      return updatedFields;
+    });
+  };
+
+  const handleAddField = (type) => {
+    // Solicitar al usuario el nombre del campo
+
+    Swal.fire({
+      title: "Ingrese el nombre del campo",
+      text: "Por ejemplo, certificado, nombre de empresa, etc",
+      input: "text",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Agregar",
+      cancelButtonText: "Cancelar",
+      preConfirm: async (fieldName) => {
+        if (fieldName !== "") {
+          // Crear el nuevo campo
+          let newField;
+          switch (type) {
+            case "text":
+              newField = { type: "text", value: "", name: fieldName };
+              break;
+            case "image":
+              newField = { type: "image", value: "", name: fieldName };
+              break;
+            case "file":
+              newField = { type: "file", value: "", name: fieldName };
+              break;
+            default:
+              break;
+          }
+
+          // Agregar el nuevo campo al estado
+          if (newField) {
+            setDynamicFields((prevFields) => [...prevFields, newField]);
+          }
+        } else {
+          setError("Por favor ingrese el nombre del campo");
+
+          setTimeout(() => {
+            setError("");
+          }, 3000);
+        }
+      },
+    });
+  };
+
+  const handleImageChange = (index, event) => {
+    try {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            const image = await uplaodImageIPFS(file);
+
+            setDynamicFields((prevFields) => {
+              const updatedFields = [...prevFields];
+              updatedFields[index] = {
+                ...updatedFields[index],
+                value: image.url,
+              };
+              return updatedFields;
+            });
+
+            console.log(dynamicFields);
+          } catch (error) {
+            console.error("Error al subir la imagen a IPFS:", error);
+          } finally {
+            setLoadingImage(false);
+          }
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+    }
+    // Puedes hacer lo que necesites con los archivos, por ejemplo, mostrar una vista previa o guardarlos en el estado
+    // Aquí, simplemente estamos actualizando el valor del campo con la información del archivo
+  };
+
+  const handleRemoveField = (index) => {
+    setDynamicFields((prevFields) => {
+      const updatedFields = [...prevFields];
+      updatedFields.splice(index, 1); // Elimina el elemento en la posición 'index'
+      return updatedFields;
+    });
+  };
+
+  const handleFileChange = (index, event) => {
+    const files = event.target.files;
+
+    console.log(files);
+
+    // Puedes hacer lo que necesites con los archivos, por ejemplo, guardarlos en el estado
+    // Aquí, simplemente estamos actualizando el valor del campo con la información del archivo
+    setDynamicFields((prevFields) => {
+      const updatedFields = [...prevFields];
+      updatedFields[index] = { ...updatedFields[index], value: files };
+      return updatedFields;
+    });
+
+    console.log(dynamicFields);
+  };
 
   useEffect(() => {
     if (protocols) {
@@ -36,40 +160,11 @@ const ProtocolPage = () => {
     }
   }, [protocols]);
 
-  const auth =
-    "Basic " +
-    Buffer.from(
-      process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ":" +
-        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString("base64");
-
-  const ipfs = create({
-    host: "ipfs.infura.io",
-    port: 5001,
-    protocol: "https",
-    headers: {
-      authorization: auth,
-    },
-  });
-
   const validateFields = () => {
     const missing = [];
 
     if (!productName.trim()) {
       missing.push("Nombre del producto");
-    }
-
-    if (!lotNumber.trim()) {
-      missing.push("Número de lote");
-    }
-
-    if (!expeditionDate) {
-      missing.push("Fecha de expedición");
-    }
-
-    if (!expirationDate) {
-      missing.push("Fecha de vencimiento");
     }
 
     if (fileUri === "") {
@@ -90,13 +185,14 @@ const ProtocolPage = () => {
         const file = e.target.files[0];
         if (file) {
           try {
-            const result = await ipfs.add(file);
-            const ipfsHash = result.path;
-            const urlImage = `https://ipfs.io/ipfs/${ipfsHash}`;
-            console.log(urlImage);
-            setFileUri(urlImage);
+            setLoadingImage(true);
+
+            const result = await uplaodImageIPFS(file);
+            setFileUri(result.url);
           } catch (error) {
             console.error("Error al subir la imagen a IPFS:", error);
+          } finally {
+            setLoadingImage(false);
           }
         }
       };
@@ -115,12 +211,6 @@ const ProtocolPage = () => {
       case "lotNumber":
         setLotNumber(value);
         break;
-      case "expeditionDate":
-        setExpeditionDate(value);
-        break;
-      case "expirationDate":
-        setExpirationDate(value);
-        break;
       default:
         break;
     }
@@ -138,9 +228,6 @@ const ProtocolPage = () => {
           trazability: protocolSelected.trazability,
           status: "en curso",
           protocolName: protocolSelected.name,
-          lotNumber,
-          expeditionDate: expeditionDate.toISOString(),
-          expirationDate: expirationDate.toISOString(),
           productImage: fileUri,
         });
         router.push(`/producto/${docRef}`);
@@ -154,7 +241,7 @@ const ProtocolPage = () => {
 
   return (
     <HomeLayout>
-      <Box sx={{ paddingY: 2 }}>
+      <Box sx={{ paddingY: 1 }}>
         <Box component={"form"}>
           <Typography sx={{ color: "primary.main", fontSize: 24 }}>
             Crea tu producto
@@ -171,7 +258,13 @@ const ProtocolPage = () => {
             {missingFields.join(", ")}
           </Typography>
         )}
-        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+
+        {error && (
+          <Typography sx={{ color: "error.main", fontSize: 16 }}>
+            {error}
+          </Typography>
+        )}
+        <Box sx={{}}>
           <Box sx={{ marginTop: 2 }}>
             <Typography sx={{ color: "primary.main", fontSize: 20 }}>
               Nombre del producto
@@ -184,40 +277,6 @@ const ProtocolPage = () => {
             />
           </Box>
 
-          <Box sx={{ marginTop: 2 }}>
-            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-              Numero de lote
-            </Typography>
-            <TextField
-              autoComplete="off"
-              label="Nro de lote"
-              value={lotNumber}
-              onChange={(e) => handleChange("lotNumber", e.target.value)}
-            />
-          </Box>
-          <Box sx={{ marginTop: 2 }}>
-            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-              Fecha de expedición
-            </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={expeditionDate}
-                onChange={(date) => handleChange("expeditionDate", date)}
-              />
-            </LocalizationProvider>
-          </Box>
-
-          <Box sx={{ marginTop: 2 }}>
-            <Typography sx={{ color: "primary.main", fontSize: 20 }}>
-              Fecha de vencimiento
-            </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={expirationDate}
-                onChange={(date) => handleChange("expirationDate", date)}
-              />
-            </LocalizationProvider>
-          </Box>
           <Box sx={{ marginTop: 2 }}>
             <Typography sx={{ color: "primary.main", fontSize: 20 }}>
               Imagen del producto
@@ -239,6 +298,8 @@ const ProtocolPage = () => {
             >
               {fileUri ? (
                 <Image src={fileUri} width={240} height={120} />
+              ) : loadingImage ? (
+                <Spinner />
               ) : (
                 <>
                   <ImageIcon />
@@ -246,20 +307,234 @@ const ProtocolPage = () => {
                 </>
               )}
             </Box>
+
+            <Box>
+              {dynamicFields.map((field, index) => (
+                <Box key={index}>
+                  {/* Mostrar el nombre del campo */}
+                  <Typography sx={{ color: "primary.main", fontSize: 20 }}>
+                    {field.name}
+                  </Typography>
+
+                  {/* Renderizar el campo según el tipo */}
+                  {field.type === "text" && (
+                    <TextField
+                      placeholder={field.name}
+                      type="text"
+                      value={field.value}
+                      onChange={(e) => handleFieldChange(index, e.target.value)}
+                    />
+                  )}
+                  {field.type === "image" && (
+                    <Box
+                      onClick={() => handleImageChange(index)}
+                      sx={{
+                        backgroundColor: "#e1e1e1",
+                        width: 240,
+                        height: 120,
+                        color: "#000",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 2,
+                        marginTop: 2,
+                      }}
+                    >
+                      {field.value ? (
+                        <Image src={field.value} width={240} height={120} />
+                      ) : loadingImage ? (
+                        <Spinner />
+                      ) : (
+                        <>
+                          <ImageIcon />
+                          <Typography>Selecciona una imagen</Typography>
+                        </>
+                      )}
+                    </Box>
+                  )}
+                  {field.type === "file" && (
+                    <input
+                      type="file"
+                      onChange={(e) => handleFileChange(index, e)}
+                      style={{ color: "red", backgroundColor: "lightgray" }}
+                    />
+                  )}
+
+                  <Button
+                    sx={{ marginTop: 1, marginLeft: 1 }}
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleRemoveField(index)}
+                  >
+                    Eliminar Campo
+                  </Button>
+                </Box>
+              ))}
+            </Box>
           </Box>
         </Box>
 
-        <Button
-          sx={{ marginTop: 5 }}
-          variant="contained"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          Comenzar la trazabilidad
-        </Button>
+        <Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
+          <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+            Comenzar la trazabilidad
+          </Button>
+          <Dropdown>
+            <MenuButton>Agregar un nuevo campo</MenuButton>
+            <Menu slots={{ listbox: Listbox }}>
+              <MenuItem
+                onClick={() => handleAddField("text")}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                Texto <EditNoteIcon />
+              </MenuItem>
+              <MenuItem
+                onClick={() => handleAddField("image")}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                Imagen <ImageIcon />
+              </MenuItem>
+              <MenuItem
+                onClick={() => handleAddField("file")}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                Archivo <AttachFileIcon />
+              </MenuItem>
+            </Menu>
+          </Dropdown>
+        </Box>
       </Box>
     </HomeLayout>
   );
 };
+const blue = {
+  50: "#F0F7FF",
+  100: "#C2E0FF",
+  200: "#99CCF3",
+  300: "#66B2FF",
+  400: "#3399FF",
+  500: "#007FFF",
+  600: "#0072E6",
+  700: "#0059B3",
+  800: "#004C99",
+  900: "#003A75",
+};
+
+const grey = {
+  50: "#F3F6F9",
+  100: "#E5EAF2",
+  200: "#DAE2ED",
+  300: "#C7D0DD",
+  400: "#B0B8C4",
+  500: "#9DA8B7",
+  600: "#6B7A90",
+  700: "#434D5B",
+  800: "#303740",
+  900: "#1C2025",
+};
+
+const Listbox = styled("ul")(
+  ({ theme }) => `
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+    padding: 6px;
+    margin: 12px 0;
+    min-width: 200px;
+    border-radius: 12px;
+    overflow: auto;
+    outline: 0px;
+    background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
+    border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
+    color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+    box-shadow: 0px 4px 30px ${
+      theme.palette.mode === "dark" ? grey[900] : grey[200]
+    };
+    z-index: 1;
+    `
+);
+
+const MenuItem = styled(BaseMenuItem)(
+  ({ theme }) => `
+    list-style: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: default;
+    user-select: none;
+  
+    &:last-of-type {
+      border-bottom: none;
+    }
+  
+    &.${menuItemClasses.focusVisible} {
+      outline: 3px solid ${
+        theme.palette.mode === "dark" ? blue[600] : blue[200]
+      };
+      background-color: ${
+        theme.palette.mode === "dark" ? grey[800] : grey[100]
+      };
+      color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+    }
+  
+    &.${menuItemClasses.disabled} {
+      color: ${theme.palette.mode === "dark" ? grey[700] : grey[400]};
+    }
+  
+    &:hover:not(.${menuItemClasses.disabled}) {
+      background-color: ${theme.palette.mode === "dark" ? blue[900] : blue[50]};
+      color: ${theme.palette.mode === "dark" ? blue[100] : blue[900]};
+    }
+
+    &:hover {
+      cursor:pointer;
+    }
+    `
+);
+
+const MenuButton = styled(BaseMenuButton)(
+  ({ theme }) => `
+    font-family: IBM Plex Sans, sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: white;
+    transition: all 150ms ease;
+    cursor: pointer;
+    background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
+    border: 1px solid ${theme.palette.mode === "dark" ? blue[700] : blue[700]};
+    color: ${theme.palette.mode === "dark" ? grey[200] : grey[900]};
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  
+    &:hover {
+      background: ${theme.palette.mode === "dark" ? grey[800] : grey[50]};
+      border-color: ${theme.palette.mode === "dark" ? grey[600] : grey[300]};
+    }
+  
+    &:active {
+      background: ${theme.palette.mode === "dark" ? grey[700] : grey[100]};
+    }
+  
+    &:focus-visible {
+      box-shadow: 0 0 0 4px ${
+        theme.palette.mode === "dark" ? blue[300] : blue[200]
+      };
+      outline: none;
+    }
+    `
+);
 
 export default ProtocolPage;

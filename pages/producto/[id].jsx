@@ -26,6 +26,7 @@ import ModalDialog from "../../components/Modals/ModalDialog";
 import Spinner from "../../components/Spinner/Spinner";
 import Swal from "sweetalert2";
 import { useAddress } from "@thirdweb-dev/react";
+import { updateProduct } from "../../firebase/controllers/firestoreControllers";
 
 const Producto = () => {
   const address = useAddress();
@@ -36,9 +37,7 @@ const Producto = () => {
 
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState("");
-
   const [txHash, setTxHash] = useState();
-
   const [error, setError] = useState();
 
   const {
@@ -222,9 +221,17 @@ const Producto = () => {
 
       const tokenDataIPFS = await uploadIPFS(tokenData);
 
-      await switchNetwork(provider);
-
       const signer = provider.getSigner();
+
+      const network = await provider.getNetwork();
+
+      console.log(network);
+
+      if (network.chainId !== process.env.NEXT_PUBLIC_CHAIN_ID) {
+        throw new Error(
+          `No estás en la red correcta, por favor seleccione la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`
+        );
+      }
 
       const trazabilityContract = new ethers.Contract(
         contractAddress,
@@ -242,7 +249,11 @@ const Producto = () => {
 
         setTxHash(response.hash);
 
-        const updated = await updateProduct(router.query.id, "realizado");
+        const updated = await updateProduct(
+          router.query.id,
+          "realizado",
+          txHash
+        );
       } catch (error) {
         setError(error.reason);
 

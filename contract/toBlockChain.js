@@ -60,3 +60,30 @@ export const uploadIPFS = async (file) => {
     url: fileToIPFSURL,
   };
 };
+
+export const uplaodImageIPFS = async (file) => {
+  const auth =
+    "Basic " +
+    Buffer.from(
+      process.env.NEXT_PUBLIC_IPFS_API_KEY +
+        ":" +
+        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
+    ).toString("base64");
+
+  const ipfs = create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: "https",
+    headers: {
+      authorization: auth,
+    },
+  });
+  const fileToIPFS = await ipfs.add(file);
+
+  const fileToIPFSURL = `https://ipfs.io/ipfs/${fileToIPFS.path}`;
+
+  return {
+    path: fileToIPFS.path,
+    url: fileToIPFSURL,
+  };
+};
