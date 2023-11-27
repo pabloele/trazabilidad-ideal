@@ -120,7 +120,7 @@ const Trazability = ({
             Agregar contenido
           </Button>
 
-          <AddBoxIcon
+          {/* <AddBoxIcon
             onClick={addMilestoneBox}
             sx={{
               color: 'primary.main',
@@ -128,7 +128,7 @@ const Trazability = ({
                 cursor: 'pointer',
               },
             }}
-          />
+          /> */}
           {milestones?.map((e, i) => {
             const index = milestones.length - 1 - i;
             return (
