@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -6,21 +6,22 @@ import {
   Link,
   TextField,
   Typography,
-} from "@mui/material";
-import { Google } from "@mui/icons-material";
-import { AuthLayout } from "../../layout";
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useRouter } from "next/navigation";
-import { createUser } from "../../firebase/controllers/firestoreControllers";
-import { FirebaseAuth } from "../../firebase/config";
-import { getRedirectResult } from "firebase/auth";
+} from '@mui/material';
+import { Google } from '@mui/icons-material';
+import { AuthLayout } from '../../layout';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { createUser } from '../../firebase/controllers/firestoreControllers';
+import { FirebaseAuth } from '../../firebase/config';
+import { getRedirectResult } from 'firebase/auth';
 const LoginPage = () => {
   const { loginWithGoogle, login } = useAuth();
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [logingIn, setLogingIn] = useState(false);
 
   const onUserEmailChange = (e) => {
     setEmail(e.target.value);
@@ -33,14 +34,15 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     try {
       const response = await login(email, password);
-      console.log("Login successful: ", response);
-      router.push("/home");
+      console.log('Login successful: ', response);
+      router.push('/home');
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleLoginWithGoogle = (e) => {
+    setLogingIn(true);
     loginWithGoogle().then((res) => {
       console.log(res.user.uid);
 
@@ -49,7 +51,9 @@ const LoginPage = () => {
         data: { name: res.user.displayName, email: res.user.email },
         products: [],
       });
-      if (res.user) router.push("/home");
+      if (res.user) {
+        router.push('/home');
+      }
     });
   };
 
@@ -58,7 +62,7 @@ const LoginPage = () => {
       const result = await getRedirectResult(FirebaseAuth);
 
       if (result.user) {
-        router.push("/home");
+        router.push('/home');
       }
     } catch (error) {
       console.log(error.message);
@@ -71,7 +75,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <AuthLayout title="Login">
+      <AuthLayout title="Login" logingIn={logingIn}>
         <form
           // onSubmit={handleLogin}
           className="animate__animated animate__fadeIn animate__faster"
