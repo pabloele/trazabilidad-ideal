@@ -177,11 +177,14 @@ export const addProtocol = async () => {
   });
 };
 
-export const updateProduct = async (id, status) => {
+export const updateProduct = async (id, status, txHash) => {
   try {
     const productRef = doc(db, "products", id);
 
-    const response = await updateDoc(productRef, { status: status });
+    const response = await updateDoc(productRef, {
+      status: status,
+      txHash: txHash,
+    });
   } catch (error) {
     console.log(error);
   }

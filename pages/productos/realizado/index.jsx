@@ -75,28 +75,49 @@ const Products = () => {
         </Box>
 
         <Box>
-          <TextField label="Buscar" variant="outlined" />
+          <TextField
+            label="Buscar"
+            variant="outlined"
+            size="small"
+            sx={{ width: "20%", marginTop: "2rem", marginBottom: "1rem" }}
+          />
         </Box>
 
-        <Table>
+        <Table aria-label="simple table">
           <TableHead>
-            <TableRow>
-              <TableCell>Nro lote</TableCell>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Protocolo</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Acciones</TableCell>
+            <TableRow sx={{ backgroundColor: "primary.main" }}>
+              <TableCell
+                sx={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}
+              >
+                Nombre
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}
+              >
+                Protocolo
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}
+              >
+                Estado
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}
+              >
+                Acciones
+              </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody sx={{ backgroundColor: "#fff" }}>
             {ownerProducts &&
               ownerProducts?.map((product) => {
                 if (product.status === "realizado") {
                   return (
                     <TableRow key={product.id}>
-                      <TableCell>{product.lotNumber}</TableCell>
                       <TableCell>{product.name}</TableCell>
-                      <TableCell>{product.protocolName}</TableCell>
+                      <TableCell sx={{ textTransform: "capitalize" }}>
+                        {product.protocolName}
+                      </TableCell>
                       <TableCell>{product.status}</TableCell>
 
                       <TableCell>

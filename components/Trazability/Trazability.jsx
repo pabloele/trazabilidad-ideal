@@ -120,7 +120,7 @@ const Trazability = ({
             Agregar contenido
           </Button>
 
-          <AddBoxIcon
+          {/* <AddBoxIcon
             onClick={addMilestoneBox}
             sx={{
               color: 'primary.main',
@@ -128,7 +128,7 @@ const Trazability = ({
                 cursor: 'pointer',
               },
             }}
-          />
+          /> */}
           {milestones?.map((e, i) => {
             const index = milestones.length - 1 - i;
             return (
@@ -146,7 +146,7 @@ const Trazability = ({
                         borderRadius: isSmallScreen
                           ? '120px 0 0 120px'
                           : '120px 120px 0 0',
-                        border: '15px solid',
+                        border: '5px solid',
                         borderColor: 'gray',
                         borderBottom: isSmallScreen ? '' : 'none',
                         borderRight: isSmallScreen ? 'none' : '',
@@ -191,7 +191,7 @@ const Trazability = ({
                       direction={isSmallScreen ? 'row' : 'column'}
                       gap={4}
                       sx={{
-                        border: '15px solid',
+                        border: '5px solid',
                         borderColor: 'gray',
                         borderLeft: isSmallScreen ? 'none' : '',
                         borderRight: isSmallScreen ? 'none' : '',
@@ -459,7 +459,7 @@ const Trazability = ({
                         borderRadius: isSmallScreen
                           ? '0 120px 120px 0'
                           : '0 0 120px  120px',
-                        border: '15px solid',
+                        border: '5px solid',
                         borderColor: 'gray',
                         borderTop: isSmallScreen ? '' : 'none',
                         borderLeft: isSmallScreen ? 'none' : '',
