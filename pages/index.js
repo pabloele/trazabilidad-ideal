@@ -1,10 +1,9 @@
-import RegisterPage from "./RegisterPage";
+import LoginPage from './LoginPage';
 
 export default function Home() {
   return (
     <>
-      {/* <NftGasless /> */}
-      <RegisterPage />
+      <LoginPage />
     </>
   );
 }
