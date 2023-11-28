@@ -21,6 +21,7 @@ import {
   getUserProducts,
   getUsers,
 } from '../../firebase/controllers/firestoreControllers';
+import Recent from '../../components/recentProducts/Recent';
 
 const activeProduct = 0;
 
