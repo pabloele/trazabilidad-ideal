@@ -20,6 +20,19 @@ const Welcome = () => {
         textAlign: 'center',
       }}
     >
+      <Button
+        variant="contained"
+        sx={{
+          position: 'fixed',
+          top: '5rem',
+          right: '6%',
+          marginTop: '0.5rem',
+          zIndex: 9999,
+        }}
+        onClick={() => router.push('/nueva-produccion')}
+      >
+        Nueva
+      </Button>
       <Box
         sx={{
           display: 'flex',
@@ -28,27 +41,17 @@ const Welcome = () => {
           justifyItems: 'center',
         }}
       >
-        <Box sx={{ color: 'primary.main' }}>
-          <Box sx={{ color: 'primary.main', fontSize: '3rem' }}>
-            <FaEthereum />
-          </Box>
-          {/* <Typography sx={{ fontSize: 20 }}>
-            Sistema de trazabilidad blockchain
-          </Typography> */}
-          <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
-            Sistema de trazabilidad blockchain
-          </Typography>
-          {/* <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
-            ¡Bienvenido!
-          </Typography> */}
-
-          <Button
-            variant="contained"
-            sx={{ marginY: 4 }}
-            onClick={() => router.push('/nueva-produccion')}
-          >
-            Crear una nueva trazabilidad
-          </Button>
+        <Box
+          sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}
+        >
+          <Grid container direction="column">
+            <Box sx={{ fontSize: '3rem', marginRight: '1rem' }}>
+              <FaEthereum />
+            </Box>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
+              Sistema de trazabilidad blockchain
+            </Typography>
+          </Grid>
         </Box>
       </Box>
       <Recent />

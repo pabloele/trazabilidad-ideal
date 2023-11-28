@@ -24,7 +24,7 @@ const Recent = () => {
   );
 
   const [page, setPage] = useState(1);
-  const productsPerPage = 3;
+  const productsPerPage = 4;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -66,7 +66,32 @@ const Recent = () => {
                   }}
                 >
                   <Card
-                    sx={{ borderRadius: '20px' }}
+                    sx={{
+                      position: 'relative',
+                      borderRadius: '20px',
+                      overflow: 'hidden',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 16px 20px 0 rgba(0,0,0,0.3)',
+                        '&:before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          background: 'rgba(0, 0, 0, 0.3)',
+                          borderRadius: '20px',
+                          transition: 'opacity 0.3s',
+                          pointerEvents: 'none',
+                          opacity: 0,
+                        },
+                        '&:hover:before': {
+                          opacity: 1,
+                        },
+                      },
+                    }}
                     onClick={() => router.push(`/producto/${product.id}`)}
                   >
                     <CardMedia

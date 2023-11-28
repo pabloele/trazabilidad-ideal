@@ -1,4 +1,4 @@
-import { LogoutOutlined, MenuOutlined } from "@mui/icons-material";
+import { LogoutOutlined, MenuOutlined } from '@mui/icons-material';
 import {
   AppBar,
   Grid,
@@ -6,10 +6,10 @@ import {
   Toolbar,
   Typography,
   Box,
-} from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
-import { ConnectWallet } from "@thirdweb-dev/react";
-import sideBarStore from "../../store/sideBarStore";
+} from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
+import { ConnectWallet } from '@thirdweb-dev/react';
+import sideBarStore from '../../store/sideBarStore';
 export const NavBar = ({ drawerWidth }) => {
   const handleLogout = (e) => {
     try {
@@ -33,7 +33,7 @@ export const NavBar = ({ drawerWidth }) => {
       <Toolbar>
         <IconButton
           edge="start"
-          sx={{ mr: 2, color: "secondary.main", display: { sm: "none" } }}
+          sx={{ mr: 2, color: 'secondary.main', display: { sm: 'none' } }}
         >
           <MenuOutlined onClick={onOpen} />
         </IconButton>
@@ -49,7 +49,10 @@ export const NavBar = ({ drawerWidth }) => {
           </Typography>
 
           <Box>
-            <ConnectWallet btnTitle="Conectar billetera" />
+            <ConnectWallet
+              btnTitle="Conectar Wallet"
+              style={{ fontSize: '14px' }}
+            />
             <IconButton onClick={handleLogout}>
               <LogoutOutlined color="secondary" />
             </IconButton>
