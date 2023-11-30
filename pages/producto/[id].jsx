@@ -73,17 +73,6 @@ const Producto = () => {
     router.query.id
   );
 
-  let provider = new ethers.providers.Web3Provider(window.ethereum);
-
-  provider.on("network", (newNetwork, oldNetwork) => {
-    if (oldNetwork) {
-      // La red ha cambiado
-      console.log("Network changed:", oldNetwork.name, "->", newNetwork.name);
-
-      // Aquí puedes llamar a la lógica necesaria para manejar el cambio de red
-      // por ejemplo, actualizando la interfaz de usuario o recargando la página
-    }
-  });
   useEffect(() => {
     if (typeof window !== "undefined") {
       import("qr-code-styling").then((module) => {
@@ -186,8 +175,12 @@ const Producto = () => {
     }
   };
 
+  console.log(product);
+
   const uploadToBlockChain = async () => {
     try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
       if (!address)
         throw new Error(
           "Conecte una billetera para certificar la trazabilidad"
@@ -198,23 +191,20 @@ const Producto = () => {
 
       const trazability = await uploadIPFS(trazabilidadAgrupada);
 
+      const productToIpfs = await uploadIPFS(product);
+
       const formatProduct = {
         id: router.query.id,
-        lotNumber: product.lotNumber,
-        protocolName: product.protocolName,
         name: product.name,
-        status: "realizado",
-        ownerUid: user.uid,
         trazability: trazability.path,
+        productReference: productToIpfs.path,
       };
+
+      const formatedDescription = `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`;
 
       const tokenData = {
         name: product.name,
-        description: {
-          expeditionDate: product.expeditionDate,
-          productImage: product.productImage,
-          trazability: trazability.path,
-        },
+        description: `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`,
 
         image: product.productImage,
       };
@@ -226,8 +216,7 @@ const Producto = () => {
       const network = await provider.getNetwork();
 
       console.log(network);
-
-      if (network.chainId !== process.env.NEXT_PUBLIC_CHAIN_ID) {
+      if (network.chainId !== Number(process.env.NEXT_PUBLIC_CHAIN_ID)) {
         throw new Error(
           `No estás en la red correcta, por favor seleccione la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`
         );
@@ -479,7 +468,7 @@ const Producto = () => {
             <Button
               variant="contained"
               onClick={handleOpenModal}
-              disabled={product?.status !== "en curso"}
+              // disabled={product?.status !== "en curso"}
             >
               Certificar en blockchain
             </Button>
