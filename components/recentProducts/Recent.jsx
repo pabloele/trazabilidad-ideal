@@ -33,6 +33,7 @@ const Recent = () => {
   const startIndex = (page - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
   const displayedProducts = ownerProducts.slice(startIndex, endIndex);
+  if (!ownerProducts) return;
   return (
     <Paper
       sx={{
