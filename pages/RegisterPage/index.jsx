@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Alert,
@@ -7,32 +7,35 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
-import { AuthLayout } from '../../layout';
-import styles from './RegisterPage.module.css';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useForm } from '../../hooks/useForm';
+} from "@mui/material";
+import { AuthLayout } from "../../layout";
+import styles from "./RegisterPage.module.css";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useForm } from "../../hooks/useForm";
 
 const initialForm = {
-  username: '',
-  email: '',
-  password: '',
+  username: "",
+  email: "",
+  password: "",
 };
 
 const formValidations = {
-  email: [(value) => value.includes('@'), 'Proporcione un email válido.'],
+  email: [(value) => value.includes("@"), "Proporcione un email válido."],
   password: [
     (value) => value.length >= 6,
-    'La contraseña debe tener más de seis caracteres.',
+    "La contraseña debe tener más de seis caracteres.",
   ],
-  username: [(value) => value.length >= 1, 'El nombre es obligatorio'],
+  username: [(value) => value.length >= 1, "El nombre es obligatorio"],
 };
 
 const RegisterPage = () => {
   const { user, loginWithGoogle, logout, error, login, signup } = useAuth();
   const router = useRouter();
   const [showErrors, setShowErrors] = useState(false);
+
+  const [errors, setError] = useState("");
+
   const {
     username,
     password,
@@ -54,8 +57,16 @@ const RegisterPage = () => {
     try {
       const response = await signup(email, password);
       console.log(response);
-      router.push('/home');
+      router.push("/home");
     } catch (error) {
+      setError("");
+      if (error.message === "Firebase: Error (auth/email-already-in-use).") {
+        setError("Este email ya se encuentra registrado");
+      }
+
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       console.log(error.message);
     }
   };
@@ -67,6 +78,17 @@ const RegisterPage = () => {
         className={`animate__animated animate__fadeIn animate__faster ${styles.form}`}
       >
         <Grid container>
+          {errors && (
+            <Typography
+              sx={{
+                textAlign: "center",
+                width: "100%",
+                color: "#FF3E3E",
+              }}
+            >
+              {errors}
+            </Typography>
+          )}
           <Grid item xs={12} sx={{ mt: 2 }}>
             <TextField
               label="Nombre completo"
@@ -126,11 +148,11 @@ const RegisterPage = () => {
         </Grid>
       </form>
       <Grid container direction="row" justifyContent="end">
-        <Typography sx={{ ml: 1, mr: 1, color: 'secondary.black' }}>
+        <Typography sx={{ ml: 1, mr: 1, color: "secondary.black" }}>
           ¿Ya tenés una cuenta?
         </Typography>
         <Link href="/LoginPage">
-          <Typography sx={{ ml: 1, mr: 1, color: 'crypto.main' }}>
+          <Typography sx={{ ml: 1, mr: 1, color: "crypto.main" }}>
             Ingresar
           </Typography>
         </Link>

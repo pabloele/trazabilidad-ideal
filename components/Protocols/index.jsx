@@ -62,61 +62,6 @@ const Protocols = () => {
 
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Box
-            sx={{
-              color: "#000",
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 2,
-            }}
-          >
-            <CloseIcon
-              sx={{
-                ":hover": {
-                  cursor: "pointer",
-                },
-              }}
-              onClick={handleClose}
-            />
-          </Box>
-
-          <Box>
-            <Typography sx={{ color: "primary.main" }}>
-              Seleccionaste el protocolo:
-            </Typography>
-
-            <Typography
-              sx={{
-                color: "primary.main",
-                marginY: 1,
-                fontWeight: "bold",
-                textTransform: "capitalize",
-              }}
-            >
-              {protocolSelected}
-            </Typography>
-
-            <Typography sx={{ color: "primary.main" }}>
-              Ingrese el nombre del producto
-            </Typography>
-          </Box>
-
-          <Box sx={{ marginY: 2, display: "flex", flexDirection: "column" }}>
-            <TextField value={productName} onChange={handleInputChange} />
-
-            <Button
-              disabled={loading}
-              variant="contained"
-              sx={{ marginY: 2 }}
-              onClick={handleSaveProduct}
-            >
-              Guardar
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
       <Box
         sx={{
           marginTop: 5,
@@ -143,7 +88,7 @@ const Protocols = () => {
                 }
                 item
                 sx={{
-                  backgroundColor: "#e1e1e1",
+                  backgroundColor: "primary.main",
                   padding: 2,
                   width: 200,
                   height: 100,
@@ -152,14 +97,16 @@ const Protocols = () => {
                   justifyContent: "center",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "#fff",
-                    backgroundColor: "primary.main",
+                    color: "#000",
                   },
                   transition: "all ease .3s",
                 }}
               >
                 <Typography
-                  sx={{ textTransform: "capitalize" }}
+                  sx={{
+                    textTransform: "capitalize",
+                    color: "#fff",
+                  }}
                   name={protocol.name}
                   data={protocol.trazability}
                 >

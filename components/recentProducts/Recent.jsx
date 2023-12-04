@@ -20,7 +20,7 @@ const Recent = () => {
 
   const { products, setProducts } = useProducts();
   const ownerProducts = products.filter(
-    (product) => product.ownerUid === user.uid
+    (product) => product.ownerUid === user?.uid
   );
 
   const [page, setPage] = useState(1);

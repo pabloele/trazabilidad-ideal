@@ -337,7 +337,7 @@ const ProtocolPage = () => {
               }}
             >
               {fileUri ? (
-                <Image src={fileUri} width={240} height={120} />
+                <Image src={fileUri} width={240} height={120}  />
               ) : loadingImage ? (
                 <Spinner />
               ) : (

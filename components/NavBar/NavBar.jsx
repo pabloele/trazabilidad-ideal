@@ -1,4 +1,4 @@
-import { LogoutOutlined, MenuOutlined } from '@mui/icons-material';
+import { LogoutOutlined, MenuOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Grid,
@@ -6,14 +6,20 @@ import {
   Toolbar,
   Typography,
   Box,
-} from '@mui/material';
-import { useAuth } from '../../context/AuthContext';
-import { ConnectWallet } from '@thirdweb-dev/react';
-import sideBarStore from '../../store/sideBarStore';
+} from "@mui/material";
+import { AuthContextProvider, useAuth } from "../../context/AuthContext";
+import { ConnectWallet } from "@thirdweb-dev/react";
+import sideBarStore from "../../store/sideBarStore";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 export const NavBar = ({ drawerWidth }) => {
+  const router = useRouter();
+
   const handleLogout = (e) => {
     try {
       logout();
+
+      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -21,6 +27,12 @@ export const NavBar = ({ drawerWidth }) => {
   const { user, logout } = useAuth();
 
   const { onOpen } = sideBarStore();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user]);
 
   return (
     <AppBar
@@ -33,7 +45,7 @@ export const NavBar = ({ drawerWidth }) => {
       <Toolbar>
         <IconButton
           edge="start"
-          sx={{ mr: 2, color: 'secondary.main', display: { sm: 'none' } }}
+          sx={{ mr: 2, color: "secondary.main", display: { sm: "none" } }}
         >
           <MenuOutlined onClick={onOpen} />
         </IconButton>
@@ -51,7 +63,7 @@ export const NavBar = ({ drawerWidth }) => {
           <Box>
             <ConnectWallet
               btnTitle="Conectar Wallet"
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: "14px" }}
             />
             <IconButton onClick={handleLogout}>
               <LogoutOutlined color="secondary" />
