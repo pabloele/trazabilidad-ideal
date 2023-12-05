@@ -218,6 +218,7 @@ const Trazability = ({
                         height: '150px',
                         width: '150px',
                         borderRadius: '20px',
+                        cursor: 'pointer',
                       }}
                     >
                       {fileUri?.length > 0 && fileUri[index] ? (
@@ -237,6 +238,7 @@ const Trazability = ({
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
+                            cursor: 'pointer',
                           }}
                         >
                           <ImageIcon
@@ -281,6 +283,7 @@ const Trazability = ({
                             height: '150px',
                             width: '150px',
                             borderRadius: '20px',
+                            cursor: 'pointer',
                           }}
                         >
                           <EditNoteOutlinedIcon
@@ -313,6 +316,7 @@ const Trazability = ({
                             marginTop: 3,
                             height: '5rem',
                             overflowY: 'auto',
+                            cursor: 'pointer',
                           }}
                         >
                           {milestones[index].atachments.map((e, i) => (
@@ -363,6 +367,7 @@ const Trazability = ({
                         <AddBoxIcon
                           onClick={() => handleFileUpload(index)}
                           sx={{
+                            cursor: 'pointer',
                             color: 'primary.main',
                             ':hover': {
                               cursor: 'pointer',
@@ -382,9 +387,14 @@ const Trazability = ({
                         bgcolor="#16161526"
                         borderRadius="20px"
                         onClick={() => handleClickAtachment(index)}
+                        sx={{ cursor: 'pointer' }}
                       >
                         <AttachmentIcon
-                          sx={{ fontSize: '6rem', color: '#0330ab' }}
+                          sx={{
+                            fontSize: '6rem',
+                            color: '#0330ab',
+                            cursor: 'pointer',
+                          }}
                         />
                       </Grid>
                     )}
@@ -400,10 +410,12 @@ const Trazability = ({
                         bgcolor="#16161526"
                         borderRadius="20px"
                         onClick={() => handleOpenCategories(index)}
+                        sx={{ cursor: 'pointer' }}
                       >
                         <Paper
                           sx={{
                             borderRadius: 4,
+                            cursor: 'pointer',
                           }}
                         >
                           <Typography
@@ -433,9 +445,13 @@ const Trazability = ({
                         bgcolor="#16161526"
                         borderRadius="20px"
                         onClick={() => handleOpenCategories(index)}
+                        sx={{ cursor: 'pointer' }}
                       >
                         <ClassIcon
-                          sx={{ fontSize: '6rem', color: '#0330ab' }}
+                          sx={{
+                            fontSize: '6rem',
+                            color: '#0330ab',
+                          }}
                         />
                       </Grid>
                     )}

@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { create } from 'ipfs-http-client';
 import { v4 } from 'uuid';
+import imageCompression from 'browser-image-compression';
+
+const options = {
+  maxSizeMB: 2,
+  maxWidthOrHeight: 1920,
+  useWebWorker: true,
+};
 
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
@@ -43,7 +50,8 @@ const useMilestone = () => {
       input.accept = 'image/*';
 
       input.onchange = async (e) => {
-        const file = e.target.files[0];
+        const rawFile = e.target.files[0];
+        const file = await imageCompression(rawFile, options);
         if (file) {
           const result = await ipfs.add(file);
           const ipfsHash = result.path;
