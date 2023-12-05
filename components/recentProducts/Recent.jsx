@@ -53,7 +53,7 @@ const Recent = () => {
             fontWeight: 'bold',
           }}
         >
-          Productos Recientes
+          Trazabilidades recientes
         </Typography>
 
         <Grid container spacing={3}>
@@ -72,6 +72,7 @@ const Recent = () => {
                       borderRadius: '20px',
                       overflow: 'hidden',
                       transition: 'transform 0.3s, box-shadow 0.3s',
+                      cursor: 'pointer',
                       '&:hover': {
                         transform: 'scale(1.05)',
                         boxShadow: '0 16px 20px 0 rgba(0,0,0,0.3)',
@@ -86,10 +87,10 @@ const Recent = () => {
                           borderRadius: '20px',
                           transition: 'opacity 0.3s',
                           pointerEvents: 'none',
-                          opacity: 0,
+                          opacity: 0.6,
                         },
                         '&:hover:before': {
-                          opacity: 1,
+                          opacity: 0.8,
                         },
                       },
                     }}
@@ -97,20 +98,32 @@ const Recent = () => {
                   >
                     <CardMedia
                       component="img"
-                      height="200"
+                      height="250"
                       image={product.productImage}
                       alt={product.name}
                       sx={{
                         width: '100%',
-                        height: 'auto',
                         objectFit: 'contain',
-                        maxHeight: '150px',
-                        bgcolor: '#e7e7e67a',
+                        position: 'relative',
                       }}
                     />
-                    <CardContent sx={{ bgcolor: '#0330abe4' }}>
+                    <CardContent
+                      sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        width: '100%',
+                        bgcolor: '#1e46b4e4',
+                        borderRadius: '0 0 20px 20px',
+                        padding: '12px',
+                        transition: 'opacity 0.3s',
+                        opacity: 1,
+                        // '&:hover': {
+                        //   opacity: 0,
+                        // },
+                      }}
+                    >
                       <Typography
-                        gutterBottom
                         variant="h5"
                         component="div"
                         color="whitesmoke"

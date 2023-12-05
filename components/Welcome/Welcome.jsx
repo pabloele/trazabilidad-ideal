@@ -5,8 +5,16 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Recent from '../recentProducts/Recent';
 import { FaEthereum } from 'react-icons/fa';
+import useProducts from '../../hooks/useProducts';
+import { useAuth } from '../../context/AuthContext';
+
 const Welcome = () => {
   const router = useRouter();
+  const { user } = useAuth();
+  const { products, setProducts } = useProducts();
+  const ownerProducts = products.filter(
+    (product) => product.ownerUid === user?.uid
+  );
 
   return (
     <Grid
@@ -31,7 +39,7 @@ const Welcome = () => {
         }}
         onClick={() => router.push('/nueva-produccion')}
       >
-        Nueva
+        NUEVA TRAZABILIDAD
       </Button>
       <Box
         sx={{
@@ -54,7 +62,7 @@ const Welcome = () => {
           </Grid>
         </Box>
       </Box>
-      <Recent />
+      {ownerProducts?.length && <Recent />}
     </Grid>
   );
 };
