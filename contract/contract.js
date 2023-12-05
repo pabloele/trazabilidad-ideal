@@ -1,4 +1,4 @@
-export const contractAddress = "0xDaDE6b608A256587B936Cc8f85125e3Fad018b4A";
+export const contractAddress = "0x898D0DB4b7cc595e476FE49d6a06b45DC8215823";
 
 export const contractAbi = [
   {
@@ -210,32 +210,17 @@ export const contractAbi = [
           },
           {
             internalType: "string",
-            name: "lotNumber",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "protocolName",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "name",
             type: "string",
           },
           {
             internalType: "string",
-            name: "status",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "ownerUid",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "trazability",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "productReference",
             type: "string",
           },
         ],
@@ -340,32 +325,17 @@ export const contractAbi = [
           },
           {
             internalType: "string",
-            name: "lotNumber",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "protocolName",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "name",
             type: "string",
           },
           {
             internalType: "string",
-            name: "status",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "ownerUid",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "trazability",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "productReference",
             type: "string",
           },
         ],

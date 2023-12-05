@@ -3,6 +3,8 @@ import React from "react";
 import mintImg from "../../public/images/milestone.png";
 import { HomeLayout } from "../../layout";
 import Protocols from "../../components/Protocols";
+import Link from "next/link";
+import HelpIcon from "@mui/icons-material/Help";
 const AddMilestone = () => {
   return (
     <HomeLayout>

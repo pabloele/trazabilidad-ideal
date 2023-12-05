@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -6,22 +6,49 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
-import { Google } from '@mui/icons-material';
-import { AuthLayout } from '../../layout';
-import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { createUser } from '../../firebase/controllers/firestoreControllers';
-import { FirebaseAuth } from '../../firebase/config';
-import { getRedirectResult } from 'firebase/auth';
+} from "@mui/material";
+import { Google } from "@mui/icons-material";
+import { AuthLayout } from "../../layout";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { createUser } from "../../firebase/controllers/firestoreControllers";
+import { FirebaseAuth } from "../../firebase/config";
+import { getRedirectResult } from "firebase/auth";
+import { useForm } from "../../hooks/useForm";
+
+const initialForm = {
+  email: "",
+  password: "",
+};
+
+const formValidations = {
+  email: [(value) => value.includes("@"), "Proporcione un email válido."],
+  password: [
+    (value) => value.length >= 6,
+    "La contraseña debe tener más de seis caracteres.",
+  ],
+};
+
 const LoginPage = () => {
   const { loginWithGoogle, login } = useAuth();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [logingIn, setLogingIn] = useState(false);
+  const [error, setError] = useState("");
+
+  const [showErrors, setShowErrors] = useState(false);
+
+  const {
+    password,
+    email,
+    onInputChange,
+    formState,
+    passwordValid,
+    emailValid,
+    usernameValid,
+    isFormValid,
+  } = useForm(initialForm, formValidations);
 
   const onUserEmailChange = (e) => {
     setEmail(e.target.value);
@@ -32,12 +59,23 @@ const LoginPage = () => {
   };
 
   const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!isFormValid) {
+      setShowErrors(true);
+      return;
+    }
+
     try {
       const response = await login(email, password);
-      console.log('Login successful: ', response);
-      router.push('/home');
+
+      console.log(response);
+      console.log("Login successful: ", response);
     } catch (error) {
-      console.log(error);
+      setError("Usuario o contraseña incorrectos");
+
+      setTimeout(() => {
+        setError("");
+      }, 3000);
     }
   };
 
@@ -52,7 +90,7 @@ const LoginPage = () => {
         products: [],
       });
       if (res.user) {
-        router.push('/home');
+        router.push("/home");
       }
     });
   };
@@ -62,7 +100,7 @@ const LoginPage = () => {
       const result = await getRedirectResult(FirebaseAuth);
 
       if (result.user) {
-        router.push('/home');
+        router.push("/home");
       }
     } catch (error) {
       console.log(error.message);
@@ -81,6 +119,17 @@ const LoginPage = () => {
           className="animate__animated animate__fadeIn animate__faster"
         >
           <Grid container>
+            {error && (
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  width: "100%",
+                  color: "#FF3E3E",
+                }}
+              >
+                {error}
+              </Typography>
+            )}
             <Grid item xs={12} sx={{ mt: 2 }}>
               <TextField
                 label="Correo"
@@ -88,7 +137,9 @@ const LoginPage = () => {
                 placeholder="correo@google.com"
                 fullWidth
                 name="email"
-                onChange={onUserEmailChange}
+                onChange={onInputChange}
+                error={showErrors && emailValid}
+                helperText={showErrors && emailValid}
                 value={email}
               />
             </Grid>
@@ -99,8 +150,10 @@ const LoginPage = () => {
                 placeholder="Contraseña"
                 fullWidth
                 name="password"
-                onChange={onUserPasswordChange}
+                onChange={onInputChange}
                 value={password}
+                error={showErrors && passwordValid}
+                helperText={showErrors && passwordValid}
               />
             </Grid>
           </Grid>

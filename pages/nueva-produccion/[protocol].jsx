@@ -16,7 +16,11 @@ import { MenuItem as BaseMenuItem, menuItemClasses } from "@mui/base/MenuItem";
 import { styled } from "@mui/system";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { uplaodImageIPFS, uploadIPFS } from "../../contract/toBlockChain";
+import {
+  uplaodImageIPFS,
+  uploadFileToIpfs,
+  uploadIPFS,
+} from "../../contract/toBlockChain";
 import Swal from "sweetalert2";
 
 const ProtocolPage = () => {
@@ -31,6 +35,7 @@ const ProtocolPage = () => {
   const [loading, setLoading] = useState(false);
   const [missingFields, setMissingFields] = useState([]);
   const [loadingImage, setLoadingImage] = useState(false);
+  const [loadingFile, setLoadingFile] = useState(false);
   const [dynamicFields, setDynamicFields] = useState([]);
 
   const [error, setError] = useState("");
@@ -133,15 +138,24 @@ const ProtocolPage = () => {
     });
   };
 
-  const handleFileChange = (index, event) => {
+  const handleFileChange = async (index, event) => {
     const files = event.target.files;
-    setDynamicFields((prevFields) => {
-      const updatedFields = [...prevFields];
-      updatedFields[index] = { ...updatedFields[index], value: files };
-      return updatedFields;
-    });
+    const file = files[0];
+    try {
+      setLoading(true);
+      const result = await uploadFileToIpfs(file);
 
-    console.log(dynamicFields);
+      setDynamicFields((prevFields) => {
+        const updatedFields = [...prevFields];
+        updatedFields[index] = { ...updatedFields[index], value: result };
+        return updatedFields;
+      });
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -323,7 +337,7 @@ const ProtocolPage = () => {
               }}
             >
               {fileUri ? (
-                <Image src={fileUri} width={240} height={120} />
+                <Image src={fileUri} width={240} height={120}  />
               ) : loadingImage ? (
                 <Spinner />
               ) : (

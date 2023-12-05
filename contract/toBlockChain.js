@@ -1,5 +1,5 @@
 import { create } from "ipfs-http-client";
-
+import { v4 } from "uuid";
 export const agroupMilestones = (product) => {
   const trazabilidadAgrupada = [];
   // Iterar sobre las líneas de trazabilidad
@@ -86,4 +86,38 @@ export const uplaodImageIPFS = async (file) => {
     path: fileToIPFS.path,
     url: fileToIPFSURL,
   };
+};
+
+export const uploadFileToIpfs = async (file) => {
+  const auth =
+    "Basic " +
+    Buffer.from(
+      process.env.NEXT_PUBLIC_IPFS_API_KEY +
+        ":" +
+        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
+    ).toString("base64");
+
+  const ipfs = create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: "https",
+    headers: {
+      authorization: auth,
+    },
+  });
+  try {
+    if (file) {
+      const extension = file.name.split(".").pop();
+      const uniqueId = v4().substr(0, 8);
+      const randomName = `${uniqueId}.${extension}`;
+
+      const result = await ipfs.add(file);
+      const ipfsHash = result.path;
+      const urlFile = `https://ipfs.io/ipfs/${ipfsHash}`;
+
+      return urlFile;
+    }
+  } catch (error) {
+    console.error("Error al subir el archivo", error);
+  }
 };

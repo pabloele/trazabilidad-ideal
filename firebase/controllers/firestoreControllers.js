@@ -162,13 +162,247 @@ export const addProtocol = async () => {
   const protocolRef = collection(db, "protocols");
 
   await addDoc(protocolRef, {
-    name: "Protocolo general",
+    name: "Protocolo Ambiental",
     trazability: [
       {
-        name: "Cataracteristicas",
+        path:"",
+        name: "Localización Geográfica",
         line: [
           {
-            name: "Caracteristicas generales",
+            name: "Ubicación real",
+            milestones: [],
+          },
+          {
+            name: "Áreas de influencia",
+            milestones: [],
+          },
+          {
+            name: "Áreas para compensación",
+            milestones: [],
+          },
+          {
+            name: "Áreas de control",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Requerimientos y Habilitaciones",
+        line: [
+          {
+            name: "Declaración de Impacto Ambiental",
+            milestones: [],
+          },
+          {
+            name: "Estudios específicos de impacto o de sensibilidad ambiental",
+            milestones: [],
+          },
+          {
+            name: "Habilitaciones locales o regionales",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Normativa Ambiental",
+        line: [
+          {
+            name: "Normas y otros requisitos",
+            milestones: [],
+          },
+          {
+            name: "Auditorías externas",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Recepción y Almacenamiento de Materias Primas e Insumos - Subcontratación de Servicios",
+        line: [
+          {
+            name: "Requisitos ambientales de compra o contratación",
+            milestones: [],
+          },
+          {
+            name: "Aspectos ambientales y sus impactos asociados",
+            milestones: [],
+          },
+          {
+            name: "Buenas Prácticas Ambientales",
+            milestones: [],
+          },
+          {
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
+            milestones: [],
+          },
+          {
+            name: "Planes de prevención, contingencia y/o mitigación",
+            milestones: [],
+          },
+        ],
+      },
+      {
+        name: "Almacenamiento de Subproductos o Productos Finales",
+        line: [
+          {
+            name: "Aspectos ambientales y sus impactos asociados",
+            milestones: [],
+          },
+          {
+            name: "Buenas Prácticas Ambientales",
+            milestones: [],
+          },
+          {
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
+            milestones: [],
+          },
+          {
+            name: "Planes de prevención, contingencia y/o mitigación",
+            milestones: [],
+          },
+        ],
+      },
+      {
+        name: "Despacho y Distribución de Subproductos o Productos Finales",
+        line: [
+          {
+            name: "Requisitos ambientales de venta o transporte",
+            milestones: [],
+          },
+          {
+            name: "Aspectos ambientales y sus impactos asociados",
+            milestones: [],
+          },
+          {
+            name: "Buenas Prácticas Ambientales",
+            milestones: [],
+          },
+          {
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
+            milestones: [],
+          },
+          {
+            name: "Planes de prevención, contingencia y/o mitigación",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Comercialización de   Productos y/o Servicios",
+        line: [
+          {
+            name: "Requisitos ambientales de comercialización",
+            milestones: [],
+          },
+          {
+            name: "Aspectos ambientales y sus impactos asociados",
+            milestones: [],
+          },
+          {
+            name: "Buenas Prácticas Ambientales",
+            milestones: [],
+          },
+          {
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
+            milestones: [],
+          },
+          {
+            name: "Planes de prevención, contingencia y/o mitigación",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Sistemas de Apoyo y Servicios Auxiliares",
+        line: [
+          {
+            name: "Aspectos ambientales y sus impactos asociados",
+            milestones: [],
+          },
+          {
+            name: "Criterios de operación de los procesos",
+            milestones: [],
+          },
+          {
+            name: "Procedimientos de control de los procesos",
+            milestones: [],
+          },
+          {
+            name: "Buenas Prácticas Ambientales",
+            milestones: [],
+          },
+          {
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
+            milestones: [],
+          },
+          {
+            name: "Planes de prevención, contingencia y/o mitigación",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Tratamiento, Transporte y/o Disposición Final de Residuos",
+        line: [
+          {
+            name: "Aspectos ambientales y sus impactos asociados",
+            milestones: [],
+          },
+          {
+            name: "Requisitos ambientales de los procesos e instalaciones",
+            milestones: [],
+          },
+          {
+            name: "Buenas Prácticas Ambientales",
+            milestones: [],
+          },
+          {
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
+            milestones: [],
+          },
+          {
+            name: "Planes de prevención, contingencia y/o mitigación",
+            milestones: [],
+          },
+        ],
+      },
+
+      {
+        name: "Evaluación de Desempeño",
+        line: [
+          {
+            name: "Estrategias y resultados",
+            milestones: [],
+          },
+          {
+            name: "Auditorías ambientales internas",
+            milestones: [],
+          },
+          {
+            name: "Personal afectado por la gestión ambiental",
+            milestones: [],
+          },
+        ],
+      },
+      {
+        name: "Mejora Continua",
+        line: [
+          {
+            name: "Plan de mejora continua",
+            milestones: [],
+          },
+          {
+            name: "Concientización y/o capacitación del personal",
+            milestones: [],
+          },
+          {
+            name: "Programas específicos de relacionamiento comunitario",
             milestones: [],
           },
         ],
