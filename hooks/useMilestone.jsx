@@ -14,7 +14,7 @@ const useMilestone = () => {
       atachments: [],
     },
   ]);
-
+  const index = 0;
   const [fileUri, setFileUri] = useState([]);
 
   const { uploadFile, getFile } = useAuth();

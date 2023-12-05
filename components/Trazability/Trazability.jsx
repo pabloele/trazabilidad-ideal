@@ -40,6 +40,7 @@ const Trazability = ({
   setShowCategories,
   setBoxIndex,
 }) => {
+  const index = 0;
   const addMilestoneBox = () => {
     setMilestones([
       ...milestones,
@@ -54,7 +55,6 @@ const Trazability = ({
   };
 
   const deleteMilestone = (index) => {
-    console.log('eskere');
     const updatedMilestones = [...milestones];
 
     const updateBoxs = [...milestoneBox];
@@ -116,10 +116,6 @@ const Trazability = ({
             gap: 2,
           }}
         >
-          <Button variant="contained" onClick={saveMilestone}>
-            Agregar contenido
-          </Button>
-
           {/* <AddBoxIcon
             onClick={addMilestoneBox}
             sx={{
@@ -129,91 +125,152 @@ const Trazability = ({
               },
             }}
           /> */}
-          {milestones?.map((e, i) => {
-            const index = milestones.length - 1 - i;
-            return (
-              <React.Fragment key={i}>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box
-                    display="flex"
-                    flexDirection={isSmallScreen ? 'row' : 'column'}
-                    key={index}
-                    marginY={2}
-                  >
-                    {/* left */}
-                    <Box
+
+          <React.Fragment>
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Box
+                display="flex"
+                flexDirection={isSmallScreen ? 'row' : 'column'}
+                key={index}
+                marginY={2}
+              >
+                {/* left */}
+                <Box
+                  sx={{
+                    borderRadius: isSmallScreen
+                      ? '120px 0 0 120px'
+                      : '120px 120px 0 0',
+                    border: '5px solid',
+                    borderColor: 'gray',
+                    borderBottom: isSmallScreen ? '' : 'none',
+                    borderRight: isSmallScreen ? 'none' : '',
+                    height: isSmallScreen ? '240px' : '140px',
+                    width: isSmallScreen ? '140px' : '240px',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '20px',
+                    display: 'flex',
+                    bgcolor: '#e7e7e67a',
+                  }}
+                >
+                  {/* card actions */}
+                  {!isSmallScreen && (
+                    <Grid
+                      item
                       sx={{
-                        borderRadius: isSmallScreen
-                          ? '120px 0 0 120px'
-                          : '120px 120px 0 0',
-                        border: '5px solid',
-                        borderColor: 'gray',
-                        borderBottom: isSmallScreen ? '' : 'none',
-                        borderRight: isSmallScreen ? 'none' : '',
-                        height: isSmallScreen ? '240px' : '140px',
-                        width: isSmallScreen ? '140px' : '240px',
+                        padding: 0,
+                        margin: 0,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        padding: '20px',
-                        display: 'flex',
-                        bgcolor: '#e7e7e67a',
+                        ':hover': {
+                          cursor: 'pointer',
+                        },
                       }}
                     >
-                      {/* card actions */}
-                      {!isSmallScreen && (
-                        <Grid
-                          item
+                      <HighlightOffSharpIcon
+                        sx={{
+                          color: '#c55052',
+                          textAlign: 'right',
+                          paddingLeft: 1,
+                          fontSize: '2.5rem',
+                        }}
+                        onClick={() => deleteMilestone(index)}
+                      />
+                    </Grid>
+                  )}
+                </Box>
+                {/* center */}
+                <Grid
+                  container
+                  direction={isSmallScreen ? 'row' : 'column'}
+                  gap={4}
+                  sx={{
+                    border: '5px solid',
+                    borderColor: 'gray',
+                    borderLeft: isSmallScreen ? 'none' : '',
+                    borderRight: isSmallScreen ? 'none' : '',
+                    borderTop: isSmallScreen ? '' : 'none',
+                    borderBottom: isSmallScreen ? '' : 'none',
+                    height: isSmallScreen ? '240px' : '100%',
+                    width: isSmallScreen ? '100%' : '240px',
+                    bgcolor: '#e7e7e67a',
+                  }}
+                >
+                  <Grid
+                    container
+                    alignContent="center"
+                    gap={2}
+                    direction={isSmallScreen ? 'row' : 'column'}
+                    sx={isSmallScreen ? { justifyContent: 'center' } : {}}
+                  >
+                    {/* image */}
+                    <Grid
+                      item
+                      onClick={() => handleImageUpload(index)}
+                      borderRadius={4}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: '#16161526',
+                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                        height: '150px',
+                        width: '150px',
+                        borderRadius: '20px',
+                      }}
+                    >
+                      {fileUri?.length > 0 && fileUri[index] ? (
+                        <Image
+                          src={fileUri[index]}
+                          width={150}
+                          height={150}
+                          alt={fileUri[index]}
+                          style={{
+                            objectFit: 'cover',
+                            borderRadius: '20px',
+                          }}
+                        />
+                      ) : (
+                        <Box
                           sx={{
-                            padding: 0,
-                            margin: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            ':hover': {
-                              cursor: 'pointer',
-                            },
                           }}
                         >
-                          <HighlightOffSharpIcon
-                            sx={{
-                              color: '#c55052',
-                              textAlign: 'right',
-                              paddingLeft: 1,
-                              fontSize: '2.5rem',
-                            }}
-                            onClick={() => deleteMilestone(index)}
+                          <ImageIcon
+                            sx={{ fontSize: '6rem', color: '#0330ab' }}
                           />
-                        </Grid>
+                          {/* <Typography sx={{ color: '#000' }}>
+                      Añadir imagen
+                    </Typography> */}
+                        </Box>
                       )}
-                    </Box>
-                    {/* center */}
+                    </Grid>
+                    {/* fields */}
                     <Grid
-                      container
-                      direction={isSmallScreen ? 'row' : 'column'}
-                      gap={4}
-                      sx={{
-                        border: '5px solid',
-                        borderColor: 'gray',
-                        borderLeft: isSmallScreen ? 'none' : '',
-                        borderRight: isSmallScreen ? 'none' : '',
-                        borderTop: isSmallScreen ? '' : 'none',
-                        borderBottom: isSmallScreen ? '' : 'none',
-                        height: isSmallScreen ? '240px' : '100%',
-                        width: isSmallScreen ? '100%' : '240px',
-                        bgcolor: '#e7e7e67a',
-                      }}
+                      item
+                      width="150px"
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      bgcolor="whitesmoke"
+                      borderRadius={4}
                     >
-                      <Grid
-                        container
-                        alignContent="center"
-                        gap={2}
-                        direction={isSmallScreen ? 'row' : 'column'}
-                        sx={isSmallScreen ? { justifyContent: 'center' } : {}}
-                      >
-                        {/* image */}
-                        <Grid
-                          item
-                          onClick={() => handleImageUpload(index)}
+                      {showTextField ? (
+                        <CustomTextField
                           borderRadius={4}
+                          value={milestones[index].description}
+                          onChange={(e) => {
+                            const newMilestones = [...milestones];
+                            newMilestones[index].description = e.target.value;
+                            setMilestones(newMilestones);
+                          }}
+                        />
+                      ) : (
+                        <Box
+                          onClick={handleTextClick}
                           sx={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -226,136 +283,68 @@ const Trazability = ({
                             borderRadius: '20px',
                           }}
                         >
-                          {fileUri?.length > 0 && fileUri[index] ? (
-                            <Image
-                              src={fileUri[index]}
-                              width={150}
-                              height={150}
-                              alt={fileUri[index]}
-                              style={{
-                                objectFit: 'cover',
-                                borderRadius: '20px',
-                              }}
-                            />
-                          ) : (
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <ImageIcon
-                                sx={{ fontSize: '6rem', color: '#0330ab' }}
-                              />
-                              {/* <Typography sx={{ color: '#000' }}>
-                      Añadir imagen
-                    </Typography> */}
-                            </Box>
-                          )}
-                        </Grid>
-                        {/* fields */}
-                        <Grid
-                          item
-                          width="150px"
-                          display="flex"
-                          justifyContent="center"
-                          alignItems="center"
-                          bgcolor="whitesmoke"
-                          borderRadius={4}
+                          <EditNoteOutlinedIcon
+                            sx={{
+                              fontSize: '6rem',
+                              color: '#0330ab',
+                              display: 'flex',
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Grid>
+
+                    {/* Atatchment */}
+                    {showAtachmentFields[index] ? (
+                      <Grid
+                        item
+                        width="150px"
+                        height="150px"
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        bgcolor="#16161526"
+                        borderRadius="20px"
+                        direction="column"
+                        // onClick={() => handleFileUpload(index)}
+                      >
+                        <Paper
+                          sx={{
+                            marginTop: 3,
+                            height: '5rem',
+                            overflowY: 'auto',
+                          }}
                         >
-                          {showTextField ? (
-                            <CustomTextField
-                              borderRadius={4}
-                              value={milestones[index].description}
-                              onChange={(e) => {
-                                const newMilestones = [...milestones];
-                                newMilestones[index].description =
-                                  e.target.value;
-                                setMilestones(newMilestones);
-                              }}
-                            />
-                          ) : (
-                            <Box
-                              onClick={handleTextClick}
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                bgcolor: '#16161526',
-                                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                                height: '150px',
-                                width: '150px',
-                                borderRadius: '20px',
-                              }}
-                            >
-                              <EditNoteOutlinedIcon
+                          {milestones[index].atachments.map((e, i) => (
+                            <Box key={i} display={'flex'} flexDirection={'row'}>
+                              {/* <Box></Box> */}
+                              <Typography
                                 sx={{
-                                  fontSize: '6rem',
-                                  color: '#0330ab',
-                                  display: 'flex',
+                                  color: '#000',
+                                  fontSize: '12px',
+                                  textAlign: 'center',
                                 }}
-                              />
-                            </Box>
-                          )}
-                        </Grid>
+                                key={i}
+                              >
+                                {e.name}
+                              </Typography>
+                              <Typography
+                                key={i}
+                                style={{
+                                  color: 'red',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  fontWeight: 'bold',
+                                  marginLeft: '0.2rem',
+                                  textAlign: 'center',
+                                }}
+                                // onClick={() => handleRemoveAttachment(index, i)}
+                              >
+                                x
+                              </Typography>
+                              {/* <Box> */}
 
-                        {/* Atatchment */}
-                        {showAtachmentFields[index] ? (
-                          <Grid
-                            item
-                            width="150px"
-                            height="150px"
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            bgcolor="#16161526"
-                            borderRadius="20px"
-                            direction="column"
-                            // onClick={() => handleFileUpload(index)}
-                          >
-                            <Paper
-                              sx={{
-                                marginTop: 3,
-                                height: '5rem',
-                                overflowY: 'auto',
-                              }}
-                            >
-                              {milestones[index].atachments.map((e, i) => (
-                                <Box
-                                  key={i}
-                                  display={'flex'}
-                                  flexDirection={'row'}
-                                >
-                                  {/* <Box></Box> */}
-                                  <Typography
-                                    sx={{
-                                      color: '#000',
-                                      fontSize: '12px',
-                                      textAlign: 'center',
-                                    }}
-                                    key={i}
-                                  >
-                                    {e.name}
-                                  </Typography>
-                                  <Typography
-                                    key={i}
-                                    style={{
-                                      color: 'red',
-                                      cursor: 'pointer',
-                                      fontSize: '12px',
-                                      fontWeight: 'bold',
-                                      marginLeft: '0.2rem',
-                                      textAlign: 'center',
-                                    }}
-                                    // onClick={() => handleRemoveAttachment(index, i)}
-                                  >
-                                    x
-                                  </Typography>
-                                  {/* <Box> */}
-
-                                  {/* <span
+                              {/* <span
                           style={{
                             color: 'red',
                             cursor: 'pointer',
@@ -366,152 +355,153 @@ const Trazability = ({
                         >
                           x
                         </span> */}
-                                  {/* </Box> */}
-                                </Box>
-                              ))}
-                            </Paper>
+                              {/* </Box> */}
+                            </Box>
+                          ))}
+                        </Paper>
 
-                            <AddBoxIcon
-                              onClick={() => handleFileUpload(index)}
-                              sx={{
-                                color: 'primary.main',
-                                ':hover': {
-                                  cursor: 'pointer',
-                                },
-                                marginBottom: 2,
-                              }}
-                            />
-                          </Grid>
-                        ) : (
-                          <Grid
-                            item
-                            width="150px"
-                            height="150px"
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            bgcolor="#16161526"
-                            borderRadius="20px"
-                            onClick={() => handleClickAtachment(index)}
-                          >
-                            <AttachmentIcon
-                              sx={{ fontSize: '6rem', color: '#0330ab' }}
-                            />
-                          </Grid>
-                        )}
-
-                        {milestones[index].name ? (
-                          <Grid
-                            item
-                            width="150px"
-                            height="150px"
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            bgcolor="#16161526"
-                            borderRadius="20px"
-                            onClick={() => handleOpenCategories(index)}
-                          >
-                            <Paper
-                              sx={{
-                                borderRadius: 4,
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  textAlign: 'center',
-                                  maxWidth: 120,
-                                  backgroundColor: '#e1e1e1',
-                                  borderRadius: 4,
-                                  padding: '5px',
-                                  fontSize: 12,
-                                  color: 'primary.main',
-                                  flex: '1',
-                                }}
-                              >
-                                {milestones[index].name}
-                              </Typography>
-                            </Paper>
-                          </Grid>
-                        ) : (
-                          <Grid
-                            item
-                            width="150px"
-                            height="150px"
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            bgcolor="#16161526"
-                            borderRadius="20px"
-                            onClick={() => handleOpenCategories(index)}
-                          >
-                            <ClassIcon
-                              sx={{ fontSize: '6rem', color: '#0330ab' }}
-                            />
-                          </Grid>
-                        )}
-                      </Grid>
-                    </Grid>
-
-                    {/* right */}
-                    <Box
-                      sx={{
-                        borderRadius: isSmallScreen
-                          ? '0 120px 120px 0'
-                          : '0 0 120px  120px',
-                        border: '5px solid',
-                        borderColor: 'gray',
-                        borderTop: isSmallScreen ? '' : 'none',
-                        borderLeft: isSmallScreen ? 'none' : '',
-                        height: isSmallScreen ? '240px' : '140px',
-                        width: isSmallScreen ? '140px' : '240px',
-                        padding: '20px',
-                        display: 'flex',
-                        bgcolor: '#e7e7e67a',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {/* card actions */}
-                      {isSmallScreen && (
-                        <Grid
-                          item
+                        <AddBoxIcon
+                          onClick={() => handleFileUpload(index)}
                           sx={{
-                            padding: 0,
-                            margin: 0,
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            color: 'primary.main',
                             ':hover': {
                               cursor: 'pointer',
                             },
+                            marginBottom: 2,
+                          }}
+                        />
+                      </Grid>
+                    ) : (
+                      <Grid
+                        item
+                        width="150px"
+                        height="150px"
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        bgcolor="#16161526"
+                        borderRadius="20px"
+                        onClick={() => handleClickAtachment(index)}
+                      >
+                        <AttachmentIcon
+                          sx={{ fontSize: '6rem', color: '#0330ab' }}
+                        />
+                      </Grid>
+                    )}
+
+                    {milestones[index].name ? (
+                      <Grid
+                        item
+                        width="150px"
+                        height="150px"
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        bgcolor="#16161526"
+                        borderRadius="20px"
+                        onClick={() => handleOpenCategories(index)}
+                      >
+                        <Paper
+                          sx={{
+                            borderRadius: 4,
                           }}
                         >
-                          <HighlightOffSharpIcon
+                          <Typography
                             sx={{
-                              color: '#c55052',
-                              textAlign: 'right',
-                              paddingLeft: 1,
-                              fontSize: '2.5rem',
+                              textAlign: 'center',
+                              maxWidth: 120,
+                              backgroundColor: '#e1e1e1',
+                              borderRadius: 4,
+                              padding: '5px',
+                              fontSize: 12,
+                              color: 'primary.main',
+                              flex: '1',
                             }}
-                            onClick={() => deleteMilestone(index)}
-                          />
-                        </Grid>
-                      )}
-                    </Box>
-                  </Box>
-                </Box>
+                          >
+                            {milestones[index].name}
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    ) : (
+                      <Grid
+                        item
+                        width="150px"
+                        height="150px"
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        bgcolor="#16161526"
+                        borderRadius="20px"
+                        onClick={() => handleOpenCategories(index)}
+                      >
+                        <ClassIcon
+                          sx={{ fontSize: '6rem', color: '#0330ab' }}
+                        />
+                      </Grid>
+                    )}
+                  </Grid>
+                </Grid>
 
-                {milestones.length > 1 && index !== 0 && (
-                  <Image
-                    width={50}
-                    height={50}
-                    src={'/images/chainlink.svg'}
-                    alt="Chainlink Logo"
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
+                {/* right */}
+                <Box
+                  sx={{
+                    borderRadius: isSmallScreen
+                      ? '0 120px 120px 0'
+                      : '0 0 120px  120px',
+                    border: '5px solid',
+                    borderColor: 'gray',
+                    borderTop: isSmallScreen ? '' : 'none',
+                    borderLeft: isSmallScreen ? 'none' : '',
+                    height: isSmallScreen ? '240px' : '140px',
+                    width: isSmallScreen ? '140px' : '240px',
+                    padding: '20px',
+                    display: 'flex',
+                    bgcolor: '#e7e7e67a',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {/* card actions */}
+                  {isSmallScreen && (
+                    <Grid
+                      item
+                      sx={{
+                        padding: 0,
+                        margin: 0,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        ':hover': {
+                          cursor: 'pointer',
+                        },
+                      }}
+                    >
+                      {/* <HighlightOffSharpIcon
+                        sx={{
+                          color: '#c55052',
+                          textAlign: 'right',
+                          paddingLeft: 1,
+                          fontSize: '2.5rem',
+                        }}
+                        onClick={() => deleteMilestone(index)}
+                      /> */}
+                    </Grid>
+                  )}
+                </Box>
+              </Box>
+            </Box>
+            {/* 
+            {milestones.length > 1 && index !== 0 && (
+              <Image
+                width={50}
+                height={50}
+                src={'/images/chainlink.svg'}
+                alt="Chainlink Logo"
+              />
+            )} */}
+          </React.Fragment>
+          <Button variant="contained" onClick={saveMilestone}>
+            Agregar contenido
+          </Button>
         </Box>
       </Box>
     </Box>
