@@ -53,7 +53,7 @@ const Recent = () => {
             fontWeight: 'bold',
           }}
         >
-          Productos Recientes
+          Trazabilidades recientes
         </Typography>
 
         <Grid container spacing={3}>
@@ -98,7 +98,7 @@ const Recent = () => {
                   >
                     <CardMedia
                       component="img"
-                      height="300"
+                      height="250"
                       image={product.productImage}
                       alt={product.name}
                       sx={{
