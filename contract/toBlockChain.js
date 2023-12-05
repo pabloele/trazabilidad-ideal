@@ -47,13 +47,14 @@ export const uploadIPFS = async (file) => {
     host: "ipfs.infura.io",
     port: 5001,
     protocol: "https",
+    apiPath: "/api/v0",
     headers: {
       authorization: auth,
     },
   });
   const fileToIPFS = await ipfs.add(JSON.stringify(file));
 
-  const fileToIPFSURL = `https://ipfs.io/ipfs/${fileToIPFS.path}`;
+  const fileToIPFSURL = `https://trazabilidadideal.infura-ipfs.io/ipfs/${fileToIPFS.path}`;
 
   return {
     path: fileToIPFS.path,
@@ -74,13 +75,14 @@ export const uplaodImageIPFS = async (file) => {
     host: "ipfs.infura.io",
     port: 5001,
     protocol: "https",
+    apiPath: "/api/v0",
     headers: {
       authorization: auth,
     },
   });
   const fileToIPFS = await ipfs.add(file);
 
-  const fileToIPFSURL = `https://ipfs.io/ipfs/${fileToIPFS.path}`;
+  const fileToIPFSURL = `https://trazabilidadideal.infura-ipfs.io/ipfs/${fileToIPFS.path}`;
 
   return {
     path: fileToIPFS.path,
@@ -101,6 +103,7 @@ export const uploadFileToIpfs = async (file) => {
     host: "ipfs.infura.io",
     port: 5001,
     protocol: "https",
+    apiPath: "/api/v0",
     headers: {
       authorization: auth,
     },
@@ -113,7 +116,7 @@ export const uploadFileToIpfs = async (file) => {
 
       const result = await ipfs.add(file);
       const ipfsHash = result.path;
-      const urlFile = `https://ipfs.io/ipfs/${ipfsHash}`;
+      const urlFile = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
 
       return urlFile;
     }
