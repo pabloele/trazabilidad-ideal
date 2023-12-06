@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { create } from 'ipfs-http-client';
-import { v4 } from 'uuid';
-import imageCompression from 'browser-image-compression';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { create } from "ipfs-http-client";
+import { v4 } from "uuid";
+import imageCompression from "browser-image-compression";
 
 const options = {
   maxSizeMB: 2,
@@ -13,11 +13,11 @@ const options = {
 const useMilestone = () => {
   const [milestones, setMilestones] = useState([
     {
-      name: '',
-      path: '',
-      image: '',
-      description: '',
-      milestoneId: '',
+      name: "",
+      path: "",
+      image: "",
+      description: "",
+      milestoneId: "",
       atachments: [],
     },
   ]);
@@ -27,17 +27,18 @@ const useMilestone = () => {
   const { uploadFile, getFile } = useAuth();
 
   const auth =
-    'Basic ' +
+    "Basic " +
     Buffer.from(
       process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ':' +
+        ":" +
         process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString('base64');
+    ).toString("base64");
 
   const ipfs = create({
-    host: 'ipfs.infura.io',
+    host: "ipfs.infura.io",
     port: 5001,
-    protocol: 'https',
+    protocol: "https",
+    apiPath: "/api/v0",
     headers: {
       authorization: auth,
     },
@@ -45,9 +46,9 @@ const useMilestone = () => {
 
   const handleImageUpload = async (index) => {
     try {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
 
       input.onchange = async (e) => {
         const rawFile = e.target.files[0];
@@ -55,7 +56,7 @@ const useMilestone = () => {
         if (file) {
           const result = await ipfs.add(file);
           const ipfsHash = result.path;
-          const urlImage = `https://ipfs.io/ipfs/${ipfsHash}`;
+          const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
 
           setFileUri((prevFileUri) => {
             const newFileUri = [...prevFileUri];
@@ -75,19 +76,19 @@ const useMilestone = () => {
 
       input.click();
     } catch (error) {
-      console.error('Error al subir la imagen:', error);
+      console.error("Error al subir la imagen:", error);
     }
   };
 
   const handleFileUpload = async (index) => {
     try {
-      const input = document.createElement('input');
-      input.type = 'file';
+      const input = document.createElement("input");
+      input.type = "file";
 
       input.onchange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-          const extension = file.name.split('.').pop();
+          const extension = file.name.split(".").pop();
           const uniqueId = v4().substr(0, 8);
           const randomName = `${uniqueId}.${extension}`;
 
@@ -115,7 +116,7 @@ const useMilestone = () => {
 
       input.click();
     } catch (error) {
-      console.error('Error al subir el archivo', error);
+      console.error("Error al subir el archivo", error);
     }
   };
 
