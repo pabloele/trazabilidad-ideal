@@ -318,8 +318,16 @@ const Producto = () => {
   if (!product) {
     return (
       <HomeLayout>
-        <Box container sx={{ height: '90vh', top: '45vh', left: '45vw' }}>
-          {/* <Spinner /> */}
+        <Box
+          container
+          sx={{
+            height: '90vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Spinner />
         </Box>
       </HomeLayout>
     );
