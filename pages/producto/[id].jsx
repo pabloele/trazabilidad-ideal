@@ -319,7 +319,7 @@ const Producto = () => {
     return (
       <HomeLayout>
         <Box container sx={{ height: '90vh', top: '45vh', left: '45vw' }}>
-          <Spinner />
+          {/* <Spinner /> */}
         </Box>
       </HomeLayout>
     );

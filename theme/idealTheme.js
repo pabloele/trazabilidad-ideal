@@ -29,6 +29,9 @@ export const idealTheme = createTheme({
       main: red.A400,
     },
   },
+  typography: {
+    fontFamily: 'Montserrat, sans-serif',
+  },
   components: {
     MuiLink: {
       defaultProps: {

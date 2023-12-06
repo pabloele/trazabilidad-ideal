@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   reactStrictMode: true,
-  basePath: "",
+  basePath: '',
   images: {
-    domains: ["firebasestorage.googleapis.com", "ipfs.io"],
+    domains: ['firebasestorage.googleapis.com', 'ipfs.io'],
   },
 };
 

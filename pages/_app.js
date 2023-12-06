@@ -1,14 +1,14 @@
-import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
-import "../styles/globals.css";
-import { ThemeProvider } from "@emotion/react";
-import { AuthContextProvider } from "../context/AuthContext";
-import { idealTheme } from "../theme";
+import { ChainId, ThirdwebProvider } from '@thirdweb-dev/react';
+import '../styles/globals.css';
+import { ThemeProvider } from '@emotion/react';
+import { AuthContextProvider } from '../context/AuthContext';
+import { idealTheme } from '../theme';
+import '../styles/fonts.css';
+import { OptimismGoerli } from '@thirdweb-dev/chains';
 
-import { OptimismGoerli } from "@thirdweb-dev/chains";
+import { Open_Sans } from 'next/font/google';
 
-import { Open_Sans } from "next/font/google";
-
-const inter = Open_Sans({ subsets: ["latin"], weight: "400" });
+const inter = Open_Sans({ subsets: ['latin'], weight: '400' });
 
 function MyApp({ Component, pageProps }) {
   return (
