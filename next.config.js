@@ -4,7 +4,11 @@ const nextConfig = {
   reactStrictMode: true,
   basePath: '',
   images: {
-    domains: ['firebasestorage.googleapis.com', 'ipfs.io'],
+    domains: [
+      'firebasestorage.googleapis.com',
+      'ipfs.io',
+      'trazabilidadideal.infura-ipfs.io',
+    ],
   },
 };
 
