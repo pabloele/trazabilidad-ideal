@@ -34,7 +34,7 @@ const Welcome = () => {
           position: 'fixed',
           top: '5rem',
           right: '6%',
-          marginTop: '0.5rem',
+          marginTop: '5rem',
           zIndex: 9999,
         }}
         onClick={() => router.push('/nueva-produccion')}
@@ -62,7 +62,7 @@ const Welcome = () => {
           </Grid>
         </Box>
       </Box>
-      {ownerProducts?.length && <Recent />}
+      {/* {ownerProducts?.length && <Recent />} */}
     </Grid>
   );
 };
