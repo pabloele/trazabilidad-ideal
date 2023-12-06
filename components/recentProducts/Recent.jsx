@@ -53,7 +53,7 @@ const Recent = () => {
             fontWeight: 'bold',
           }}
         >
-          Trazabilidades recientes
+          Productos
         </Typography>
 
         <Grid container spacing={3}>
@@ -62,14 +62,14 @@ const Recent = () => {
               <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                 <Paper
                   sx={{
-                    borderRadius: '20px',
+                    // borderRadius: '20px',
                     boxShadow: '0 16px 20px 0 rgba(0,0,0,0.2)',
                   }}
                 >
                   <Card
                     sx={{
                       position: 'relative',
-                      borderRadius: '20px',
+                      // borderRadius: '20px',
                       overflow: 'hidden',
                       transition: 'transform 0.3s, box-shadow 0.3s',
                       cursor: 'pointer',
@@ -84,7 +84,7 @@ const Recent = () => {
                           width: '100%',
                           height: '100%',
                           background: 'rgba(0, 0, 0, 0.3)',
-                          borderRadius: '20px',
+
                           transition: 'opacity 0.3s',
                           pointerEvents: 'none',
                           opacity: 0.6,
@@ -114,7 +114,7 @@ const Recent = () => {
                         left: 0,
                         width: '100%',
                         bgcolor: '#1e46b4e4',
-                        borderRadius: '0 0 20px 20px',
+                        // borderRadius: '0 0 20px 20px',
                         padding: '12px',
                         transition: 'opacity 0.3s',
                         opacity: 1,
@@ -144,7 +144,7 @@ const Recent = () => {
             count={Math.ceil(ownerProducts.length / productsPerPage)}
             page={page}
             onChange={handleChangePage}
-            color="primary"
+            // color="primary"
           />
         </Box>
       </Box>
