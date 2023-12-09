@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
-import useProduct from "../../hooks/useProduct";
-import Image from "next/image";
-import { Typography, Box, Button, useMediaQuery } from "@mui/material";
-import UserNavBar from "../../components/NavBar/UserNavBar";
-import { contractAddress, contractAbi } from "../../contract/contract";
-import { ethers } from "ethers";
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import useProduct from '../../hooks/useProduct';
+import Image from 'next/image';
+import { Typography, Box, Button, useMediaQuery } from '@mui/material';
+import UserNavBar from '../../components/NavBar/UserNavBar';
+import { contractAddress, contractAbi } from '../../contract/contract';
+import { ethers } from 'ethers';
 
-import Link from "next/link";
+import Link from 'next/link';
 
 const ViewProduct = () => {
   const router = useRouter();
@@ -15,7 +15,7 @@ const ViewProduct = () => {
 
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const isSmallScreen = useMediaQuery("(min-width: 720px)");
+  const isSmallScreen = useMediaQuery('(min-width: 720px)');
 
   const getBlockChainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -44,8 +44,8 @@ const ViewProduct = () => {
       <UserNavBar />
 
       <Box
-        sx={{ padding: 2, display: "flex", gap: 5 }}
-        flexDirection={isSmallScreen ? "row" : "column"}
+        sx={{ padding: 2, display: 'flex', gap: 5 }}
+        flexDirection={isSmallScreen ? 'row' : 'column'}
       >
         <Box>
           <Image
@@ -59,7 +59,7 @@ const ViewProduct = () => {
 
         <Box sx={{ marginTop: 4 }}>
           <Typography
-            sx={{ fontSize: 55, fontWeight: "bold", color: "primary.main" }}
+            sx={{ fontSize: 55, fontWeight: 'bold', color: 'primary.main' }}
           >
             {product?.name}
           </Typography>
@@ -67,12 +67,12 @@ const ViewProduct = () => {
           <hr />
           <Box
             sx={{
-              backgroundColor: "#f5f5f5",
+              backgroundColor: '#f5f5f5',
               padding: 2,
-              color: "primary.main",
+              color: 'primary.main',
             }}
           >
-            <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
+            <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
               Producto certificado
             </Typography>
             <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -84,15 +84,15 @@ const ViewProduct = () => {
               onClick={getBlockChainData}
               variant="contained"
               sx={{
-                display: "flex",
+                display: 'flex',
                 gap: 1,
-                alignItems: "center",
+                alignItems: 'center',
                 marginTop: 2,
               }}
             >
               Ver trazabilidad
               <Image
-                src={"/images/logo-ideal.png"}
+                src={'/images/logo-ideal.png'}
                 width={50}
                 height={20}
                 alt="logo"
@@ -106,7 +106,7 @@ const ViewProduct = () => {
                 <Link
                   target="_blank"
                   rel="noopener noreferrer "
-                  href={`https://ipfs.io/ipfs/${productData.trazability}`}
+                  href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.trazability}`}
                 >
                   Linea de trazabilidad
                 </Link>
@@ -125,10 +125,10 @@ const ViewProduct = () => {
             if (hasMilestones) {
               return (
                 <Box
-                  sx={{ backgroundColor: "primary.main", padding: 2 }}
+                  sx={{ backgroundColor: 'primary.main', padding: 2 }}
                   key={index}
                 >
-                  <Typography sx={{ color: "#fff", fontSize: 24 }}>
+                  <Typography sx={{ color: '#fff', fontSize: 24 }}>
                     {trazability.name}
                   </Typography>
 
@@ -138,7 +138,7 @@ const ViewProduct = () => {
                         return (
                           <Box key={lineIndex}>
                             <Typography
-                              sx={{ color: "#fff", fontSize: 16, marginY: 5 }}
+                              sx={{ color: '#fff', fontSize: 16, marginY: 5 }}
                             >
                               {line.name}
                             </Typography>
@@ -147,9 +147,9 @@ const ViewProduct = () => {
                                 (milestone, milestoneIndex) => (
                                   <Box
                                     sx={{
-                                      display: "flex",
+                                      display: 'flex',
                                       gap: 2,
-                                      alignItems: "center",
+                                      alignItems: 'center',
                                     }}
                                     key={milestoneIndex}
                                   >

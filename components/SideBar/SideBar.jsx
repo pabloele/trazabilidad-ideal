@@ -35,6 +35,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
   const handleLeave = (event) => {
     event.currentTarget.classList.remove('overlay-hover');
   };
+
   return (
     <Drawer
       variant={isMobileScreen ? 'permanent' : 'temporary'}
