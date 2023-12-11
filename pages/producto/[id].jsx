@@ -137,23 +137,14 @@ const Producto = () => {
     setTabActive(newValue);
   };
 
-  const saveMilestone = async (index) => {
-    let milestonesValid = true;
+  const saveMilestone = async (milestone) => {
+    if (
+      milestone.image === '' ||
+      milestone.description === '' ||
+      milestone.name === ''
+    ) {
+      alert(`Descripción, imagen y/o categoría faltantes`);
 
-    milestones.forEach((element, index) => {
-      if (element.image === '' || element.description === '') {
-        const number = index + 1;
-        alert(`Faltan completar datos en el hito número ${number}`);
-        milestonesValid = false;
-      }
-    });
-
-    if (!milestonesValid) {
-      return;
-    }
-
-    if (!subprocessSelected || tabActive === null) {
-      alert('Por favor, selecciona un proceso y un subproceso.');
       return;
     }
 
@@ -359,7 +350,7 @@ const Producto = () => {
               />
             </Box>
 
-            {showCategories && (
+            {/* {showCategories && (
               <React.Fragment>
                 <Grid display="flex" justifyContent="center">
                   <Tabs
@@ -431,26 +422,10 @@ const Producto = () => {
                   </Box>
                 ))}
               </React.Fragment>
-            )}
+            )} */}
 
-            <Box key={boxIndex}>
-              <Trazability
-                fileUri={fileUri}
-                handleImageUpload={handleImageUpload}
-                product={product}
-                subprocessSelected={subprocessSelected}
-                milestones={milestones}
-                setMilestones={setMilestones}
-                saveMilestone={saveMilestone}
-                setMilestoneBox={setMilestoneBox}
-                milestoneBox={milestoneBox}
-                handleAddMilestone={handleAddMilestone}
-                path={path}
-                handleFileUpload={handleFileUpload}
-                setShowCategories={setShowCategories}
-                setBoxIndex={setBoxIndex}
-                boxIndex={boxIndex}
-              />
+            <Box>
+              <Trazability />
             </Box>
           </Box>
         </Modal>
