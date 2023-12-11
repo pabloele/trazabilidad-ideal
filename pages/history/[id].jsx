@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import useProduct from '../../hooks/useProduct';
 import Image from 'next/image';
-import { Typography, Box, Button, useMediaQuery } from '@mui/material';
+import { Typography, Box, Button, useMediaQuery, Paper } from '@mui/material';
 import UserNavBar from '../../components/NavBar/UserNavBar';
 import { contractAddress, contractAbi } from '../../contract/contract';
 import { ethers } from 'ethers';
@@ -44,78 +44,90 @@ const ViewProduct = () => {
       <UserNavBar />
 
       <Box
-        sx={{ padding: 2, display: 'flex', gap: 5 }}
+        sx={{ padding: 2, display: 'flex', gap: 5, marginY: 4 }}
         flexDirection={isSmallScreen ? 'row' : 'column'}
+        justifyContent="center"
       >
-        <Box>
-          <Image
-            style={{ borderRadius: 60 }}
-            src={product?.productImage}
-            width={isSmallScreen ? 515 : 315}
-            height={isSmallScreen ? 515 : 315}
-            alt="Product Image"
-          />
-        </Box>
-
-        <Box sx={{ marginTop: 4 }}>
-          <Typography
-            sx={{ fontSize: 55, fontWeight: 'bold', color: 'primary.main' }}
-          >
-            {product?.name}
-          </Typography>
-
-          <hr />
-          <Box
-            sx={{
-              backgroundColor: '#f5f5f5',
-              padding: 2,
-              color: 'primary.main',
-            }}
-          >
-            <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
-              Producto certificado
-            </Typography>
-            <Typography sx={{ fontSize: 20, marginTop: 2 }}>
-              La trazabilidad de este producto fue certificada con tecnología
-              blockchain
-            </Typography>
-
-            <Button
-              onClick={getBlockChainData}
-              variant="contained"
-              sx={{
-                display: 'flex',
-                gap: 1,
-                alignItems: 'center',
-                marginTop: 2,
-              }}
-            >
-              Ver trazabilidad
-              <Image
-                src={'/images/logo-ideal.png'}
-                width={50}
-                height={20}
-                alt="logo"
-              />
-            </Button>
+        <Paper
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            padding: 4,
+            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+          }}
+        >
+          <Box>
+            <Image
+              style={{ objectFit: 'contain' }}
+              src={product?.productImage}
+              width={isSmallScreen ? 315 : 215}
+              height={isSmallScreen ? 315 : 215}
+              alt="Product Image"
+            />
           </Box>
 
-          {productData?.length > 0 && (
-            <Box>
-              <Box>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer "
-                  href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.trazability}`}
+          <Box sx={{ marginTop: 4 }}>
+            <Typography
+              sx={{ fontSize: 48, fontWeight: 'bold', color: 'primary.main' }}
+            >
+              {product?.name}
+            </Typography>
+
+            <hr />
+            <Box
+              sx={{
+                backgroundColor: '#f5f5f5',
+                padding: 2,
+                color: 'primary.main',
+              }}
+            >
+              <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                Producto certificado
+              </Typography>
+              <Typography sx={{ fontSize: 20, marginTop: 2 }}>
+                La trazabilidad de este producto fue certificada con tecnología
+                blockchain
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  onClick={getBlockChainData}
+                  variant="contained"
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: 2,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                  }}
                 >
-                  Linea de trazabilidad
-                </Link>
+                  Ver trazabilidad
+                  <Image
+                    src={'/images/logo-ideal.png'}
+                    width={50}
+                    height={20}
+                    alt="logo"
+                  />
+                </Button>
               </Box>
             </Box>
-          )}
-        </Box>
+
+            {productData?.length > 0 && (
+              <Box>
+                <Box>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer "
+                    href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.trazability}`}
+                  >
+                    Linea de trazabilidad
+                  </Link>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Paper>
       </Box>
-      <Box sx={{ paddingX: 2, marginY: 10 }}>
+      <Box sx={{ paddingX: 2 }}>
         {product &&
           product.trazability.map((trazability, index) => {
             const hasMilestones = trazability.line.some(
@@ -124,11 +136,15 @@ const ViewProduct = () => {
 
             if (hasMilestones) {
               return (
-                <Box
-                  sx={{ backgroundColor: 'primary.main', padding: 2 }}
-                  key={index}
-                >
-                  <Typography sx={{ color: '#fff', fontSize: 24 }}>
+                <Box sx={{ backgroundColor: '', padding: 1 }} key={index}>
+                  <Typography
+                    sx={{
+                      fontSize: 32,
+                      fontWeight: 'bold',
+                      color: 'primary.main',
+                      marginX: 10,
+                    }}
+                  >
                     {trazability.name}
                   </Typography>
 
@@ -137,34 +153,100 @@ const ViewProduct = () => {
                       if (line.milestones.length > 0) {
                         return (
                           <Box key={lineIndex}>
-                            <Typography
-                              sx={{ color: '#fff', fontSize: 16, marginY: 5 }}
-                            >
-                              {line.name}
-                            </Typography>
                             <Box>
                               {line.milestones.map(
                                 (milestone, milestoneIndex) => (
-                                  <Box
-                                    sx={{
-                                      display: 'flex',
-                                      gap: 2,
-                                      alignItems: 'center',
-                                    }}
-                                    key={milestoneIndex}
-                                  >
-                                    <Image
-                                      style={{ borderRadius: 20 }}
-                                      width={isSmallScreen ? 300 : 150}
-                                      height={isSmallScreen ? 300 : 150}
-                                      src={milestone.image}
-                                      alt={milestone.description}
-                                    />
+                                  <React.Fragment key={milestoneIndex}>
+                                    <Box
+                                      sx={{
+                                        padding: 2,
+                                        display: 'flex',
+                                        gap: 5,
+                                      }}
+                                      flexDirection={
+                                        isSmallScreen ? 'row' : 'column'
+                                      }
+                                    >
+                                      <Box>
+                                        <Image
+                                          style={{ objectFit: 'contain' }}
+                                          src={product?.productImage}
+                                          width={isSmallScreen ? 280 : 215}
+                                          height={isSmallScreen ? 280 : 215}
+                                          alt="Product Image"
+                                        />
+                                      </Box>
 
-                                    <Typography key={milestoneIndex}>
-                                      {milestone.description}
-                                    </Typography>
-                                  </Box>
+                                      <Box>
+                                        <Typography
+                                          sx={{
+                                            fontSize: 28,
+                                            fontWeight: 'bold',
+                                            color: 'primary.main',
+                                          }}
+                                        >
+                                          {line.name}
+                                        </Typography>
+
+                                        <hr />
+                                        <Box
+                                          sx={{
+                                            backgroundColor: '#f5f5f5',
+
+                                            color: 'primary.main',
+                                            minWidth: '800px',
+                                            minHeight: '200px',
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{ fontSize: 20, marginTop: 2 }}
+                                          >
+                                            {milestone.description}
+                                          </Typography>
+                                          <Typography
+                                            sx={{
+                                              fontSize: 20,
+                                              fontWeight: 'bold',
+                                              paddingTop: 1,
+                                            }}
+                                          >
+                                            Archivos adjuntos:
+                                          </Typography>
+                                          {milestone.atachments?.map(
+                                            (atachment, index) => (
+                                              <Typography
+                                                key={atachment.name}
+                                                sx={{
+                                                  fontSize: 14,
+                                                  fontWeight: 'bold',
+                                                  color: 'black',
+                                                  textDecoration: 'none',
+                                                }}
+                                              >
+                                                <Link href={atachment.url}>
+                                                  {atachment.name}
+                                                </Link>
+                                              </Typography>
+                                            )
+                                          )}
+                                        </Box>
+
+                                        {productData?.length > 0 && (
+                                          <Box>
+                                            <Box>
+                                              <Link
+                                                target="_blank"
+                                                rel="noopener noreferrer "
+                                                href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.trazability}`}
+                                              >
+                                                Linea de trazabilidad
+                                              </Link>
+                                            </Box>
+                                          </Box>
+                                        )}
+                                      </Box>
+                                    </Box>
+                                  </React.Fragment>
                                 )
                               )}
                             </Box>
