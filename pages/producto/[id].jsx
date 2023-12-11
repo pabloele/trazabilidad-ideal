@@ -344,7 +344,7 @@ const Producto = () => {
           >
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <CloseIcon
-                onClick={() => setOpen(false)}
+                onClick={() => onClose()}
                 sx={{
                   color: "red",
                   ":hover": {

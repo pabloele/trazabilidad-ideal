@@ -22,6 +22,8 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import Image from "next/image";
 import Link from "next/link";
 import useModalStore from "../../store/useModalStore";
+import Trazability from "../Trazability/Trazability";
+import EditTrazability from "../EditTrazability/EditTrazability";
 export default function TrazabilityLine({ protocol }) {
   const isMediumScreen = useMediaQuery("(min-width: 600px)");
   const timelineWidth = isMediumScreen ? "900px" : "500px";
@@ -73,8 +75,8 @@ export default function TrazabilityLine({ protocol }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "80vw",
-    height: "100%",
+    width: "95%",
+    height: "90vh",
     overflowY: "auto",
     bgcolor: "background.paper",
     border: "2px solid #000",
@@ -115,92 +117,9 @@ export default function TrazabilityLine({ protocol }) {
                         </TimelineDot>
                         <TimelineConnector />
                       </TimelineSeparator>
+                      <TimelineSeparator></TimelineSeparator>
                       <TimelineContent>
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: 24,
-                              textAlign: "center",
-                              marginBottom: 2,
-                              color: "primary.main",
-                            }}
-                          >
-                            {element.name}
-                          </Typography>
-                        </Box>
-                        <Box
-                          sx={{
-                            borderRadius: "10px",
-                            background: `linear-gradient(to right, #55555545, #0330ab28)`,
-                            width: "100%",
-                            height: "100%",
-                            padding: "20px",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 2,
-                          }}
-                        >
-                          <Grid
-                            container
-                            direction={"row"}
-                            width={"100%"}
-                            spacing={2}
-                          >
-                            <Grid item xs={4} sm={4} md={4} lg={4}>
-                              <Box
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                height="100%"
-                              >
-                                <Image
-                                  src={element.image}
-                                  width={200}
-                                  height={200}
-                                  alt="image"
-                                  style={{
-                                    objectFit: "cover",
-                                    borderRadius: "10px",
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
-                            <Grid item xs={6} sm={6} md={6} lg={6}>
-                              <Typography
-                                variant="body1"
-                                fontSize={20}
-                                color="BlackText"
-                              >
-                                {element.description}
-                              </Typography>
-
-                              {element.atachments && (
-                                <>
-                                  <Typography
-                                    variant="body1"
-                                    fontSize={18}
-                                    color="BlackText"
-                                  >
-                                    Archivos adjuntos
-                                  </Typography>
-                                  {element.atachments.map((element, index) => (
-                                    <React.Fragment key={index}>
-                                      <Link
-                                        target="_blank"
-                                        rel="noopener noreferrer "
-                                        href={element.url}
-                                      >
-                                        {element.name}
-                                      </Link>
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              )}
-                              {/* </Paper> */}
-                            </Grid>
-                          </Grid>
-                        </Box>
+                        <Trazability initialMilestone={element} />
                       </TimelineContent>
                     </TimelineItem>
                   );

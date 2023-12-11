@@ -38,7 +38,7 @@ const CustomTextField = styled.textarea`
   resize: none;
 `;
 
-const Trazability = ({ initialMilestone }) => {
+const EditTrazability = ({ milestoneForEdit }) => {
   const router = useRouter();
   const index = 0;
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
@@ -52,6 +52,9 @@ const Trazability = ({ initialMilestone }) => {
 
   const { onClose, onOpen } = useModalStore();
 
+
+  
+
   const modalStore = useModalStore();
 
   const {
@@ -64,10 +67,8 @@ const Trazability = ({ initialMilestone }) => {
     handleFileUpload,
     handleChangeMilestoneField,
     handleRemoveAtachment,
-  } = useMilestone(initialMilestone);
-  const [showTextField, setShowTextField] = useState(
-    initialMilestone ? true : false
-  );
+  } = useMilestone();
+  const [showTextField, setShowTextField] = useState(true);
 
   const handleTextClick = () => {
     setShowTextField(true);
@@ -102,13 +103,15 @@ const Trazability = ({ initialMilestone }) => {
     // const updatedMilestones = [...milestones];
 
     handleChangeMilestoneField({ target: { name: "name", value: name } });
-    handleChangeMilestoneField({ target: { name: "path", value: path } });
 
     const subprocess = name;
 
     setSubprocessSelected(subprocess);
     // setPath(path);
     // setMilestones([...updatedMilestones]);
+
+    setMilestone({ ...milestoneForEdit, name: subprocessSelected });
+
     setShowCategories(false);
   };
   const handleChangeTab = (event, newValue) => {
@@ -119,9 +122,9 @@ const Trazability = ({ initialMilestone }) => {
 
   const saveMilestone = async () => {
     if (
-      milestone.image === "" ||
-      milestone.description === "" ||
-      milestone.name === ""
+      milestoneForEdit.image === "" ||
+      milestoneForEdit.description === "" ||
+      milestoneForEdit.name === ""
     ) {
       alert(`Descripción, imagen y/o categoría faltantes`);
 
@@ -132,70 +135,18 @@ const Trazability = ({ initialMilestone }) => {
       const updatedProduct = { ...product };
 
       updatedProduct.trazability.forEach((line) => {
-        if (line.path === milestone.path) {
+        if (line.path === milestoneForEdit.path) {
           console.log(line);
           const matchingSubprocess = line.line.find(
-            (subprocess) => subprocess.name === milestone.name
+            (subprocess) => subprocess.name === subprocessSelected
           );
 
           if (matchingSubprocess) {
-            matchingSubprocess.milestones.push({
-              ...milestone,
-              milestoneId: v4(),
-            });
+            matchingSubprocess.milestones.push(milestone);
           }
         }
       });
       setProductData({ ...updatedProduct });
-
-      await uploadProduct(updatedProduct);
-
-      modalStore.onClose();
-
-      Swal.fire({
-        title: "Agregado correctamente",
-        text: "Hito agregado correctamente",
-        icon: "success",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const editMilestone = async () => {
-    try {
-      const updatedProduct = { ...product };
-
-      updatedProduct.trazability.forEach((line) => {
-        if (line.path === milestone.path) {
-          console.log(line);
-          const matchingSubprocess = line.line.find(
-            (subprocess) => subprocess.name === milestone.name
-          );
-
-          if (matchingSubprocess) {
-            console.log(matchingSubprocess);
-            console.log(milestone);
-
-            let indexOf;
-
-            const updatedMilestone = matchingSubprocess.milestones.findIndex(
-              (element, index) => {
-                if (element.milestoneId === milestone.milestoneId) {
-                  indexOf = index;
-                  return true; // Devuelve true para incluir el elemento en el nuevo array
-                }
-                return false; // Devuelve false para excluir el elemento del nuevo array
-              }
-            );
-
-            
-            // matchingSubprocess.milestones.splice(indexOf, 0, milestone);
-          }
-        }
-      });
-      setProductData({ ...updatedProduct });
-
       await uploadProduct(updatedProduct);
 
       modalStore.onClose();
@@ -290,9 +241,11 @@ const Trazability = ({ initialMilestone }) => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            marginTop: 3,
+            marginTop: 1,
           }}
         >
+          <Button onClick={saveMilestone}>Editar</Button>
+
           <Box
             sx={{
               display: "flex",
@@ -302,19 +255,10 @@ const Trazability = ({ initialMilestone }) => {
               gap: 2,
             }}
           >
-            {/* <AddBoxIcon
-            onClick={addMilestoneBox}
-            sx={{
-              color: 'primary.main',
-              ':hover': {
-                cursor: 'pointer',
-              },
-            }}
-          /> */}
-
             <React.Fragment>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <Box
+                  width={"65vw"}
                   display="flex"
                   flexDirection={isSmallScreen ? "row" : "column"}
                   key={index}
@@ -352,17 +296,7 @@ const Trazability = ({ initialMilestone }) => {
                             cursor: "pointer",
                           },
                         }}
-                      >
-                        {/* <HighlightOffSharpIcon
-                          sx={{
-                            color: '#c55052',
-                            textAlign: 'right',
-                            paddingLeft: 1,
-                            fontSize: '2.5rem',
-                          }}
-                          // onClick={() => deleteMilestone(index)}
-                        /> */}
-                      </Grid>
+                      ></Grid>
                     )}
                   </Box>
                   {/* center */}
@@ -407,12 +341,12 @@ const Trazability = ({ initialMilestone }) => {
                           cursor: "pointer",
                         }}
                       >
-                        {milestone.image ? (
+                        {milestoneForEdit.image ? (
                           <Image
-                            src={milestone.image}
+                            src={milestoneForEdit.image}
                             width={150}
                             height={150}
-                            alt={milestone.image}
+                            alt={milestoneForEdit.image}
                             style={{
                               objectFit: "cover",
                               borderRadius: "20px",
@@ -430,9 +364,6 @@ const Trazability = ({ initialMilestone }) => {
                             <ImageIcon
                               sx={{ fontSize: "6rem", color: "#0330ab" }}
                             />
-                            {/* <Typography sx={{ color: '#000' }}>
-                      Añadir imagen
-                    </Typography> */}
                           </Box>
                         )}
                       </Grid>
@@ -450,7 +381,7 @@ const Trazability = ({ initialMilestone }) => {
                           <CustomTextField
                             borderRadius={4}
                             name="description"
-                            value={milestone.description}
+                            value={milestoneForEdit.description}
                             onChange={handleChangeMilestoneField}
                           />
                         ) : (
@@ -481,7 +412,7 @@ const Trazability = ({ initialMilestone }) => {
                       </Grid>
 
                       {/* Atachment */}
-                      {milestone.atachments.length ? (
+                      {milestoneForEdit.atachments.length ? (
                         <Grid
                           item
                           width="150px"
@@ -519,49 +450,38 @@ const Trazability = ({ initialMilestone }) => {
                               display={"flex"}
                               flexDirection={"column"}
                             >
-                              {milestone.atachments.map((atachment, i) => (
-                                <Box
-                                  key={atachment.name}
-                                  display="flex"
-                                  flexDirection="row"
-                                >
-                                  <Typography
-                                    sx={{
-                                      color: "#000",
-                                      fontSize: "12px",
-                                      textAlign: "center",
-                                    }}
+                              {milestoneForEdit.atachments.map(
+                                (atachment, i) => (
+                                  <Box
+                                    key={atachment.name}
+                                    display="flex"
+                                    flexDirection="row"
                                   >
-                                    {atachment.name}
-                                  </Typography>
-                                  <Typography
-                                    style={{
-                                      color: "red",
-                                      cursor: "pointer",
-                                      fontSize: "12px",
-                                      fontWeight: "bold",
-                                      marginLeft: "0.2rem",
-                                      textAlign: "center",
-                                    }}
-                                    onClick={() => handleRemoveAtachment(i)}
-                                  >
-                                    x
-                                  </Typography>
-
-                                  {/* <span
-                          style={{
-                            color: 'red',
-                            cursor: 'pointer',
-                            marginLeft: '0.2rem',
-                            textAlign: 'center',
-                          }}
-                          // onClick={() => handleRemoveAttachment(index, i)}
-                        >
-                          x
-                        </span> */}
-                                  {/* </Box> */}
-                                </Box>
-                              ))}
+                                    <Typography
+                                      sx={{
+                                        color: "#000",
+                                        fontSize: "12px",
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      {atachment.name}
+                                    </Typography>
+                                    <Typography
+                                      style={{
+                                        color: "red",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        fontWeight: "bold",
+                                        marginLeft: "0.2rem",
+                                        textAlign: "center",
+                                      }}
+                                      onClick={() => handleRemoveAtachment(i)}
+                                    >
+                                      x
+                                    </Typography>
+                                  </Box>
+                                )
+                              )}
                             </Box>
                           </Paper>
 
@@ -600,7 +520,7 @@ const Trazability = ({ initialMilestone }) => {
                         </Grid>
                       )}
 
-                      {milestone.name ? (
+                      {milestoneForEdit.name ? (
                         <Grid
                           item
                           width="150px"
@@ -631,7 +551,7 @@ const Trazability = ({ initialMilestone }) => {
                                 flex: "1",
                               }}
                             >
-                              {milestone.name}
+                              {milestoneForEdit.name}
                             </Typography>
                           </Paper>
                         </Grid>
@@ -691,42 +611,12 @@ const Trazability = ({ initialMilestone }) => {
                             cursor: "pointer",
                           },
                         }}
-                      >
-                        {/* <HighlightOffSharpIcon
-                        sx={{
-                          color: '#c55052',
-                          textAlign: 'right',
-                          paddingLeft: 1,
-                          fontSize: '2.5rem',
-                        }}
-                        onClick={() => deleteMilestone(index)}
-                      /> */}
-                      </Grid>
+                      ></Grid>
                     )}
                   </Box>
                 </Box>
               </Box>
-              {/* 
-            {milestones.length > 1 && index !== 0 && (
-              <Image
-                width={50}
-                height={50}
-                src={'/images/chainlink.svg'}
-                alt="Chainlink Logo"
-              />
-            )} */}
             </React.Fragment>
-            {!initialMilestone && (
-              <Button variant="contained" onClick={saveMilestone}>
-                Agregar contenido
-              </Button>
-            )}
-
-            {initialMilestone && (
-              <Button variant="contained" onClick={editMilestone}>
-                Editar Contenido
-              </Button>
-            )}
           </Box>
         </Box>
       </Box>
@@ -734,4 +624,4 @@ const Trazability = ({ initialMilestone }) => {
   );
 };
 
-export default Trazability;
+export default EditTrazability;
