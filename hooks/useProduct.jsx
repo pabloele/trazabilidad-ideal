@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { db } from '../firebase/config';
-import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
+import React, { useEffect, useState } from "react";
+import { db } from "../firebase/config";
+import { doc, getDoc, setDoc } from "firebase/firestore/lite";
+import { useProductStore } from "../store";
 
 const useProduct = (productId) => {
-  const [product, setProduct] = useState();
+  const { setProductData, product } = useProductStore();
 
   const getProduct = async () => {
     try {
-      const productRef = doc(db, 'products', productId);
+      const productRef = doc(db, "products", productId);
 
       const response = await getDoc(productRef);
 
       if (response.exists()) {
         const productData = response.data();
-        setProduct(productData);
+
+        setProductData(productData);
       }
     } catch (error) {
       console.log(error);
@@ -21,7 +23,7 @@ const useProduct = (productId) => {
   };
 
   const uploadQr = async (product, qrcode) => {
-    const productRef = doc(db, 'products', productId);
+    const productRef = doc(db, "products", productId);
 
     const productWithQr = { ...product, qrcode };
 
@@ -32,11 +34,11 @@ const useProduct = (productId) => {
 
   const uploadProduct = async (updateProduct) => {
     try {
-      const productRef = doc(db, 'products', productId);
+      const productRef = doc(db, "products", productId);
 
       const response = await setDoc(productRef, updateProduct, { merge: true });
 
-      console.log(response);
+      updateProduct(updateProduct);
     } catch (error) {
       console.log(error);
     }
@@ -46,7 +48,7 @@ const useProduct = (productId) => {
     getProduct();
   }, [productId]);
 
-  return { product, setProduct, uploadProduct, uploadQr };
+  return { product, uploadProduct, uploadQr };
 };
 
 export default useProduct;
