@@ -69,6 +69,14 @@ const Trazability = ({ initialMilestone }) => {
     initialMilestone ? true : false
   );
 
+  const oldPath = initialMilestone?.path;
+
+  const oldName = initialMilestone?.name;
+
+  console.log(initialMilestone);
+
+  console.log(product.trazability);
+
   const handleTextClick = () => {
     setShowTextField(true);
   };
@@ -165,35 +173,51 @@ const Trazability = ({ initialMilestone }) => {
   const editMilestone = async () => {
     try {
       const updatedProduct = { ...product };
+      console.log("Old Path:", oldPath);
 
       updatedProduct.trazability.forEach((line) => {
-        if (line.path === milestone.path) {
-          console.log(line);
-          const matchingSubprocess = line.line.find(
-            (subprocess) => subprocess.name === milestone.name
+        const matchingSubprocess = line.line.find(
+          (subprocess) => subprocess.name === milestone.name
+        );
+
+        if (matchingSubprocess && matchingSubprocess.name === oldName) {
+          console.log(matchingSubprocess);
+          const indexOf = matchingSubprocess.milestones.findIndex(
+            (element) => element.milestoneId === milestone.milestoneId
           );
 
-          if (matchingSubprocess) {
-            console.log(matchingSubprocess);
-            console.log(milestone);
+          matchingSubprocess.milestones.splice(indexOf, 1);
+          matchingSubprocess.milestones.splice(indexOf, 0, milestone);
+        } else {
+          //elimina el hito anterior
+          if (line.path === oldPath) {
+            line.line.map((element) => {
+              if (element.name === oldName) {
+                console.log(element);
 
-            let indexOf;
+                const indexOf = element.milestones.findIndex(
+                  (index) => index.milestoneId === milestone.milestoneId
+                );
 
-            const updatedMilestone = matchingSubprocess.milestones.findIndex(
-              (element, index) => {
-                if (element.milestoneId === milestone.milestoneId) {
-                  indexOf = index;
-                  return true; // Devuelve true para incluir el elemento en el nuevo array
-                }
-                return false; // Devuelve false para excluir el elemento del nuevo array
+                element.milestones.splice(indexOf, 1);
               }
-            );
+            });
+          }
 
-            
-            // matchingSubprocess.milestones.splice(indexOf, 0, milestone);
+          if (line.path === milestone.path) {
+            console.log(line);
+
+            line.line.map((element) => {
+              if (element.name === milestone.name) {
+                console.log(element);
+
+                element.milestones.push(milestone);
+              }
+            });
           }
         }
       });
+
       setProductData({ ...updatedProduct });
 
       await uploadProduct(updatedProduct);
