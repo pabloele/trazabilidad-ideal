@@ -225,7 +225,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
       modalStore.onClose();
       closeModal();
       Swal.fire({
-        title: 'Agregado correctamente',
+        title: 'Actualizado correctamente',
         text: 'Hito agregado correctamente',
         icon: 'success',
       });
