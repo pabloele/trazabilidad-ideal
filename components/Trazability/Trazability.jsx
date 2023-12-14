@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -8,24 +8,24 @@ import {
   useMediaQuery,
   Tabs,
   Tab,
-} from '@mui/material';
+} from "@mui/material";
 
-import ImageIcon from '@mui/icons-material/Image';
-import Image from 'next/image';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import AttachmentIcon from '@mui/icons-material/Attachment';
-import styled from 'styled-components';
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-import ClassIcon from '@mui/icons-material/Class';
-import { v4 } from 'uuid';
-import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
-import TabPanel from '../TabPanel/TabPanel';
-import useProduct from '../../hooks/useProduct';
-import { useRouter } from 'next/router';
-import useMilestone from '../../hooks/useMilestone';
-import { useProductStore } from '../../store';
-import useModalStore from '../../store/useModalStore';
-import Swal from 'sweetalert2';
+import ImageIcon from "@mui/icons-material/Image";
+import Image from "next/image";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import AttachmentIcon from "@mui/icons-material/Attachment";
+import styled from "styled-components";
+import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import ClassIcon from "@mui/icons-material/Class";
+import { v4 } from "uuid";
+import HighlightOffSharpIcon from "@mui/icons-material/HighlightOffSharp";
+import TabPanel from "../TabPanel/TabPanel";
+import useProduct from "../../hooks/useProduct";
+import { useRouter } from "next/router";
+import useMilestone from "../../hooks/useMilestone";
+import { useProductStore } from "../../store";
+import useModalStore from "../../store/useModalStore";
+import Swal from "sweetalert2";
 const CustomTextField = styled.textarea`
   width: 100%;
   height: 150px;
@@ -41,7 +41,7 @@ const CustomTextField = styled.textarea`
 const Trazability = ({ initialMilestone, closeModal }) => {
   const router = useRouter();
   const index = 0;
-  const isSmallScreen = useMediaQuery('(min-width: 600px)');
+  const isSmallScreen = useMediaQuery("(min-width: 600px)");
 
   const [showCategories, setShowCategories] = useState(true);
   const [tabActive, setTabActive] = useState(0);
@@ -73,10 +73,6 @@ const Trazability = ({ initialMilestone, closeModal }) => {
 
   const oldName = initialMilestone?.name;
 
-  console.log(initialMilestone);
-
-  console.log(product.trazability);
-
   const handleTextClick = () => {
     setShowTextField(true);
   };
@@ -92,7 +88,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
     handleFileUpload();
   };
 
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState("");
 
   const handleSaveClick = () => {
     setMilestone((prevMilestone) => {
@@ -109,8 +105,8 @@ const Trazability = ({ initialMilestone, closeModal }) => {
   const handleClickSubprocess = ({ name, path }) => {
     // const updatedMilestones = [...milestones];
 
-    handleChangeMilestoneField({ target: { name: 'name', value: name } });
-    handleChangeMilestoneField({ target: { name: 'path', value: path } });
+    handleChangeMilestoneField({ target: { name: "name", value: name } });
+    handleChangeMilestoneField({ target: { name: "path", value: path } });
 
     const subprocess = name;
 
@@ -120,16 +116,16 @@ const Trazability = ({ initialMilestone, closeModal }) => {
     setShowCategories(false);
   };
   const handleChangeTab = (event, newValue) => {
-    console.log('event', event.target.value);
-    console.log('value', newValue);
+    console.log("event", event.target.value);
+    console.log("value", newValue);
     setTabActive(newValue);
   };
 
   const saveMilestone = async () => {
     if (
-      milestone.image === '' ||
-      milestone.description === '' ||
-      milestone.name === ''
+      milestone.image === "" ||
+      milestone.description === "" ||
+      milestone.name === ""
     ) {
       alert(`Descripción, imagen y/o categoría faltantes`);
 
@@ -161,9 +157,9 @@ const Trazability = ({ initialMilestone, closeModal }) => {
       modalStore.onClose();
 
       Swal.fire({
-        title: 'Agregado correctamente',
-        text: 'Hito agregado correctamente',
-        icon: 'success',
+        title: "Agregado correctamente",
+        text: "Hito agregado correctamente",
+        icon: "success",
       });
     } catch (error) {
       console.log(error);
@@ -173,7 +169,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
   const editMilestone = async () => {
     try {
       const updatedProduct = { ...product };
-      console.log('Old Path:', oldPath);
+      console.log("Old Path:", oldPath);
 
       updatedProduct.trazability.forEach((line) => {
         const matchingSubprocess = line.line.find(
@@ -225,14 +221,61 @@ const Trazability = ({ initialMilestone, closeModal }) => {
       modalStore.onClose();
       closeModal();
       Swal.fire({
-        title: 'Agregado correctamente',
-        text: 'Hito agregado correctamente',
-        icon: 'success',
+        title: "Agregado correctamente",
+        text: "Hito agregado correctamente",
+        icon: "success",
       });
     } catch (error) {
       console.log(error);
     }
   };
+
+  const deleteMilestone = async () => {
+    try {
+      closeModal();
+
+      Swal.fire({
+        title: "¿Seguro que deseas eliminar este hito?",
+        text: "Esta acción no es reversible",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const updatedProduct = { ...product };
+            updatedProduct.trazability.forEach((line) => {
+              const matchingSubprocess = line.line.find(
+                (subprocess) => subprocess.name === milestone.name
+              );
+
+              if (matchingSubprocess) {
+                console.log(matchingSubprocess);
+                const indexOf = matchingSubprocess.milestones.findIndex(
+                  (element) => element.milestoneId === milestone.milestoneId
+                );
+                matchingSubprocess.milestones.splice(indexOf, 1);
+              }
+            });
+
+            setMilestone(null);
+
+            setProductData({ ...updatedProduct });
+            await uploadProduct(updatedProduct);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if (!milestone) return null;
 
   return (
     <>
@@ -248,7 +291,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                 <Tab
                   label={element.name}
                   sx={{
-                    color: 'primary.main',
+                    color: "primary.main",
                   }}
                   key={element.name}
                 />
@@ -260,7 +303,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
             // categoría
             <Box key={element.name}>
               <TabPanel
-                sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                sx={{ display: "flex", flexDirection: "row", gap: 2 }}
                 value={tabActive}
                 index={index}
                 key={index}
@@ -272,10 +315,10 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                       marginTop: 1,
                       backgroundColor:
                         subprocessSelected === subprocess.name
-                          ? 'primary.main'
-                          : 'transparent',
-                      transition: 'gray 0.3s ease',
-                      borderRadius: '40px',
+                          ? "primary.main"
+                          : "transparent",
+                      transition: "gray 0.3s ease",
+                      borderRadius: "40px",
                     }}
                   >
                     <Typography
@@ -289,14 +332,14 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                       sx={{
                         color:
                           subprocessSelected === subprocess.name
-                            ? 'white'
-                            : 'primary.main',
+                            ? "white"
+                            : "primary.main",
                         marginY: 1,
                         marginX: 1,
                         fontSize: 12,
-                        textTransform: 'uppercase',
-                        ':hover': {
-                          cursor: 'pointer',
+                        textTransform: "uppercase",
+                        ":hover": {
+                          cursor: "pointer",
                         },
                       }}
                     >
@@ -312,16 +355,16 @@ const Trazability = ({ initialMilestone, closeModal }) => {
       <Box sx={{ padding: 4 }} width="100%">
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
+            display: "flex",
+            justifyContent: "center",
             marginTop: 3,
           }}
         >
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
               marginBottom: 2,
               gap: 2,
             }}
@@ -340,7 +383,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
               <Box display="flex" flexDirection="row" alignItems="center">
                 <Box
                   display="flex"
-                  flexDirection={isSmallScreen ? 'row' : 'column'}
+                  flexDirection={isSmallScreen ? "row" : "column"}
                   key={index}
                   marginY={2}
                 >
@@ -348,19 +391,19 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                   <Box
                     sx={{
                       borderRadius: isSmallScreen
-                        ? '120px 0 0 120px'
-                        : '120px 120px 0 0',
-                      border: '5px solid',
-                      borderColor: 'gray',
-                      borderBottom: isSmallScreen ? '' : 'none',
-                      borderRight: isSmallScreen ? 'none' : '',
-                      height: isSmallScreen ? '240px' : '140px',
-                      width: isSmallScreen ? '140px' : '240px',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '20px',
-                      display: 'flex',
-                      bgcolor: '#e7e7e67a',
+                        ? "120px 0 0 120px"
+                        : "120px 120px 0 0",
+                      border: "5px solid",
+                      borderColor: "gray",
+                      borderBottom: isSmallScreen ? "" : "none",
+                      borderRight: isSmallScreen ? "none" : "",
+                      height: isSmallScreen ? "240px" : "140px",
+                      width: isSmallScreen ? "140px" : "240px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "20px",
+                      display: "flex",
+                      bgcolor: "#e7e7e67a",
                     }}
                   >
                     {/* card actions */}
@@ -370,19 +413,19 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                         sx={{
                           padding: 0,
                           margin: 0,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          ':hover': {
-                            cursor: 'pointer',
+                          alignItems: "center",
+                          justifyContent: "center",
+                          ":hover": {
+                            cursor: "pointer",
                           },
                         }}
                       >
                         <HighlightOffSharpIcon
                           sx={{
-                            color: '#c55052',
-                            textAlign: 'right',
+                            color: "#c55052",
+                            textAlign: "right",
                             paddingLeft: 1,
-                            fontSize: '2.5rem',
+                            fontSize: "2.5rem",
                           }}
                           // onClick={() => deleteMilestone(index)}
                         />
@@ -392,26 +435,26 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                   {/* center */}
                   <Grid
                     container
-                    direction={isSmallScreen ? 'row' : 'column'}
+                    direction={isSmallScreen ? "row" : "column"}
                     gap={4}
                     sx={{
-                      border: '5px solid',
-                      borderColor: 'gray',
-                      borderLeft: isSmallScreen ? 'none' : '',
-                      borderRight: isSmallScreen ? 'none' : '',
-                      borderTop: isSmallScreen ? '' : 'none',
-                      borderBottom: isSmallScreen ? '' : 'none',
-                      height: isSmallScreen ? '240px' : '100%',
-                      width: isSmallScreen ? '100%' : '240px',
-                      bgcolor: '#e7e7e67a',
+                      border: "5px solid",
+                      borderColor: "gray",
+                      borderLeft: isSmallScreen ? "none" : "",
+                      borderRight: isSmallScreen ? "none" : "",
+                      borderTop: isSmallScreen ? "" : "none",
+                      borderBottom: isSmallScreen ? "" : "none",
+                      height: isSmallScreen ? "240px" : "100%",
+                      width: isSmallScreen ? "100%" : "240px",
+                      bgcolor: "#e7e7e67a",
                     }}
                   >
                     <Grid
                       container
                       alignContent="center"
                       gap={2}
-                      direction={isSmallScreen ? 'row' : 'column'}
-                      sx={isSmallScreen ? { justifyContent: 'center' } : {}}
+                      direction={isSmallScreen ? "row" : "column"}
+                      sx={isSmallScreen ? { justifyContent: "center" } : {}}
                     >
                       {/* Category */}
                       {milestone.name ? (
@@ -425,24 +468,24 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                           bgcolor="#16161526"
                           borderRadius="20px"
                           onClick={() => handleOpenCategories(index)}
-                          sx={{ cursor: 'pointer' }}
+                          sx={{ cursor: "pointer" }}
                         >
                           <Paper
                             sx={{
                               borderRadius: 4,
-                              cursor: 'pointer',
+                              cursor: "pointer",
                             }}
                           >
                             <Typography
                               sx={{
-                                textAlign: 'center',
+                                textAlign: "center",
                                 maxWidth: 120,
-                                backgroundColor: '#e1e1e1',
+                                backgroundColor: "#e1e1e1",
                                 borderRadius: 4,
-                                padding: '5px',
+                                padding: "5px",
                                 fontSize: 12,
-                                color: 'primary.main',
-                                flex: '1',
+                                color: "primary.main",
+                                flex: "1",
                               }}
                             >
                               {milestone.name}
@@ -460,23 +503,23 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                           bgcolor="#16161526"
                           borderRadius="20px"
                           onClick={() => handleOpenCategories(index)}
-                          sx={{ cursor: 'pointer' }}
+                          sx={{ cursor: "pointer" }}
                         >
                           <Box
                             sx={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              cursor: 'pointer',
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              cursor: "pointer",
                             }}
                           >
                             <ClassIcon
                               sx={{
-                                fontSize: '6rem',
-                                color: '#0330ab',
+                                fontSize: "6rem",
+                                color: "#0330ab",
                               }}
                             />
-                            <Typography sx={{ color: 'primary.main' }}>
+                            <Typography sx={{ color: "primary.main" }}>
                               Categoría
                             </Typography>
                           </Box>
@@ -488,16 +531,16 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                         onClick={() => handleImageUpload(index)}
                         borderRadius={4}
                         sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          bgcolor: '#16161526',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                          height: '150px',
-                          width: '150px',
-                          borderRadius: '20px',
-                          cursor: 'pointer',
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "#16161526",
+                          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                          height: "150px",
+                          width: "150px",
+                          borderRadius: "20px",
+                          cursor: "pointer",
                         }}
                       >
                         {milestone.image ? (
@@ -507,23 +550,23 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                             height={150}
                             alt={milestone.image}
                             style={{
-                              objectFit: 'cover',
-                              borderRadius: '20px',
+                              objectFit: "cover",
+                              borderRadius: "20px",
                             }}
                           />
                         ) : (
                           <Box
                             sx={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              cursor: 'pointer',
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              cursor: "pointer",
                             }}
                           >
                             <ImageIcon
-                              sx={{ fontSize: '6rem', color: '#0330ab' }}
+                              sx={{ fontSize: "6rem", color: "#0330ab" }}
                             />
-                            <Typography sx={{ color: 'primary.main' }}>
+                            <Typography sx={{ color: "primary.main" }}>
                               Añadir imagen
                             </Typography>
                           </Box>
@@ -550,26 +593,26 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                           <Box
                             onClick={handleTextClick}
                             sx={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              bgcolor: '#16161526',
-                              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                              height: '150px',
-                              width: '150px',
-                              borderRadius: '20px',
-                              cursor: 'pointer',
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: "#16161526",
+                              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                              height: "150px",
+                              width: "150px",
+                              borderRadius: "20px",
+                              cursor: "pointer",
                             }}
                           >
                             <EditNoteOutlinedIcon
                               sx={{
-                                fontSize: '6rem',
-                                color: '#0330ab',
-                                display: 'flex',
+                                fontSize: "6rem",
+                                color: "#0330ab",
+                                display: "flex",
                               }}
                             />
-                            <Typography sx={{ color: 'primary.main' }}>
+                            <Typography sx={{ color: "primary.main" }}>
                               Descripción
                             </Typography>
                           </Box>
@@ -593,27 +636,27 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                           <Paper
                             sx={{
                               marginTop: 3,
-                              height: '5rem',
+                              height: "5rem",
 
-                              overflowY: 'auto',
+                              overflowY: "auto",
                               // cursor: 'pointer',
-                              '&::-webkit-scrollbar': {
-                                width: '4px',
+                              "&::-webkit-scrollbar": {
+                                width: "4px",
                               },
-                              '&::-webkit-scrollbar-track': {
-                                background: 'transparent',
+                              "&::-webkit-scrollbar-track": {
+                                background: "transparent",
                               },
-                              '&::-webkit-scrollbar-thumb': {
-                                background: '#8888888d',
-                                borderRadius: '4px',
+                              "&::-webkit-scrollbar-thumb": {
+                                background: "#8888888d",
+                                borderRadius: "4px",
                               },
                             }}
                           >
                             <Box
                               // key={i}
                               width="7rem"
-                              display={'flex'}
-                              flexDirection={'column'}
+                              display={"flex"}
+                              flexDirection={"column"}
                             >
                               {milestone.atachments.map((atachment, i) => (
                                 <Box
@@ -623,21 +666,21 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                                 >
                                   <Typography
                                     sx={{
-                                      color: '#000',
-                                      fontSize: '12px',
-                                      textAlign: 'center',
+                                      color: "#000",
+                                      fontSize: "12px",
+                                      textAlign: "center",
                                     }}
                                   >
                                     {atachment.name}
                                   </Typography>
                                   <Typography
                                     style={{
-                                      color: 'red',
-                                      cursor: 'pointer',
-                                      fontSize: '12px',
-                                      fontWeight: 'bold',
-                                      marginLeft: '0.2rem',
-                                      textAlign: 'center',
+                                      color: "red",
+                                      cursor: "pointer",
+                                      fontSize: "12px",
+                                      fontWeight: "bold",
+                                      marginLeft: "0.2rem",
+                                      textAlign: "center",
                                     }}
                                     onClick={() => handleRemoveAtachment(i)}
                                   >
@@ -664,10 +707,10 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                           <AddBoxIcon
                             onClick={handleFileUpload}
                             sx={{
-                              cursor: 'pointer',
-                              color: 'primary.main',
-                              ':hover': {
-                                cursor: 'pointer',
+                              cursor: "pointer",
+                              color: "primary.main",
+                              ":hover": {
+                                cursor: "pointer",
                               },
                               marginBottom: 2,
                             }}
@@ -684,31 +727,31 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                           bgcolor="#16161526"
                           borderRadius="20px"
                           onClick={() => handleClickAtachment(index)}
-                          sx={{ cursor: 'pointer' }}
+                          sx={{ cursor: "pointer" }}
                         >
                           <Box
                             onClick={handleTextClick}
                             sx={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              bgcolor: '#16161526',
-                              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                              height: '150px',
-                              width: '150px',
-                              borderRadius: '20px',
-                              cursor: 'pointer',
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: "#16161526",
+                              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                              height: "150px",
+                              width: "150px",
+                              borderRadius: "20px",
+                              cursor: "pointer",
                             }}
                           >
                             <AttachmentIcon
                               sx={{
-                                fontSize: '6rem',
-                                color: '#0330ab',
-                                cursor: 'pointer',
+                                fontSize: "6rem",
+                                color: "#0330ab",
+                                cursor: "pointer",
                               }}
                             />
-                            <Typography sx={{ color: 'primary.main' }}>
+                            <Typography sx={{ color: "primary.main" }}>
                               Adjuntos
                             </Typography>
                           </Box>
@@ -721,19 +764,19 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                   <Box
                     sx={{
                       borderRadius: isSmallScreen
-                        ? '0 120px 120px 0'
-                        : '0 0 120px  120px',
-                      border: '5px solid',
-                      borderColor: 'gray',
-                      borderTop: isSmallScreen ? '' : 'none',
-                      borderLeft: isSmallScreen ? 'none' : '',
-                      height: isSmallScreen ? '240px' : '140px',
-                      width: isSmallScreen ? '140px' : '240px',
-                      padding: '20px',
-                      display: 'flex',
-                      bgcolor: '#e7e7e67a',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                        ? "0 120px 120px 0"
+                        : "0 0 120px  120px",
+                      border: "5px solid",
+                      borderColor: "gray",
+                      borderTop: isSmallScreen ? "" : "none",
+                      borderLeft: isSmallScreen ? "none" : "",
+                      height: isSmallScreen ? "240px" : "140px",
+                      width: isSmallScreen ? "140px" : "240px",
+                      padding: "20px",
+                      display: "flex",
+                      bgcolor: "#e7e7e67a",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     {/* card actions */}
@@ -743,21 +786,21 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                         sx={{
                           padding: 0,
                           margin: 0,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          ':hover': {
-                            cursor: 'pointer',
+                          alignItems: "center",
+                          justifyContent: "center",
+                          ":hover": {
+                            cursor: "pointer",
                           },
                         }}
                       >
                         <HighlightOffSharpIcon
                           sx={{
-                            color: '#c55052',
-                            textAlign: 'right',
+                            color: "#c55052",
+                            textAlign: "right",
                             paddingLeft: 1,
-                            fontSize: '2.5rem',
+                            fontSize: "2.5rem",
                           }}
-                          // onClick={() => deleteMilestone(index)}
+                          onClick={deleteMilestone}
                         />
                       </Grid>
                     )}
