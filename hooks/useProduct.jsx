@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore/lite";
+import { useProductStore } from "../store";
 
 const useProduct = (productId) => {
-  const [product, setProduct] = useState();
+  const { setProductData, product } = useProductStore();
 
   const getProduct = async () => {
     try {
@@ -13,7 +14,8 @@ const useProduct = (productId) => {
 
       if (response.exists()) {
         const productData = response.data();
-        setProduct(productData);
+
+        setProductData(productData);
       }
     } catch (error) {
       console.log(error);
@@ -36,7 +38,7 @@ const useProduct = (productId) => {
 
       const response = await setDoc(productRef, updateProduct, { merge: true });
 
-      console.log(response);
+      updateProduct(updateProduct);
     } catch (error) {
       console.log(error);
     }
@@ -46,7 +48,7 @@ const useProduct = (productId) => {
     getProduct();
   }, [productId]);
 
-  return { product, setProduct, uploadProduct, uploadQr };
+  return { product, uploadProduct, uploadQr };
 };
 
 export default useProduct;

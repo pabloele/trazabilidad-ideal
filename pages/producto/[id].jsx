@@ -29,12 +29,16 @@ import { useAddress } from "@thirdweb-dev/react";
 import { updateProduct } from "../../firebase/controllers/firestoreControllers";
 import { v4 } from "uuid";
 import CloseIcon from "@mui/icons-material/Close";
+import { useProductStore } from "../../store";
+import useModalStore from "../../store/useModalStore";
 const Producto = () => {
   const address = useAddress();
 
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
   const router = useRouter();
   const { user } = useAuth();
+
+  const { product, setProductData } = useProductStore();
 
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState("");
@@ -69,9 +73,9 @@ const Producto = () => {
     handleFileUpload,
   } = useMilestone();
 
-  const { product, setProduct, uploadProduct, uploadQr } = useProduct(
-    router.query.id
-  );
+  const { isOpen, onOpen, onClose } = useModalStore();
+
+  const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -109,10 +113,10 @@ const Producto = () => {
   const handleOpen = () => {
     setTabActive(0);
     setSubprocessSelected(null);
-    setOpen(true);
+    onOpen();
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => onClose();
 
   const handleClickSubprocess = ({ name, path }) => {
     const updatedMilestones = [...milestones];
@@ -137,23 +141,14 @@ const Producto = () => {
     setTabActive(newValue);
   };
 
-  const saveMilestone = async (index) => {
-    let milestonesValid = true;
+  const saveMilestone = async (milestone) => {
+    if (
+      milestone.image === "" ||
+      milestone.description === "" ||
+      milestone.name === ""
+    ) {
+      alert(`Descripción, imagen y/o categoría faltantes`);
 
-    milestones.forEach((element, index) => {
-      if (element.image === "" || element.description === "") {
-        const number = index + 1;
-        alert(`Faltan completar datos en el hito número ${number}`);
-        milestonesValid = false;
-      }
-    });
-
-    if (!milestonesValid) {
-      return;
-    }
-
-    if (!subprocessSelected || tabActive === null) {
-      alert("Por favor, selecciona un proceso y un subproceso.");
       return;
     }
 
@@ -249,13 +244,15 @@ const Producto = () => {
           tokenDataIPFS.url
         );
 
-        setTxHash(response.hash);
-
-        const updated = await updateProduct(
-          router.query.id,
-          "realizado",
-          txHash
-        );
+        if (txHash) {
+          const updated = await updateProduct(
+            router.query.id,
+            "realizado",
+            txHash
+          );
+        } else {
+          console.error("El valor de txHash es undefined.");
+        }
       } catch (error) {
         setError(error.reason);
 
@@ -278,7 +275,7 @@ const Producto = () => {
     });
     const response = await uploadQr(product, QRdata);
 
-    setProduct({ ...product, qrcode: QRdata });
+    setProductData({ ...product, qrcode: QRdata });
   };
 
   const handleOpenModal = async () => {
@@ -328,7 +325,7 @@ const Producto = () => {
 
         {/* <Button onClick={addProtocol}>agregar</Button> */}
 
-        <Modal open={open} onClose={handleClose} sx={{ width: "100%" }}>
+        <Modal open={isOpen} onClose={handleClose} sx={{ width: "100%" }}>
           <Box
             sx={{
               position: "absolute",
@@ -349,7 +346,7 @@ const Producto = () => {
           >
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <CloseIcon
-                onClick={() => setOpen(false)}
+                onClick={() => onClose()}
                 sx={{
                   color: "red",
                   ":hover": {
@@ -358,99 +355,16 @@ const Producto = () => {
                 }}
               />
             </Box>
-
-            {showCategories && (
-              <React.Fragment>
-                <Grid display="flex" justifyContent="center">
-                  <Tabs
-                    variant="scrollable"
-                    onChange={handleChange}
-                    value={tabActive}
-                  >
-                    {product.trazability.map((element, index) => (
-                      <Tab
-                        label={element.name}
-                        sx={{
-                          color: "primary.main",
-                        }}
-                        key={element.name}
-                      />
-                    ))}
-                  </Tabs>
-                </Grid>
-
-                {product.trazability.map((element, index) => (
-                  // categoría
-                  <Box key={element.name}>
-                    <TabPanel
-                      sx={{ display: "flex", flexDirection: "row", gap: 2 }}
-                      value={tabActive}
-                      index={index}
-                      key={index}
-                    >
-                      {element.line.map((subprocess, subprocessIndex) => (
-                        <Box
-                          key={subprocessIndex}
-                          sx={{
-                            marginTop: 1,
-                            backgroundColor:
-                              subprocessSelected === subprocess.name
-                                ? "primary.main"
-                                : "transparent",
-                            transition: "gray 0.3s ease",
-                            borderRadius: "40px",
-                          }}
-                        >
-                          <Typography
-                            onClick={() => {
-                              handleClickSubprocess({
-                                path: element.path,
-                                name: subprocess.name,
-                              });
-                            }}
-                            name={subprocess.name}
-                            sx={{
-                              color:
-                                subprocessSelected === subprocess.name
-                                  ? "white"
-                                  : "primary.main",
-                              marginY: 1,
-                              marginX: 1,
-                              fontSize: 12,
-                              textTransform: "uppercase",
-                              ":hover": {
-                                cursor: "pointer",
-                              },
-                            }}
-                          >
-                            {subprocess.name}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </TabPanel>
-                  </Box>
-                ))}
-              </React.Fragment>
-            )}
-
-            <Box key={boxIndex}>
-              <Trazability
-                fileUri={fileUri}
-                handleImageUpload={handleImageUpload}
-                product={product}
-                subprocessSelected={subprocessSelected}
-                milestones={milestones}
-                setMilestones={setMilestones}
-                saveMilestone={saveMilestone}
-                setMilestoneBox={setMilestoneBox}
-                milestoneBox={milestoneBox}
-                handleAddMilestone={handleAddMilestone}
-                path={path}
-                handleFileUpload={handleFileUpload}
-                setShowCategories={setShowCategories}
-                setBoxIndex={setBoxIndex}
-                boxIndex={boxIndex}
-              />
+            <Box>
+              <Typography
+                sx={{
+                  color: "primary.main",
+                  fontSize: 24,
+                }}
+              >
+                Complete los datos del hito
+              </Typography>
+              <Trazability />
             </Box>
           </Box>
         </Modal>

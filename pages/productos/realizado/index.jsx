@@ -20,10 +20,13 @@ import { useAuth } from "../../../context/AuthContext";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 import { deleteProduct } from "../../../firebase/controllers/firestoreControllers";
+import { useProductStore } from "../../../store";
 const Products = () => {
   const { user } = useAuth();
 
   const { products, setProducts } = useProducts();
+
+  const { setProductData } = useProductStore();
   const ownerProducts = products.filter(
     (product) => product.ownerUid === user.uid
   );
@@ -45,7 +48,7 @@ const Products = () => {
         try {
           await deleteProduct(id);
 
-          setProducts(productFiltter);
+          setProductData(productFiltter);
 
           Swal.fire({
             title: "Producto eliminado",

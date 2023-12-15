@@ -21,23 +21,35 @@ import TimelineOppositeContent, {
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Image from 'next/image';
 import Link from 'next/link';
+import useModalStore from '../../store/useModalStore';
+import Trazability from '../Trazability/Trazability';
+import { FaLink } from 'react-icons/fa';
+import styled from 'styled-components';
+
+const VerticalLine = styled('div')({
+  width: '10px',
+  height: '2rem',
+  background: 'purple',
+});
+
 export default function TrazabilityLine({ protocol }) {
   const isMediumScreen = useMediaQuery('(min-width: 600px)');
   const timelineWidth = isMediumScreen ? '900px' : '500px';
 
   const [isGrabbing, setIsGrabbing] = useState(false);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const { isOpen, onOpen, onClose } = useModalStore();
 
+  const [open, setOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState(null);
 
   const openModal = (milestone) => {
+    setOpen(true);
     setSelectedMilestone(milestone);
-    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setOpen(false);
   };
 
   const handleMouseDown = () => {
@@ -71,8 +83,8 @@ export default function TrazabilityLine({ protocol }) {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '80vw',
-    height: '100%',
+    width: '95%',
+    height: '90vh',
     overflowY: 'auto',
     bgcolor: 'background.paper',
     border: '2px solid #000',
@@ -83,127 +95,48 @@ export default function TrazabilityLine({ protocol }) {
 
   return (
     <>
-      <Modal open={isModalOpen} onClose={closeModal}>
+      <Modal open={open} onClose={closeModal}>
         <Box sx={style}>
           <Paper sx={{ p: 2 }}>
             {/* <Typography variant="h6">Contenido del Milestone</Typography> */}
 
-            <Timeline
-              sx={{
-                [`& .${timelineOppositeContentClasses.root}`]: {
-                  flex: 0,
-                  padding: 0,
-                  margin: 0,
-                },
-              }}
-            >
-              {selectedMilestone &&
-                selectedMilestone.map((element, index) => {
-                  return (
-                    <TimelineItem key={index}>
-                      <TimelineOppositeContent
-                        sx={{ m: 'auto 0' }}
-                        align="right"
-                        variant="body2"
-                        color="text.secondary"
-                      ></TimelineOppositeContent>
-                      <TimelineSeparator>
-                        <TimelineDot>
-                          <ModeEditIcon />
-                        </TimelineDot>
-                        <TimelineConnector />
-                      </TimelineSeparator>
-                      <TimelineContent>
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: 24,
-                              textAlign: 'center',
-                              marginBottom: 2,
-                              color: 'primary.main',
-                            }}
-                          >
-                            {element.name}
-                          </Typography>
-                        </Box>
+            {selectedMilestone &&
+              selectedMilestone.map((element, index) => {
+                return (
+                  <Box
+                    key={index}
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    paddingY={2}
+                  >
+                    <Trazability
+                      initialMilestone={element}
+                      closeModal={closeModal}
+                    />
+                    {selectedMilestone.length &&
+                      selectedMilestone.length - 1 > index && (
                         <Box
-                          sx={{
-                            borderRadius: '10px',
-                            background: `linear-gradient(to right, #55555545, #0330ab28)`,
-                            width: '100%',
-                            height: '100%',
-                            padding: '20px',
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: 2,
-                          }}
+                          display={'flex'}
+                          flexDirection={'column'}
+                          alignItems={'center'}
+                          marginY={3}
                         >
-                          <Grid
-                            container
-                            direction={'row'}
-                            width={'100%'}
-                            spacing={2}
-                          >
-                            <Grid item xs={4} sm={4} md={4} lg={4}>
-                              <Box
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                height="100%"
-                              >
-                                <Image
-                                  src={element.image}
-                                  width={200}
-                                  height={200}
-                                  alt="image"
-                                  style={{
-                                    objectFit: 'cover',
-                                    borderRadius: '10px',
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
-                            <Grid item xs={6} sm={6} md={6} lg={6}>
-                              <Typography
-                                variant="body1"
-                                fontSize={20}
-                                color="BlackText"
-                              >
-                                {element.description}
-                              </Typography>
-
-                              {element.atachments && (
-                                <>
-                                  <Typography
-                                    variant="body1"
-                                    fontSize={18}
-                                    color="BlackText"
-                                  >
-                                    Archivos adjuntos
-                                  </Typography>
-                                  {element.atachments.map((element, index) => (
-                                    <React.Fragment key={index}>
-                                      <Link
-                                        target="_blank"
-                                        rel="noopener noreferrer "
-                                        href={element.url}
-                                      >
-                                        {element.name}
-                                      </Link>
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              )}
-                              {/* </Paper> */}
-                            </Grid>
-                          </Grid>
+                          {/* <VerticalLine /> */}
+                          <FaLink
+                            fontSize="2rem"
+                            style={{
+                              backgroundColor: '#524cff',
+                              borderRadius: '100%',
+                              marginBottom: 2,
+                            }}
+                          />
+                          {/* <VerticalLine /> */}
                         </Box>
-                      </TimelineContent>
-                    </TimelineItem>
-                  );
-                })}
-            </Timeline>
+                      )}
+                  </Box>
+                );
+              })}
           </Paper>
         </Box>
       </Modal>

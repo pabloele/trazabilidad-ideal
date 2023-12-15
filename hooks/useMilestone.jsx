@@ -10,18 +10,18 @@ const options = {
   useWebWorker: true,
 };
 
-const useMilestone = () => {
-  const [milestones, setMilestones] = useState([
-    {
-      name: "",
-      path: "",
-      image: "",
-      description: "",
-      milestoneId: "",
-      atachments: [],
-    },
-  ]);
-  const index = 0;
+const useMilestone = (
+  initialMilestone = {
+    name: "",
+    path: "",
+    image: "",
+    description: "",
+    milestoneId: "",
+    atachments: [],
+  }
+) => {
+  const [milestone, setMilestone] = useState(initialMilestone);
+
   const [fileUri, setFileUri] = useState([]);
 
   const { uploadFile, getFile } = useAuth();
@@ -44,7 +44,7 @@ const useMilestone = () => {
     },
   });
 
-  const handleImageUpload = async (index) => {
+  const handleImageUpload = async () => {
     try {
       const input = document.createElement("input");
       input.type = "file";
@@ -54,23 +54,24 @@ const useMilestone = () => {
         const rawFile = e.target.files[0];
         const file = await imageCompression(rawFile, options);
         if (file) {
-          const result = await ipfs.add(file);
-          const ipfsHash = result.path;
-          const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
+          try {
+            const result = await ipfs.add(file);
+            const ipfsHash = result.path;
+            const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
 
-          setFileUri((prevFileUri) => {
-            const newFileUri = [...prevFileUri];
-            newFileUri[index] = urlImage;
-            return newFileUri;
-          });
+            // setFileUri((prevFileUri) => {
+            //   const newFileUri = [...prevFileUri];
+            //   newFileUri[index] = urlImage;
+            //   return newFileUri;
+            // });
 
-          setMilestones((prevMilestones) => {
-            const newMilestones = [...prevMilestones];
-            newMilestones[index].image = urlImage;
-            return newMilestones;
-          });
-
-          console.log(milestones);
+            setMilestone((prev) => ({
+              ...prev,
+              image: urlImage,
+            }));
+          } catch (error) {
+            alert(error.message);
+          }
         }
       };
 
@@ -80,7 +81,7 @@ const useMilestone = () => {
     }
   };
 
-  const handleFileUpload = async (index) => {
+  const handleFileUpload = async () => {
     try {
       const input = document.createElement("input");
       input.type = "file";
@@ -96,21 +97,14 @@ const useMilestone = () => {
           const ipfsHash = result.path;
           const urlFile = `https://ipfs.io/ipfs/${ipfsHash}`;
 
-          setMilestones((prevMilestones) => {
-            const newMilestones = prevMilestones.map((milestone, i) => {
-              if (i === index) {
-                const atachments = [
-                  ...milestone.atachments,
-                  { name: randomName, url: urlFile },
-                ];
-                return { ...milestone, atachments };
-              }
-              return milestone;
-            });
-            return newMilestones;
-          });
-
-          console.log(milestones);
+          const atachments = [
+            ...milestone.atachments,
+            { name: randomName, url: urlFile },
+          ];
+          setMilestone((prev) => ({
+            ...prev,
+            atachments,
+          }));
         }
       };
 
@@ -119,14 +113,33 @@ const useMilestone = () => {
       console.error("Error al subir el archivo", error);
     }
   };
+  const handleRemoveAtachment = (i) => {
+    const updatedAttachments = [...milestone.atachments];
+
+    updatedAttachments.splice(i, 1);
+
+    setMilestone((prev) => ({
+      ...prev,
+      atachments: updatedAttachments,
+    }));
+  };
+
+  const handleChangeMilestoneField = (e) => {
+    setMilestone((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   return {
     setFileUri,
     fileUri,
-    milestones,
-    setMilestones,
+    milestone,
+    setMilestone,
     handleImageUpload,
     handleFileUpload,
+    handleChangeMilestoneField,
+    handleRemoveAtachment,
   };
 };
 

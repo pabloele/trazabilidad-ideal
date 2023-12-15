@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   IconButton,
   useMediaQuery,
@@ -7,31 +7,33 @@ import {
   Grid,
   TextField,
   Box,
-} from '@mui/material';
-import { AddOutlined, Image, MailOutlined } from '@mui/icons-material';
-import { HomeLayout } from '../../layout';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
-import Welcome from '../../components/Welcome/Welcome';
-import { TrazabilityContent } from '../../components';
+} from "@mui/material";
+import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
+import { HomeLayout } from "../../layout";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
+import Welcome from "../../components/Welcome/Welcome";
+import { TrazabilityContent } from "../../components";
 import {
   addMilestone,
   addUserProduct,
   deleteUserDoc,
   getUserProducts,
   getUsers,
-} from '../../firebase/controllers/firestoreControllers';
-import Recent from '../../components/recentProducts/Recent';
+} from "../../firebase/controllers/firestoreControllers";
+import Recent from "../../components/recentProducts/Recent";
+import { useProductStore } from "../../store";
 
 const activeProduct = 0;
 
 const HomePage = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState();
+  const { setProductData } = useProductStore();
 
   const handleGetProducts = async (uid) => {
     const products = await getUserProducts(uid);
-    setProducts(products);
+    setProductData(products);
   };
 
   useEffect(() => {
@@ -48,11 +50,11 @@ const HomePage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) router.push('/');
+    if (!user) router.push("/");
     handleGetProducts(user?.uid);
   }, [user, router]);
 
-  const isMediumScreen = useMediaQuery('(min-width: 600px)');
+  const isMediumScreen = useMediaQuery("(min-width: 600px)");
   return (
     <HomeLayout>
       <h1>TODO: SUSCRIPTION </h1>

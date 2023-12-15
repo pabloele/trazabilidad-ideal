@@ -1,13 +1,13 @@
-import React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Box, Typography } from '@mui/material';
-import Spinner from '../Spinner/Spinner';
-import Link from 'next/link';
+import React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Box, Typography } from "@mui/material";
+import Spinner from "../Spinner/Spinner";
+import Link from "next/link";
 const ModalDialog = () => {
   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
@@ -25,9 +25,9 @@ const ModalDialog = () => {
               <Box
                 sx={{
                   height: 200,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Spinner />
@@ -42,7 +42,7 @@ const ModalDialog = () => {
             onClose={handleClose}
             aria-labelledby="draggable-dialog-title"
           >
-            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+            <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
               La transaccion se esta procesando
             </DialogTitle>
             <DialogContent>
@@ -58,6 +58,15 @@ const ModalDialog = () => {
                 >
                   Mas informacion
                 </Link>
+
+                <Button
+                  sx={{ marginLeft: 20 }}
+                  onClick={() => setOpen(false)}
+                  variant="contained"
+                  color="error"
+                >
+                  Cerrar
+                </Button>
               </DialogContentText>
             </DialogContent>
           </Dialog>
