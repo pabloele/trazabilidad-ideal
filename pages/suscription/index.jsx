@@ -57,7 +57,7 @@ const HomePage = () => {
   const isMediumScreen = useMediaQuery("(min-width: 600px)");
   return (
     <HomeLayout>
-      <Welcome />
+      <h1>TODO: SUSCRIPTION </h1>
     </HomeLayout>
   );
 };

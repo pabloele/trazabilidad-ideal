@@ -30,7 +30,6 @@ const HomePage = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState();
   const { setProductData } = useProductStore();
-
   const handleGetProducts = async (uid) => {
     const products = await getUserProducts(uid);
     setProductData(products);
@@ -57,7 +56,7 @@ const HomePage = () => {
   const isMediumScreen = useMediaQuery("(min-width: 600px)");
   return (
     <HomeLayout>
-      <Welcome />
+      <h1>TODO: PROFILE</h1>
     </HomeLayout>
   );
 };

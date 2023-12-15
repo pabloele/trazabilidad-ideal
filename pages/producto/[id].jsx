@@ -27,13 +27,18 @@ import Spinner from "../../components/Spinner/Spinner";
 import Swal from "sweetalert2";
 import { useAddress } from "@thirdweb-dev/react";
 import { updateProduct } from "../../firebase/controllers/firestoreControllers";
-
+import { v4 } from "uuid";
+import CloseIcon from "@mui/icons-material/Close";
+import { useProductStore } from "../../store";
+import useModalStore from "../../store/useModalStore";
 const Producto = () => {
   const address = useAddress();
 
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
   const router = useRouter();
   const { user } = useAuth();
+
+  const { product, setProductData } = useProductStore();
 
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState("");
@@ -58,7 +63,6 @@ const Producto = () => {
 
   const [subprocessSelected, setSubprocessSelected] = useState();
   const [showCategories, setShowCategories] = useState(false);
-
   const {
     milestones,
     setMilestones,
@@ -69,21 +73,10 @@ const Producto = () => {
     handleFileUpload,
   } = useMilestone();
 
-  const { product, setProduct, uploadProduct, uploadQr } = useProduct(
-    router.query.id
-  );
+  const { isOpen, onOpen, onClose } = useModalStore();
 
-  let provider = new ethers.providers.Web3Provider(window.ethereum);
+  const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
-  provider.on("network", (newNetwork, oldNetwork) => {
-    if (oldNetwork) {
-      // La red ha cambiado
-      console.log("Network changed:", oldNetwork.name, "->", newNetwork.name);
-
-      // Aquí puedes llamar a la lógica necesaria para manejar el cambio de red
-      // por ejemplo, actualizando la interfaz de usuario o recargando la página
-    }
-  });
   useEffect(() => {
     if (typeof window !== "undefined") {
       import("qr-code-styling").then((module) => {
@@ -110,13 +103,20 @@ const Producto = () => {
     }
   }, [product?.qrcode]);
 
+  const onDownloadClick = () => {
+    if (!qrcode) return;
+    qrcode.download({
+      extension: "png",
+    });
+  };
+
   const handleOpen = () => {
     setTabActive(0);
     setSubprocessSelected(null);
-    setOpen(true);
+    onOpen();
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => onClose();
 
   const handleClickSubprocess = ({ name, path }) => {
     const updatedMilestones = [...milestones];
@@ -141,23 +141,14 @@ const Producto = () => {
     setTabActive(newValue);
   };
 
-  const saveMilestone = async (index) => {
-    let milestonesValid = true;
+  const saveMilestone = async (milestone) => {
+    if (
+      milestone.image === "" ||
+      milestone.description === "" ||
+      milestone.name === ""
+    ) {
+      alert(`Descripción, imagen y/o categoría faltantes`);
 
-    milestones.forEach((element, index) => {
-      if (element.image === "" || element.description === "") {
-        const number = index + 1;
-        alert(`Faltan completar datos en el hito número ${number}`);
-        milestonesValid = false;
-      }
-    });
-
-    if (!milestonesValid) {
-      return;
-    }
-
-    if (!subprocessSelected || tabActive === null) {
-      alert("Por favor, selecciona un proceso y un subproceso.");
       return;
     }
 
@@ -176,7 +167,15 @@ const Producto = () => {
       uploadProduct(updateProduct);
 
       setMilestoneBox([0]);
-      setMilestones([{ description: "", image: "" }]);
+      setMilestones([
+        {
+          description: "",
+          image: "",
+          path: "",
+          milestoneUid: v4(),
+          atachments: [],
+        },
+      ]);
       setFileUri("");
       setSubprocessSelected(null);
       setTabActive(null);
@@ -188,6 +187,8 @@ const Producto = () => {
 
   const uploadToBlockChain = async () => {
     try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
       if (!address)
         throw new Error(
           "Conecte una billetera para certificar la trazabilidad"
@@ -198,23 +199,20 @@ const Producto = () => {
 
       const trazability = await uploadIPFS(trazabilidadAgrupada);
 
+      const productToIpfs = await uploadIPFS(product);
+
       const formatProduct = {
         id: router.query.id,
-        lotNumber: product.lotNumber,
-        protocolName: product.protocolName,
         name: product.name,
-        status: "realizado",
-        ownerUid: user.uid,
         trazability: trazability.path,
+        productReference: productToIpfs.path,
       };
+
+      const formatedDescription = `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`;
 
       const tokenData = {
         name: product.name,
-        description: {
-          expeditionDate: product.expeditionDate,
-          productImage: product.productImage,
-          trazability: trazability.path,
-        },
+        description: `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`,
 
         image: product.productImage,
       };
@@ -226,8 +224,7 @@ const Producto = () => {
       const network = await provider.getNetwork();
 
       console.log(network);
-
-      if (network.chainId !== process.env.NEXT_PUBLIC_CHAIN_ID) {
+      if (network.chainId !== Number(process.env.NEXT_PUBLIC_CHAIN_ID)) {
         throw new Error(
           `No estás en la red correcta, por favor seleccione la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`
         );
@@ -247,13 +244,15 @@ const Producto = () => {
           tokenDataIPFS.url
         );
 
-        setTxHash(response.hash);
-
-        const updated = await updateProduct(
-          router.query.id,
-          "realizado",
-          txHash
-        );
+        if (txHash) {
+          const updated = await updateProduct(
+            router.query.id,
+            "realizado",
+            txHash
+          );
+        } else {
+          console.error("El valor de txHash es undefined.");
+        }
       } catch (error) {
         setError(error.reason);
 
@@ -276,24 +275,9 @@ const Producto = () => {
     });
     const response = await uploadQr(product, QRdata);
 
-    setProduct({ ...product, qrcode: QRdata });
+    setProductData({ ...product, qrcode: QRdata });
   };
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: isSmallScreen ? "95%" : "95%",
-    height: "90vh",
-    overflowY: "auto",
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    margin: isSmallScreen ? "0" : "auto",
-    textAlign: "center",
-    justifyContent: "center",
-  };
   const handleOpenModal = async () => {
     Swal.fire({
       title:
@@ -321,7 +305,15 @@ const Producto = () => {
   if (!product) {
     return (
       <HomeLayout>
-        <Box container sx={{ height: "90vh" }}>
+        <Box
+          container
+          sx={{
+            height: "90vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Spinner />
         </Box>
       </HomeLayout>
@@ -333,7 +325,7 @@ const Producto = () => {
 
         {/* <Button onClick={addProtocol}>agregar</Button> */}
 
-        <Modal open={open} onClose={handleClose} sx={{ width: "100%" }}>
+        <Modal open={isOpen} onClose={handleClose} sx={{ width: "100%" }}>
           <Box
             sx={{
               position: "absolute",
@@ -352,98 +344,27 @@ const Producto = () => {
               p: 4,
             }}
           >
-            {showCategories && (
-              <React.Fragment>
-                <Grid display="flex" justifyContent="center">
-                  <Tabs
-                    variant="scrollable"
-                    onChange={handleChange}
-                    value={tabActive}
-                  >
-                    {product.trazability.map((element, index) => (
-                      <Tab
-                        label={element.name}
-                        sx={{
-                          color: "primary.main",
-                        }}
-                        key={element.name}
-                      />
-                    ))}
-                  </Tabs>
-                </Grid>
-
-                {product.trazability.map((element, index) => (
-                  // categoría
-                  <Box key={element.name}>
-                    <TabPanel
-                      sx={{ display: "flex", flexDirection: "row", gap: 2 }}
-                      value={tabActive}
-                      index={index}
-                      key={index}
-                    >
-                      {element.line.map((subprocess, subprocessIndex) => (
-                        <Box
-                          key={subprocessIndex}
-                          sx={{
-                            marginTop: 1,
-                            backgroundColor:
-                              subprocessSelected === subprocess.name
-                                ? "primary.main"
-                                : "transparent",
-                            transition: "gray 0.3s ease",
-                            borderRadius: "40px",
-                          }}
-                        >
-                          <Typography
-                            onClick={() => {
-                              handleClickSubprocess({
-                                path: element.path,
-                                name: subprocess.name,
-                              });
-                            }}
-                            name={subprocess.name}
-                            sx={{
-                              color:
-                                subprocessSelected === subprocess.name
-                                  ? "white"
-                                  : "primary.main",
-                              marginY: 1,
-                              marginX: 1,
-                              fontSize: 12,
-                              textTransform: "uppercase",
-                              ":hover": {
-                                cursor: "pointer",
-                              },
-                            }}
-                          >
-                            {subprocess.name}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </TabPanel>
-                  </Box>
-                ))}
-              </React.Fragment>
-            )}
-
-            <Box key={boxIndex}>
-              <Trazability
-                fileUri={fileUri}
-                handleImageUpload={handleImageUpload}
-                product={product}
-                subprocessSelected={subprocessSelected}
-                milestones={milestones}
-                setMilestones={setMilestones}
-                saveMilestone={saveMilestone}
-                setMilestoneBox={setMilestoneBox}
-                milestoneBox={milestoneBox}
-                handleAddMilestone={handleAddMilestone}
-                path={path}
-                handleFileUpload={handleFileUpload}
-                setShowCategories={setShowCategories}
-                setBoxIndex={setBoxIndex}
-                boxIndex={boxIndex}
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <CloseIcon
+                onClick={() => onClose()}
+                sx={{
+                  color: "red",
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
               />
+            </Box>
+            <Box>
+              <Typography
+                sx={{
+                  color: "primary.main",
+                  fontSize: 24,
+                }}
+              >
+                Complete los datos del hito
+              </Typography>
+              <Trazability />
             </Box>
           </Box>
         </Modal>
@@ -465,7 +386,29 @@ const Producto = () => {
           <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
 
-            <Box ref={ref}></Box>
+            {product?.qrcode && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Box ref={ref}></Box>
+
+                <Box sx={{ display: "flex" }}>
+                  <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
+                    Descargar QR
+                  </Button>
+                  <Button
+                    onClick={() => router.push(`/history/${router.query.id}`)}
+                    sx={{ fontSize: 12 }}
+                  >
+                    Visitar trazabilidad
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Box>
 
           <Box sx={{ display: "flex", gap: 2 }}>
@@ -479,7 +422,7 @@ const Producto = () => {
             <Button
               variant="contained"
               onClick={handleOpenModal}
-              disabled={product?.status !== "en curso"}
+              // disabled={product?.status !== "en curso"}
             >
               Certificar en blockchain
             </Button>
