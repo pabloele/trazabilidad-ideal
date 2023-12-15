@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useProduct from '../../hooks/useProduct';
 import Image from 'next/image';
@@ -14,16 +14,17 @@ import UserNavBar from '../../components/NavBar/UserNavBar';
 import { contractAddress, contractAbi } from '../../contract/contract';
 import { ethers } from 'ethers';
 
-import Link from "next/link";
+import Link from 'next/link';
 
 const ViewProduct = () => {
   const router = useRouter();
   const { product } = useProduct(router.query.id);
 
-  const [productData, setProductData] = useState([]);
+  const [productData, setProductData] = useState({ data: [], success: false });
   const [loading, setLoading] = useState(false);
   const isSmallScreen = useMediaQuery('(min-width: 720px)');
   const isMediumScreen = useMediaQuery('(min-width: 10240px)');
+
   const getBlockChainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -38,13 +39,17 @@ const ViewProduct = () => {
     try {
       setLoading(true);
       const data = await trazabilityContract.getProductData(router.query.id);
-      setProductData(data);
+      setProductData({ data: data, success: true });
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getBlockChainData();
+  }, []);
 
   return (
     <Grid container justifyContent="center" direction={'column'}>
@@ -54,10 +59,10 @@ const ViewProduct = () => {
       <Grid item marginY={4}>
         <Paper
           sx={{
-            display: "flex",
-            flexDirection: "row",
+            display: 'flex',
+            flexDirection: 'row',
             padding: 4,
-            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
           }}
         >
           <Grid container direction="column">
@@ -94,44 +99,51 @@ const ViewProduct = () => {
                 {product?.name}
               </Typography>
             </Grid>
-            <Grid
-              item
-              sx={{
-                backgroundColor: "#f5f5f5",
-                padding: 2,
-                color: "primary.main",
-              }}
-            >
-              <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
-                Producto certificado
-              </Typography>
-              <Typography sx={{ fontSize: 20, marginTop: 2 }}>
-                La trazabilidad de este producto fue certificada con tecnología
-                blockchain
-              </Typography>
-              <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  onClick={getBlockChainData}
-                  variant="contained"
-                  sx={{
-                    display: "flex",
-                    gap: 1,
-                    alignItems: "center",
-                    marginTop: 2,
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
-                  }}
-                >
-                  Ver trazabilidad
-                  <Image
-                    src={"/images/logo-ideal.png"}
-                    width={50}
-                    height={20}
-                    alt="logo"
-                  />
-                </Button>
-              </Grid>
-            </Grid>
+            {productData.success && (
+              <Grid
+                item
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  padding: 2,
+                  color: 'primary.main',
+                }}
+              >
+                <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                  Producto certificado
+                </Typography>
+                <Typography sx={{ fontSize: 20, marginTop: 2 }}>
+                  La trazabilidad de este producto fue certificada con
+                  tecnología blockchain
+                </Typography>
 
+                <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer "
+                    href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.data.trazability}`}
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                    >
+                      Ver trazabilidad
+                      <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      />
+                    </Button>
+                  </Link>
+                </Grid>
+              </Grid>
+            )}
             {isMediumScreen && (
               <Grid container direction="row">
                 <Grid
@@ -271,7 +283,7 @@ const ViewProduct = () => {
                                         justifyContent: 'center',
                                       }}
                                       flexDirection={
-                                        isSmallScreen ? "row" : "column"
+                                        isSmallScreen ? 'row' : 'column'
                                       }
                                     >
                                       <Box
@@ -294,7 +306,7 @@ const ViewProduct = () => {
                                           // width={isSmallScreen ? 280 : 215}
                                           height={215}
                                           sx={{
-                                            backgroundColor: "#f5f5f5",
+                                            backgroundColor: '#f5f5f5',
 
                                             color: 'primary.main',
                                             minWidth: '800px',
@@ -318,7 +330,7 @@ const ViewProduct = () => {
                                           <Typography
                                             sx={{
                                               fontSize: 20,
-                                              fontWeight: "bold",
+                                              fontWeight: 'bold',
                                               paddingTop: 1,
                                             }}
                                           >
@@ -330,9 +342,9 @@ const ViewProduct = () => {
                                                 key={atachment.name}
                                                 sx={{
                                                   fontSize: 14,
-                                                  fontWeight: "bold",
-                                                  color: "black",
-                                                  textDecoration: "none",
+                                                  fontWeight: 'bold',
+                                                  color: 'black',
+                                                  textDecoration: 'none',
                                                 }}
                                               >
                                                 <Link href={atachment.url}>
