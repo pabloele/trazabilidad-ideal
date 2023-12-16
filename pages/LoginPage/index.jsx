@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -6,27 +6,27 @@ import {
   Link,
   TextField,
   Typography,
-} from "@mui/material";
-import { Google } from "@mui/icons-material";
-import { AuthLayout } from "../../layout";
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useRouter } from "next/navigation";
-import { createUser } from "../../firebase/controllers/firestoreControllers";
-import { FirebaseAuth } from "../../firebase/config";
-import { getRedirectResult } from "firebase/auth";
-import { useForm } from "../../hooks/useForm";
+} from '@mui/material';
+import { Google } from '@mui/icons-material';
+import { AuthLayout } from '../../layout';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { createUser } from '../../firebase/controllers/firestoreControllers';
+import { FirebaseAuth } from '../../firebase/config';
+import { getRedirectResult } from 'firebase/auth';
+import { useForm } from '../../hooks/useForm';
 
 const initialForm = {
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 };
 
 const formValidations = {
-  email: [(value) => value.includes("@"), "Proporcione un email válido."],
+  email: [(value) => value.includes('@'), 'Proporcione un email válido.'],
   password: [
     (value) => value.length >= 6,
-    "La contraseña debe tener más de seis caracteres.",
+    'La contraseña debe tener más de seis caracteres.',
   ],
 };
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
   const router = useRouter();
 
   const [logingIn, setLogingIn] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const [showErrors, setShowErrors] = useState(false);
 
@@ -69,12 +69,15 @@ const LoginPage = () => {
       const response = await login(email, password);
 
       console.log(response);
-      console.log("Login successful: ", response);
+      console.log('Login successful: ', response);
+      if (response.user) {
+        router.push('/home');
+      }
     } catch (error) {
-      setError("Usuario o contraseña incorrectos");
+      setError('Usuario o contraseña incorrectos');
 
       setTimeout(() => {
-        setError("");
+        setError('');
       }, 3000);
     }
   };
@@ -90,7 +93,7 @@ const LoginPage = () => {
         products: [],
       });
       if (res.user) {
-        router.push("/home");
+        router.push('/home');
       }
     });
   };
@@ -100,7 +103,7 @@ const LoginPage = () => {
       const result = await getRedirectResult(FirebaseAuth);
 
       if (result.user) {
-        router.push("/home");
+        router.push('/home');
       }
     } catch (error) {
       console.log(error.message);
@@ -122,9 +125,9 @@ const LoginPage = () => {
             {error && (
               <Typography
                 sx={{
-                  textAlign: "center",
-                  width: "100%",
-                  color: "#FF3E3E",
+                  textAlign: 'center',
+                  width: '100%',
+                  color: '#FF3E3E',
                 }}
               >
                 {error}
@@ -163,16 +166,14 @@ const LoginPage = () => {
           </Grid> */}
 
             <Grid item xs={12} sm={6}>
-              <Link color="secondary.main" href="/home">
-                <Button
-                  onClick={handleLogin}
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                >
-                  <Typography sx={{ ml: 1 }}>Login</Typography>
-                </Button>
-              </Link>
+              <Button
+                onClick={handleLogin}
+                type="submit"
+                variant="contained"
+                fullWidth
+              >
+                <Typography sx={{ ml: 1 }}>Login</Typography>
+              </Button>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Button
