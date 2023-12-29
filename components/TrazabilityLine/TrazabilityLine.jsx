@@ -25,6 +25,7 @@ import useModalStore from '../../store/useModalStore';
 import Trazability from '../Trazability/Trazability';
 import { FaLink } from 'react-icons/fa';
 import styled from 'styled-components';
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
 const VerticalLine = styled('div')({
   width: '10px',

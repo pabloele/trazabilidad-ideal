@@ -31,6 +31,21 @@ import { v4 } from 'uuid';
 import CloseIcon from '@mui/icons-material/Close';
 import { useProductStore } from '../../store';
 import useModalStore from '../../store/useModalStore';
+import styled from 'styled-components';
+
+const CustomTextField = styled.textarea`
+  width: 30%;
+  height: 2rem;
+  padding: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid #cfcdcd28;
+  background-color: #cfcdcd28;
+  border-radius: 4px;
+  outline: none;
+  overflow-y: hidden;
+  resize: none;
+`;
+
 const Producto = () => {
   const address = useAddress();
 
@@ -83,8 +98,8 @@ const Producto = () => {
         const QRCodeStyling = module.default;
 
         const qrCodeInstance = new QRCodeStyling({
-          width: 180,
-          height: 180,
+          width: 80,
+          height: 80,
           image: '/images/cropped-logo-ideal-2.png',
           dotsOptions: { type: 'extra-rounded', color: '#000000' },
           imageOptions: {
@@ -301,7 +316,48 @@ const Producto = () => {
       }
     });
   };
+  useEffect(() => {}, [product]);
+  const handleBeginCustomProtocol = async () => {
+    // console.log(product);
 
+    // console.log(product.trazability);
+    // console.log(product.trazability[0].line);
+    // console.log(product.trazability[0]);
+    // console.log(initialMilestoneStageAndProtocol.stage);
+    // console.log(initialMilestoneStageAndProtocol.process);
+    const trazability = [
+      {
+        ...product.trazability[0],
+        name: initialMilestoneStageAndProtocol.stage,
+        line: [
+          { name: initialMilestoneStageAndProtocol.process, milestones: [] },
+        ],
+      },
+    ];
+
+    console.log(trazability);
+    const updatedProduct = { ...product, trazability };
+    console.log(updatedProduct);
+    try {
+      uploadProduct(updatedProduct);
+    } catch (error) {
+      console.log(error);
+    }
+    setShowCustomFirsTime(false);
+  };
+
+  const [showCustomFirstTime, setShowCustomFirsTime] = useState(true);
+  const [
+    initialMilestoneStageAndProtocol,
+    setInitialMilestoneStageAndProtocol,
+  ] = useState({ stage: '', protocol: '' });
+
+  const handleChangeMilestoneField = (e) => {
+    setInitialMilestoneStageAndProtocol((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
   if (!product) {
     return (
       <HomeLayout>
@@ -355,17 +411,78 @@ const Producto = () => {
                 }}
               />
             </Box>
-            <Box>
-              <Typography
-                sx={{
-                  color: 'primary.main',
-                  fontSize: 24,
-                }}
-              >
-                Complete los datos del hito
-              </Typography>
-              <Trazability />
-            </Box>
+
+            {showCustomFirstTime && (
+              <>
+                <Box>
+                  <Typography
+                    sx={{
+                      color: 'primary.main',
+                      fontSize: 20,
+                    }}
+                  >
+                    Los hitos productivos se estructuran en etapas y procesos
+                    (por ejemplo Etapa: Producción - Proceso: Siembra). <br />{' '}
+                    Por favor defina la etapa y proceso de su primer hito
+                    productivo para comenzar con su trazabilidad.
+                  </Typography>
+                  <br />
+                  <Typography
+                    sx={{
+                      color: 'primary.main',
+                      fontSize: 20,
+                    }}
+                  >
+                    Etapa
+                  </Typography>
+                  <CustomTextField
+                    borderRadius={4}
+                    name="stage"
+                    value={initialMilestoneStageAndProtocol.stage}
+                    onChange={handleChangeMilestoneField}
+                  />
+                  <br />
+                  <Typography
+                    sx={{
+                      color: 'primary.main',
+                      fontSize: 20,
+                    }}
+                  >
+                    Proceso
+                  </Typography>
+                  <CustomTextField
+                    borderRadius={4}
+                    name="process"
+                    value={initialMilestoneStageAndProtocol.process}
+                    onChange={handleChangeMilestoneField}
+                  />
+                </Box>
+                <Button
+                  onClick={handleBeginCustomProtocol}
+                  style={{
+                    fontSize: 20,
+                    backgroundColor: '#1D45B0',
+                    color: 'whitesmoke',
+                  }}
+                >
+                  Comenzar
+                </Button>
+              </>
+            )}
+
+            {!showCustomFirstTime && (
+              <Box>
+                <Typography
+                  sx={{
+                    color: 'primary.main',
+                    fontSize: 24,
+                  }}
+                >
+                  Complete los datos del hito
+                </Typography>
+                <Trazability />
+              </Box>
+            )}
           </Box>
         </Modal>
 
@@ -376,7 +493,7 @@ const Producto = () => {
               fontSize: 24,
             }}
           >
-            Cadena de produccion para : {product.name}
+            {product.name}
           </Typography>
           {error && (
             <Typography sx={{ color: '#FF0000', fontSize: 20 }}>
@@ -385,34 +502,18 @@ const Producto = () => {
           )}
           <Box sx={{ display: 'flex' }}>
             <TrazabilityLine protocol={product.trazability} />
-
-            {product?.qrcode && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                }}
-              >
-                <Box ref={ref}></Box>
-
-                <Box sx={{ display: 'flex' }}>
-                  <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
-                    Descargar QR
-                  </Button>
-                  <Button
-                    onClick={() => router.push(`/history/${router.query.id}`)}
-                    sx={{ fontSize: 12 }}
-                  >
-                    Visitar trazabilidad
-                  </Button>
-                </Box>
-              </Box>
-            )}
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+
+              left: isSmallScreen ? 240 : 25,
+
+              marginTop: '1rem',
+            }}
+          >
             <Button
               variant="contained"
               onClick={createQRcode}
@@ -429,21 +530,59 @@ const Producto = () => {
             </Button>
           </Box>
         </Box>
-
-        <IconButton
-          size="large"
+        <Box>
+          <IconButton
+            size="large"
+            sx={{
+              color: 'white',
+              backgroundColor: 'error.main',
+              ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
+              position: 'fixed',
+              right: isSmallScreen ? 145 : 55,
+              top: isSmallScreen ? '48vh' : '40vh',
+            }}
+            onClick={handleOpen}
+          >
+            <AddOutlined sx={{ fontSize: 50, color: 'whitesmoke' }} />
+          </IconButton>
+        </Box>
+        <Box
           sx={{
-            color: 'white',
-            backgroundColor: 'error.main',
-            ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
             position: 'fixed',
-            right: 100,
-            bottom: 100,
+            right: isSmallScreen ? 105 : 25,
+            top: '12vh',
           }}
-          onClick={handleOpen}
         >
-          <AddOutlined sx={{ fontSize: 100 }} />
-        </IconButton>
+          {product?.qrcode && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <Box ref={ref}></Box>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
+                  Descargar QR
+                </Button>
+                <Button
+                  onClick={() => router.push(`/history/${router.query.id}`)}
+                  sx={{ fontSize: 12 }}
+                >
+                  Visitar trazabilidad
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Box>
       </HomeLayout>
     );
   }

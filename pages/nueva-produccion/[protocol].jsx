@@ -16,6 +16,8 @@ import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
 import { styled } from '@mui/system';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import Modal from '@mui/material/Modal';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   uplaodImageIPFS,
   uploadFileToIpfs,
@@ -266,9 +268,49 @@ const ProtocolPage = () => {
       }
     }
   };
-
+  const [open, setOpen] = useState(true);
+  const handleClose = () => setOpen(false);
   return (
     <HomeLayout>
+      {/* <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{ width: '50%', height: '50%' }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            // top: '%',
+            left: '50%',
+            // transform: 'translate(-50%, -50%)',
+            // width: isSmallScreen ? '95%' : '95%',
+            width: '95%',
+            height: '90vh',
+            overflowY: 'auto',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            // margin: isSmallScreen ? '0' : 'auto',
+            margin: 'auto',
+            textAlign: 'center',
+            justifyContent: 'center',
+            p: 4,
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <CloseIcon
+              onClick={() => setOpen(false)}
+              sx={{
+                color: 'red',
+                ':hover': {
+                  cursor: 'pointer',
+                },
+              }}
+            />
+          </Box>
+        </Box>
+      </Modal> */}
+
       <Box sx={{ paddingY: 1 }}>
         <Box component={'form'}>
           <Typography sx={{ color: 'primary.main', fontSize: 24 }}>
