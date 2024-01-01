@@ -26,6 +26,7 @@ import useMilestone from "../../hooks/useMilestone";
 import { useProductStore } from "../../store";
 import useModalStore from "../../store/useModalStore";
 import Swal from "sweetalert2";
+import useAddModalStore from "../../store/useAddModalStore";
 const CustomTextField = styled.textarea`
   width: 100%;
   height: 150px;
@@ -44,13 +45,13 @@ const Trazability = ({ initialMilestone, closeModal }) => {
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
 
   const [showCategories, setShowCategories] = useState(true);
-  const [tabActive, setTabActive] = useState(0);
+
   const [subprocessSelected, setSubprocessSelected] = useState();
   const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   const { product, setProductData } = useProductStore();
 
-  const { onClose, onOpen } = useModalStore();
+  const { tabActive, setTabActive } = useAddModalStore();
 
   const modalStore = useModalStore();
 

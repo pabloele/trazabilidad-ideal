@@ -31,6 +31,7 @@ import { v4 } from "uuid";
 import CloseIcon from "@mui/icons-material/Close";
 import { useProductStore } from "../../store";
 import useModalStore from "../../store/useModalStore";
+import useAddModalStore from "../../store/useAddModalStore";
 const Producto = () => {
   const address = useAddress();
 
@@ -39,6 +40,12 @@ const Producto = () => {
   const { user } = useAuth();
 
   const { product, setProductData } = useProductStore();
+
+  const {
+    onOpen: onOpenMilestoneModal,
+    onClose: onCloseMilestoneModal,
+    isOpen: isOpenMilestoneModal,
+  } = useAddModalStore();
 
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState("");
@@ -113,7 +120,7 @@ const Producto = () => {
   const handleOpen = () => {
     setTabActive(0);
     setSubprocessSelected(null);
-    onOpen();
+    onOpenMilestoneModal();
   };
 
   const handleClose = () => onClose();
@@ -325,7 +332,11 @@ const Producto = () => {
 
         {/* <Button onClick={addProtocol}>agregar</Button> */}
 
-        <Modal open={isOpen} onClose={handleClose} sx={{ width: "100%" }}>
+        <Modal
+          open={isOpenMilestoneModal}
+          onClose={onCloseMilestoneModal}
+          sx={{ width: "100%" }}
+        >
           <Box
             sx={{
               position: "absolute",
@@ -346,7 +357,7 @@ const Producto = () => {
           >
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <CloseIcon
-                onClick={() => onClose()}
+                onClick={() => onCloseMilestoneModal()}
                 sx={{
                   color: "red",
                   ":hover": {
