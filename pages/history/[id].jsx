@@ -56,6 +56,8 @@ const ViewProduct = () => {
       <Grid item>
         <UserNavBar />
       </Grid>
+
+      {/* Product header */}
       <Grid item marginY={4}>
         <Paper
           sx={{
@@ -65,6 +67,7 @@ const ViewProduct = () => {
             boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
           }}
         >
+          {/* Product data */}
           <Grid container direction="column">
             <Grid
               item
@@ -73,7 +76,8 @@ const ViewProduct = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 border: 'dotted',
-                backgroundImage: `url("/images/bg-product.jpg")`,
+                // backgroundImage: `url("/images/bg-product.jpg")`,
+                backgroundImage: `url(${product?.productImage})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
                 direction: 'row',
@@ -225,7 +229,7 @@ const ViewProduct = () => {
               </Grid>
             )}
           </Grid>
-
+          {/* Trazability line */}
           {productData?.length > 0 && (
             <Box>
               <Box>
@@ -241,6 +245,8 @@ const ViewProduct = () => {
           )}
         </Paper>
       </Grid>
+
+      {/* milestones */}
       <Grid item>
         {product &&
           product.trazability &&
@@ -252,6 +258,7 @@ const ViewProduct = () => {
             if (hasMilestones) {
               return (
                 <Box key={index}>
+                  {/* stage */}
                   <Typography
                     sx={{
                       fontSize: 26,
@@ -303,11 +310,11 @@ const ViewProduct = () => {
 
                                       <Box>
                                         <Box
-                                          // width={isSmallScreen ? 280 : 215}
+                                          width={isSmallScreen ? 280 : 215}
                                           height={215}
                                           sx={{
                                             backgroundColor: '#f5f5f5',
-
+                                            overflowY: 'auto',
                                             color: 'primary.main',
                                             minWidth: '800px',
                                             minHeight: '200px',
@@ -323,7 +330,10 @@ const ViewProduct = () => {
                                             {line.name}
                                           </Typography>
                                           <Typography
-                                            sx={{ fontSize: 20, marginTop: 2 }}
+                                            sx={{
+                                              fontSize: 20,
+                                              marginTop: 2,
+                                            }}
                                           >
                                             {milestone.description}
                                           </Typography>
