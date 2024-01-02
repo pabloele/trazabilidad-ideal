@@ -10,30 +10,6 @@ import {
   Button,
   Grid,
   useMediaQuery,
-<<<<<<< HEAD
-} from "@mui/material";
-import useProduct from "../../hooks/useProduct";
-import { useRouter } from "next/router";
-import Modal from "@mui/material/Modal";
-import { AddOutlined } from "@mui/icons-material";
-import Trazability from "../../components/Trazability/Trazability";
-import TabPanel from "../../components/TabPanel/TabPanel";
-import useMilestone from "../../hooks/useMilestone";
-import { ethers } from "ethers";
-import { contractAddress, contractAbi } from "../../contract/contract";
-import { useAuth } from "../../context/AuthContext";
-import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
-import ModalDialog from "../../components/Modals/ModalDialog";
-import Spinner from "../../components/Spinner/Spinner";
-import Swal from "sweetalert2";
-import { useAddress } from "@thirdweb-dev/react";
-import { updateProduct } from "../../firebase/controllers/firestoreControllers";
-import { v4 } from "uuid";
-import CloseIcon from "@mui/icons-material/Close";
-import { useProductStore } from "../../store";
-import useModalStore from "../../store/useModalStore";
-import useAddModalStore from "../../store/useAddModalStore";
-=======
 } from '@mui/material';
 import useProduct from '../../hooks/useProduct';
 import { useRouter } from 'next/router';
@@ -55,6 +31,7 @@ import { v4 } from 'uuid';
 import CloseIcon from '@mui/icons-material/Close';
 import { useProductStore } from '../../store';
 import useModalStore from '../../store/useModalStore';
+import useAddModalStore from '../../store/useAddModalStore';
 import styled from 'styled-components';
 
 const CustomTextField = styled.textarea`
@@ -70,7 +47,6 @@ const CustomTextField = styled.textarea`
   resize: none;
 `;
 
->>>>>>> 6e6cd845d014e074a111aaa029e030c4d0f4e9b9
 const Producto = () => {
   const address = useAddress();
 
@@ -412,15 +388,12 @@ const Producto = () => {
 
         {/* <Button onClick={addProtocol}>agregar</Button> */}
 
-<<<<<<< HEAD
         <Modal
           open={isOpenMilestoneModal}
           onClose={onCloseMilestoneModal}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
-=======
-        <Modal open={isOpen} onClose={handleClose} sx={{ width: '100%' }}>
->>>>>>> 6e6cd845d014e074a111aaa029e030c4d0f4e9b9
+          {/* <Modal open={isOpen} onClose={handleClose} sx={{ width: '100%' }}> */}
           <Box
             sx={{
               position: 'absolute',
