@@ -93,13 +93,17 @@ const Producto = () => {
   const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   useEffect(() => {
+    if (product.trazability?.length > 0) setShowCustomFirsTime(false);
+  });
+
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       import('qr-code-styling').then((module) => {
         const QRCodeStyling = module.default;
 
         const qrCodeInstance = new QRCodeStyling({
-          width: 80,
-          height: 80,
+          width: 120,
+          height: 120,
           image: '/images/cropped-logo-ideal-2.png',
           dotsOptions: { type: 'extra-rounded', color: '#000000' },
           imageOptions: {
@@ -117,6 +121,10 @@ const Producto = () => {
       });
     }
   }, [product?.qrcode]);
+
+  // useEffect(() => {
+  //   if (!product?.qrcode) createQRcode();
+  // });
 
   const onDownloadClick = () => {
     if (!qrcode) return;
@@ -507,30 +515,73 @@ const Producto = () => {
           <Box
             sx={{
               display: 'flex',
+              flexDirection: isSmallScreen ? 'row' : 'column',
+              alignItems: isSmallScreen ? 'flex-start' : 'center',
+              justifyContent: 'space-between',
               gap: 2,
 
               left: isSmallScreen ? 240 : 25,
 
-              marginTop: '1rem',
+              marginTop: isSmallScreen ? '0' : '1rem',
             }}
           >
-            <Button
-              variant="contained"
-              onClick={createQRcode}
-              disabled={product?.qrcode ? true : false}
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyItems: 'flex-start',
+              }}
             >
-              Crear QR
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleOpenModal}
-              // disabled={product?.status !== "en curso"}
-            >
-              Certificar en blockchain
-            </Button>
+              <Button
+                variant="contained"
+                onClick={createQRcode}
+                disabled={product?.qrcode ? true : false}
+                sx={{ height: '2.5rem', marginRight: '1rem' }}
+              >
+                Crear QR
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleOpenModal}
+                // disabled={product?.status !== "en curso"}
+                sx={{ height: '2.5rem' }}
+              >
+                Certificar en blockchain
+              </Button>
+            </Box>
+            {product?.qrcode && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  marginTop: isSmallScreen ? '-8rem' : '0',
+                }}
+              >
+                <Box ref={ref}></Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
+                    Descargar QR
+                  </Button>
+                  <Button
+                    onClick={() => router.push(`/history/${router.query.id}`)}
+                    sx={{ fontSize: 12 }}
+                  >
+                    Visitar trazabilidad
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Box>
         </Box>
-        <Box>
+        {/* <Box>
           <IconButton
             size="large"
             sx={{
@@ -545,15 +596,29 @@ const Producto = () => {
           >
             <AddOutlined sx={{ fontSize: 50, color: 'whitesmoke' }} />
           </IconButton>
-        </Box>
+        </Box> */}
+        <Button
+          variant="contained"
+          sx={{
+            position: 'fixed',
+            top: '0rem',
+            right: '6%',
+            marginTop: '5rem',
+            zIndex: 9999,
+          }}
+          onClick={handleOpen}
+        >
+          NUEVO HITO
+        </Button>
         <Box
           sx={{
             position: 'fixed',
-            right: isSmallScreen ? 105 : 25,
-            top: '12vh',
+
+            right: isSmallScreen ? 65 : 25,
+            top: '50vh',
           }}
         >
-          {product?.qrcode && (
+          {/* {product?.qrcode && (
             <Box
               sx={{
                 display: 'flex',
@@ -581,7 +646,7 @@ const Producto = () => {
                 </Button>
               </Box>
             </Box>
-          )}
+          )} */}
         </Box>
       </HomeLayout>
     );

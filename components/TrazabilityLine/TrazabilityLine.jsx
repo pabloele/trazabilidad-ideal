@@ -98,7 +98,7 @@ export default function TrazabilityLine({ protocol }) {
     <>
       <Modal open={open} onClose={closeModal}>
         <Box sx={style}>
-          <Paper sx={{ p: 2 }}>
+          <Paper sx={{ p: 2, border: '0' }}>
             {/* <Typography variant="h6">Contenido del Milestone</Typography> */}
 
             {selectedMilestone &&
