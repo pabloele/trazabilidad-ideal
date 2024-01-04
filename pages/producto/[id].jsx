@@ -103,7 +103,7 @@ const Producto = () => {
   const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   useEffect(() => {
-    if (product.trazability?.length > 0) setShowCustomFirsTime(false);
+    if (product.trazability?.length > 1) setShowCustomFirsTime(false);
   });
 
   useEffect(() => {
