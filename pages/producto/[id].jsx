@@ -10,6 +10,8 @@ import {
   Button,
   Grid,
   useMediaQuery,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import useProduct from '../../hooks/useProduct';
 import { useRouter } from 'next/router';
@@ -32,6 +34,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useProductStore } from '../../store';
 import useModalStore from '../../store/useModalStore';
 import styled from 'styled-components';
+import { FaEdit } from 'react-icons/fa';
 
 const CustomTextField = styled.textarea`
   width: 30%;
@@ -59,6 +62,8 @@ const Producto = () => {
   const [path, setPath] = useState('');
   const [txHash, setTxHash] = useState();
   const [error, setError] = useState();
+  const [isEditingProtocol, setIsEditingProtocol] = useState(false);
+  const [editingProtocolScreen, setEditingProtocolScreen] = useState('select');
 
   const {
     DialogModal,
@@ -122,10 +127,6 @@ const Producto = () => {
     }
   }, [product?.qrcode]);
 
-  // useEffect(() => {
-  //   if (!product?.qrcode) createQRcode();
-  // });
-
   const onDownloadClick = () => {
     if (!qrcode) return;
     qrcode.download({
@@ -140,7 +141,10 @@ const Producto = () => {
   };
 
   const handleClose = () => onClose();
-
+  const handleCloseEditProtocol = () => {
+    setIsEditingProtocol(false);
+    onClose();
+  };
   const handleClickSubprocess = ({ name, path }) => {
     const updatedMilestones = [...milestones];
 
@@ -305,7 +309,7 @@ const Producto = () => {
     Swal.fire({
       title:
         '¿Seguro que deseas certificar este proceso productivo en la blockchain?',
-      text: 'Esta acción no es reversible y sera información pública',
+      text: 'Esta acción no es reversible y será información pública',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -324,7 +328,10 @@ const Producto = () => {
       }
     });
   };
-  useEffect(() => {}, [product]);
+
+  useEffect(() => {
+    console.log('render');
+  }, []);
   const handleBeginCustomProtocol = async () => {
     // console.log(product);
 
@@ -366,6 +373,103 @@ const Producto = () => {
       [e.target.name]: e.target.value,
     }));
   };
+
+  const handleEditProtocol = () => {
+    setIsEditingProtocol(true);
+    onOpen();
+  };
+
+  const [addingStageAndProcess, setAddingStageAndProcess] = useState({
+    stage: '',
+    process: '',
+  });
+
+  const handleAddStageAndProcess = (e) => {
+    const { name, value } = e.target;
+
+    setAddingStageAndProcess((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const [selectedValue, setSelectedValue] = useState('');
+
+  // const handleChangeStages = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setAddingStageAndProcess((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
+  // const handleSaveNewStageAndProcess = async () => {
+  //   const trazability = [
+  //     ...product.trazability,
+  //     {
+  //       name: addingStageAndProcess.stage,
+  //       line: [{ name: addingStageAndProcess.process, milestones: [] }],
+  //       path: v4(),
+  //     },
+  //   ];
+
+  //   console.log(trazability);
+  //   const updatedProduct = { ...product, trazability };
+  //   console.log(updatedProduct);
+  //   try {
+  //     uploadProduct(updatedProduct);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   setIsEditingProtocol(false);
+  //   onClose();
+  //   router.reload();
+  // };
+  const handleSaveNewStageAndProcess = async () => {
+    const existingStage = product.trazability.find(
+      (stage) => stage.name === addingStageAndProcess.stage
+    );
+
+    if (existingStage) {
+      const updatedStages = product.trazability.map((stage) => {
+        if (stage.name === addingStageAndProcess.stage) {
+          const updatedLine = [
+            ...stage.line,
+            { name: addingStageAndProcess.process, milestones: [] },
+          ];
+          return { ...stage, line: updatedLine };
+        }
+        return stage;
+      });
+
+      const updatedProduct = { ...product, trazability: updatedStages };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      const newStage = {
+        name: addingStageAndProcess.stage,
+        line: [{ name: addingStageAndProcess.process, milestones: [] }],
+        path: v4(),
+      };
+
+      const updatedStages = [...product.trazability, newStage];
+      const updatedProduct = { ...product, trazability: updatedStages };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    setIsEditingProtocol(false);
+    onClose();
+    router.reload();
+  };
+
   if (!product) {
     return (
       <HomeLayout>
@@ -419,7 +523,258 @@ const Producto = () => {
                 }}
               />
             </Box>
+            {isEditingProtocol && !showCustomFirstTime && (
+              <>
+                {editingProtocolScreen === 'select' && (
+                  <Box justifyContent="center">
+                    <Typography
+                      sx={{
+                        color: 'primary.main',
+                        fontSize: 24,
+                      }}
+                    >
+                      Agregar, editar o quitar etapas y procesos a tu procolo.
+                    </Typography>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="center"
+                      gap="1rem"
+                      marginTop="1rem"
+                    >
+                      <Button
+                        onClick={() => {
+                          setEditingProtocolScreen('add');
+                        }}
+                        style={{
+                          fontSize: 20,
+                          backgroundColor: '#1D45B0',
+                          color: 'whitesmoke',
+                        }}
+                      >
+                        Agregar
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEditingProtocolScreen('editRemove');
+                        }}
+                        style={{
+                          fontSize: 20,
+                          backgroundColor: '#1D45B0',
+                          color: 'whitesmoke',
+                        }}
+                      >
+                        Editar o eliminar
+                      </Button>
+                    </Box>
+                  </Box>
+                )}
 
+                {editingProtocolScreen.substring(0, 3) === 'add' && (
+                  <>
+                    {editingProtocolScreen === 'add' && (
+                      <Box justifyContent="center">
+                        <Typography
+                          sx={{
+                            color: 'primary.main',
+                            fontSize: 24,
+                          }}
+                        >
+                          Agregar nueva etapa?
+                        </Typography>
+                        <Button
+                          onClick={() => {
+                            setEditingProtocolScreen('add2');
+                          }}
+                          style={{
+                            fontSize: 20,
+                            backgroundColor: '#1D45B0',
+                            color: 'whitesmoke',
+                          }}
+                        >
+                          Si
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setEditingProtocolScreen('add2');
+                          }}
+                          style={{
+                            fontSize: 20,
+                            backgroundColor: '#1D45B0',
+                            color: 'whitesmoke',
+                          }}
+                        >
+                          No
+                        </Button>
+                      </Box>
+                    )}
+                    {editingProtocolScreen === 'add2' && (
+                      <Grid container direction="row" height="100%">
+                        {/* <Typography
+                          sx={{
+                            color: 'primary.main',
+                            fontSize: 20,
+                          }}
+                        >
+                          Etapa
+                        </Typography>
+                        <Box width="50%" display="flex" justifySelf="center">
+                          <CustomTextField
+                            display="flex"
+                            borderRadius={4}
+                            name="stage"
+                            value={addingStageAndProcess.stage}
+                            onChange={handleAddStageAndProcess}
+                            style={{ width: '100%', marginBottom: '8px' }}
+                          />
+                        </Box>
+                        <Typography
+                          sx={{
+                            color: 'primary.main',
+                            fontSize: 20,
+                          }}
+                        >
+                          Proceso
+                        </Typography>
+                        <CustomTextField
+                          borderRadius={4}
+                          name="process"
+                          value={addingStageAndProcess.process}
+                          onChange={handleAddStageAndProcess}
+                        /> */}
+                        {/* <Typography
+                          sx={{
+                            color: 'primary.main',
+                            fontSize: 24,
+                          }}
+                        >
+                          {product?.trazability.map((p) => p.name)}
+                        </Typography> */}
+
+                        {/* left */}
+                        <Grid item xs={2}></Grid>
+                        {/* center */}
+                        <Grid
+                          item
+                          xs={8}
+                          justifyContent="center"
+                          display="flex"
+                          flexDirection="column"
+                          alignItems="center"
+                        >
+                          <Typography
+                            sx={{
+                              color: 'primary.main',
+                              fontSize: 24,
+                            }}
+                          >
+                            Selecciona una etapa existente:
+                          </Typography>
+                          <Select
+                            name="stage"
+                            value={addingStageAndProcess.stage}
+                            onChange={handleAddStageAndProcess}
+                            sx={{
+                              minWidth: 200,
+                              height: '2.5rem',
+                              marginRight: 1,
+                            }}
+                          >
+                            {product?.trazability.map((p) => (
+                              <MenuItem key={p.name} value={p.name}>
+                                {p.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          <Typography
+                            sx={{
+                              color: 'primary.main',
+                              fontSize: 20,
+                            }}
+                          >
+                            O bien, puedes agregar una nueva:
+                          </Typography>
+                          <CustomTextField
+                            borderRadius={4}
+                            name="stage"
+                            value={addingStageAndProcess.stage}
+                            onChange={handleAddStageAndProcess}
+                          />
+                          <br />
+                          <Typography
+                            sx={{
+                              color: 'primary.main',
+                              fontSize: 20,
+                            }}
+                          >
+                            Proceso:
+                          </Typography>
+                          <CustomTextField
+                            borderRadius={4}
+                            name="process"
+                            value={addingStageAndProcess.process}
+                            onChange={handleAddStageAndProcess}
+                          />
+
+                          <Button
+                            onClick={() => {
+                              handleSaveNewStageAndProcess();
+                            }}
+                            style={{
+                              display: 'flex',
+                              fontSize: 20,
+                              backgroundColor: '#1D45B0',
+                              color: 'whitesmoke',
+                              width: '10rem',
+                            }}
+                          >
+                            Guardar
+                          </Button>
+                        </Grid>
+                        {/* right */}
+                        <Grid item xs={2}></Grid>
+                      </Grid>
+                    )}
+                    {editingProtocolScreen === 'add3' && (
+                      <Box justifyContent="center">
+                        <Typography
+                          sx={{
+                            color: 'primary.main',
+                            fontSize: 24,
+                          }}
+                        >
+                          Segunda pantalla
+                        </Typography>
+                        <Button
+                          onClick={() => {
+                            setEditingProtocolScreen('add2');
+                          }}
+                          style={{
+                            fontSize: 20,
+                            backgroundColor: '#1D45B0',
+                            color: 'whitesmoke',
+                          }}
+                        >
+                          Next
+                        </Button>
+                      </Box>
+                    )}
+                  </>
+                )}
+                {editingProtocolScreen === 'editRemove' && (
+                  <Box justifyContent="center">
+                    <Typography
+                      sx={{
+                        color: 'primary.main',
+                        fontSize: 24,
+                      }}
+                    >
+                      Editar etapas y procesos
+                    </Typography>
+                  </Box>
+                )}
+              </>
+            )}
             {showCustomFirstTime && (
               <>
                 <Box>
@@ -478,7 +833,7 @@ const Producto = () => {
               </>
             )}
 
-            {!showCustomFirstTime && (
+            {!showCustomFirstTime && !isEditingProtocol && (
               <Box>
                 <Typography
                   sx={{
@@ -486,7 +841,7 @@ const Producto = () => {
                     fontSize: 24,
                   }}
                 >
-                  Complete los datos del hito
+                  Clasifica y completa los datos del hito productivo
                 </Typography>
                 <Trazability />
               </Box>
@@ -495,14 +850,23 @@ const Producto = () => {
         </Modal>
 
         <Box>
-          <Typography
-            sx={{
-              color: 'primary.main',
-              fontSize: 24,
-            }}
-          >
-            {product.name}
-          </Typography>
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Typography
+              sx={{
+                color: 'primary.main',
+                fontSize: 24,
+                marginRight: '1rem',
+              }}
+            >
+              {product.name}
+            </Typography>
+            <FaEdit
+              color="#1d77c0"
+              size={24}
+              onClick={handleEditProtocol}
+              style={{ cursor: 'pointer' }}
+            />
+          </Box>
           {error && (
             <Typography sx={{ color: '#FF0000', fontSize: 20 }}>
               {error}
@@ -519,9 +883,7 @@ const Producto = () => {
               alignItems: isSmallScreen ? 'flex-start' : 'center',
               justifyContent: 'space-between',
               gap: 2,
-
               left: isSmallScreen ? 240 : 25,
-
               marginTop: isSmallScreen ? '0' : '1rem',
             }}
           >
@@ -597,14 +959,15 @@ const Producto = () => {
             <AddOutlined sx={{ fontSize: 50, color: 'whitesmoke' }} />
           </IconButton>
         </Box> */}
+
         <Button
           variant="contained"
           sx={{
             position: 'fixed',
             top: '0rem',
-            right: '6%',
+            right: '5%',
             marginTop: '5rem',
-            zIndex: 9999,
+            // zIndex: 9999,
           }}
           onClick={handleOpen}
         >

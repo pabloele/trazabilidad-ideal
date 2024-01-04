@@ -538,7 +538,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                               }}
                             />
                             <Typography sx={{ color: 'primary.main' }}>
-                              Categoría
+                              Clasificación
                             </Typography>
                           </Box>
                         </Grid>
