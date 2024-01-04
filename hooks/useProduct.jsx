@@ -48,7 +48,7 @@ const useProduct = (productId) => {
     getProduct();
   }, [productId]);
 
-  return { product, uploadProduct, uploadQr };
+  return { product, uploadProduct, uploadQr,setProductData };
 };
 
 export default useProduct;
