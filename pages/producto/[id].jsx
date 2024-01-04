@@ -10,30 +10,36 @@ import {
   Button,
   Grid,
   useMediaQuery,
-} from "@mui/material";
-import useProduct from "../../hooks/useProduct";
-import { useRouter } from "next/router";
-import Modal from "@mui/material/Modal";
-import { AddOutlined } from "@mui/icons-material";
-import Trazability from "../../components/Trazability/Trazability";
-import TabPanel from "../../components/TabPanel/TabPanel";
-import useMilestone from "../../hooks/useMilestone";
-import { ethers } from "ethers";
-import { contractAddress, contractAbi } from "../../contract/contract";
-import { useAuth } from "../../context/AuthContext";
-import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
-import ModalDialog from "../../components/Modals/ModalDialog";
-import Spinner from "../../components/Spinner/Spinner";
-import Swal from "sweetalert2";
-import { useAddress } from "@thirdweb-dev/react";
-import { updateProduct } from "../../firebase/controllers/firestoreControllers";
-import { v4 } from "uuid";
-import CloseIcon from "@mui/icons-material/Close";
-import { useProductStore } from "../../store";
-import useModalStore from "../../store/useModalStore";
-import useAddModalStore from "../../store/useAddModalStore";
-import styled from "styled-components";
-
+  Select,
+  MenuItem,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+} from '@mui/material';
+import useProduct from '../../hooks/useProduct';
+import { useRouter } from 'next/router';
+import Modal from '@mui/material/Modal';
+import { AddOutlined, Delete } from '@mui/icons-material';
+import Trazability from '../../components/Trazability/Trazability';
+import TabPanel from '../../components/TabPanel/TabPanel';
+import useMilestone from '../../hooks/useMilestone';
+import { ethers } from 'ethers';
+import { contractAddress, contractAbi } from '../../contract/contract';
+import { useAuth } from '../../context/AuthContext';
+import { agroupMilestones, uploadIPFS } from '../../contract/toBlockChain';
+import ModalDialog from '../../components/Modals/ModalDialog';
+import Spinner from '../../components/Spinner/Spinner';
+import Swal from 'sweetalert2';
+import { useAddress } from '@thirdweb-dev/react';
+import { updateProduct } from '../../firebase/controllers/firestoreControllers';
+import { v4 } from 'uuid';
+import CloseIcon from '@mui/icons-material/Close';
+import { useProductStore } from '../../store';
+import useModalStore from '../../store/useModalStore';
+import styled from 'styled-components';
+import { FaEdit } from 'react-icons/fa';
+import DeleteIcon from '@mui/icons-material/Delete';
 const CustomTextField = styled.textarea`
   width: 30%;
   height: 2rem;
@@ -66,6 +72,9 @@ const Producto = () => {
   const [path, setPath] = useState("");
   const [txHash, setTxHash] = useState();
   const [error, setError] = useState();
+  const [isEditingProtocol, setIsEditingProtocol] = useState(false);
+  const [editingProtocolScreen, setEditingProtocolScreen] = useState('select');
+  const [protocolSnapshot, setProtocolSnapshot] = useState({});
 
   const {
     DialogModal,
@@ -100,15 +109,15 @@ const Producto = () => {
   const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      import("qr-code-styling").then((module) => {
+    if (typeof window !== 'undefined') {
+      import('qr-code-styling').then((module) => {
         const QRCodeStyling = module.default;
 
         const qrCodeInstance = new QRCodeStyling({
-          width: 80,
-          height: 80,
-          image: "/images/cropped-logo-ideal-2.png",
-          dotsOptions: { type: "extra-rounded", color: "#000000" },
+          width: 120,
+          height: 120,
+          image: '/images/cropped-logo-ideal-2.png',
+          dotsOptions: { type: 'extra-rounded', color: '#000000' },
           imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
@@ -138,8 +147,12 @@ const Producto = () => {
     onOpenMilestoneModal();
   };
 
-  const handleClose = () => onClose();
-
+  const handleClose = () => {
+    setIsEditingProtocol(false);
+    setAddingStageAndProcess(false);
+    setEditingProtocolScreen('select');
+    onClose();
+  };
   const handleClickSubprocess = ({ name, path }) => {
     const updatedMilestones = [...milestones];
 
@@ -303,9 +316,9 @@ const Producto = () => {
   const handleOpenModal = async () => {
     Swal.fire({
       title:
-        "¿Seguro que deseas certificar este proceso productivo en la blockchain?",
-      text: "Esta acción no es reversible y sera información pública",
-      icon: "question",
+        '¿Seguro que deseas certificar este proceso productivo en la blockchain?',
+      text: 'Esta acción no es reversible y será información pública',
+      icon: 'question',
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -333,13 +346,6 @@ const Producto = () => {
     }
   }, [product]);
   const handleBeginCustomProtocol = async () => {
-    // console.log(product);
-
-    // console.log(product.trazability);
-    // console.log(product.trazability[0].line);
-    // console.log(product.trazability[0]);
-    // console.log(initialMilestoneStageAndProtocol.stage);
-    // console.log(initialMilestoneStageAndProtocol.process);
     const trazability = [
       {
         ...product.trazability[0],
@@ -355,10 +361,10 @@ const Producto = () => {
     console.log(updatedProduct);
     try {
       uploadProduct(updatedProduct);
+      setShowCustomFirsTime(false);
     } catch (error) {
       console.log(error);
     }
-    setShowCustomFirsTime(false);
   };
 
   const [showCustomFirstTime, setShowCustomFirsTime] = useState(false);
@@ -373,6 +379,141 @@ const Producto = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleEditProtocol = () => {
+    setIsEditingProtocol(true);
+    onOpen();
+  };
+
+  const [addingStageAndProcess, setAddingStageAndProcess] = useState({
+    stage: '',
+    process: '',
+  });
+
+  const handleAddStageAndProcess = (e) => {
+    const { name, value } = e.target;
+
+    setAddingStageAndProcess((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const [selectedValue, setSelectedValue] = useState('');
+
+  // const handleChangeStages = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setAddingStageAndProcess((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
+  const handleDeleteStage = (stageIndex) => {
+    const updatedProduct = setProtocolSnapshot((prevProduct) => {
+      const updatedTrazability = [...prevProduct?.trazability];
+
+      updatedTrazability.splice(stageIndex, 1);
+
+      const updatedProduct = {
+        ...prevProduct,
+        trazability: updatedTrazability,
+      };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    router.reload();
+  };
+
+  const handleDeleteProcess = (stageIndex, processIndex) => {
+    const updatedProduct = setProtocolSnapshot((prevProduct) => {
+      const updatedTrazability = [...prevProduct?.trazability];
+      updatedTrazability[stageIndex].line.splice(processIndex, 1);
+      const updatedProduct = {
+        ...prevProduct,
+        trazability: updatedTrazability,
+      };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    router.reload();
+  };
+
+  const handleEditProcess = (event, stageIndex, processIndex) => {
+    const updatedValue = event.target.value;
+    setProtocolSnapshot((prevProduct) => {
+      const updatedTrazability = [...prevProduct?.trazability];
+      updatedTrazability[stageIndex].line[processIndex].name = updatedValue;
+      return { ...prevProduct, trazability: updatedTrazability };
+    });
+  };
+
+  const handleEditStage = (event, stageIndex) => {
+    const updatedValue = event.target.value;
+    const updatedTrazability = [...protocolSnapshot?.trazability];
+    console.log(updatedValue);
+    console.log(protocolSnapshot.trazability[stageIndex]);
+    // console.log(protocolSnapshot[stageIndex]);
+    // console.log(updatedTrazability[stageIndex].line[processIndex].name);
+    updatedTrazability[stageIndex] = updatedValue;
+    const updatedProduct = {
+      ...protocolSnapshot,
+      trazability: updatedTrazability,
+    };
+    setProtocolSnapshot(updatedProduct);
+  };
+
+  const handleSaveNewStageAndProcess = async () => {
+    const existingStage = product.trazability.find(
+      (stage) => stage.name === addingStageAndProcess.stage
+    );
+
+    if (existingStage) {
+      const updatedStages = product.trazability.map((stage) => {
+        if (stage.name === addingStageAndProcess.stage) {
+          const updatedLine = [
+            ...stage.line,
+            { name: addingStageAndProcess.process, milestones: [] },
+          ];
+          return { ...stage, line: updatedLine };
+        }
+        return stage;
+      });
+
+      const updatedProduct = { ...product, trazability: updatedStages };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      const newStage = {
+        name: addingStageAndProcess.stage,
+        line: [{ name: addingStageAndProcess.process, milestones: [] }],
+        path: v4(),
+      };
+
+      const updatedStages = [...product.trazability, newStage];
+      const updatedProduct = { ...product, trazability: updatedStages };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    setIsEditingProtocol(false);
+    onClose();
+    router.reload();
   };
 
   if (!product) {
@@ -396,14 +537,8 @@ const Producto = () => {
       <HomeLayout>
         <DialogModal txHash={txHash} loading={loading} />
 
-        {/* <Button onClick={addProtocol}>agregar</Button> */}
 
-        <Modal
-          open={isOpenMilestoneModal}
-          onClose={onCloseMilestoneModal}
-          sx={{ width: "100%" }}
-        >
-          {/* <Modal open={isOpen} onClose={handleClose} sx={{ width: '100%' }}> */}
+        <Modal open={isOpen} onClose={handleClose} sx={{ width: '100%' }}>
           <Box
             sx={{
               position: "absolute",
@@ -424,7 +559,7 @@ const Producto = () => {
           >
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <CloseIcon
-                onClick={() => onCloseMilestoneModal()}
+                onClick={handleClose}
                 sx={{
                   color: "red",
                   ":hover": {
@@ -433,7 +568,255 @@ const Producto = () => {
                 }}
               />
             </Box>
+            {isEditingProtocol && !showCustomFirstTime && (
+              <>
+                {editingProtocolScreen === 'select' && (
+                  <Box justifyContent="center">
+                    <Typography
+                      sx={{
+                        color: 'primary.main',
+                        fontSize: 24,
+                      }}
+                    >
+                      Agregar, editar o quitar etapas y procesos a tu
+                      trazabilidad.
+                    </Typography>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="center"
+                      gap="1rem"
+                      marginTop="1rem"
+                    >
+                      <Button
+                        onClick={() => {
+                          setEditingProtocolScreen('add');
+                        }}
+                        style={{
+                          fontSize: 20,
+                          backgroundColor: '#1D45B0',
+                          color: 'whitesmoke',
+                        }}
+                      >
+                        Agregar
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEditingProtocolScreen('editRemove');
+                          setProtocolSnapshot({ ...product });
+                        }}
+                        style={{
+                          fontSize: 20,
+                          backgroundColor: '#1D45B0',
+                          color: 'whitesmoke',
+                        }}
+                      >
+                        Editar o eliminar
+                      </Button>
+                    </Box>
+                  </Box>
+                )}
 
+                {editingProtocolScreen.substring(0, 3) === 'add' && (
+                  <>
+                    {editingProtocolScreen === 'add' && (
+                      <Grid container direction="row" height="100%">
+                        {/* left */}
+                        <Grid item xs={2}></Grid>
+                        {/* center */}
+                        <Grid
+                          item
+                          xs={8}
+                          justifyContent="center"
+                          display="flex"
+                          flexDirection="column"
+                          alignItems="center"
+                        >
+                          <Typography
+                            sx={{
+                              color: 'primary.main',
+                              fontSize: 24,
+                            }}
+                          >
+                            Selecciona una etapa existente:
+                          </Typography>
+                          <Select
+                            name="stage"
+                            value={addingStageAndProcess.stage}
+                            onChange={handleAddStageAndProcess}
+                            sx={{
+                              minWidth: 200,
+                              height: '2.5rem',
+                              marginRight: 1,
+                            }}
+                          >
+                            {product?.trazability.map((p) => (
+                              <MenuItem key={p.name} value={p.name}>
+                                {p.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          <Typography
+                            sx={{
+                              color: 'primary.main',
+                              fontSize: 20,
+                            }}
+                          >
+                            O bien, puedes agregar una nueva:
+                          </Typography>
+                          <CustomTextField
+                            borderRadius={4}
+                            name="stage"
+                            value={addingStageAndProcess.stage}
+                            onChange={handleAddStageAndProcess}
+                          />
+                          <br />
+                          <Typography
+                            sx={{
+                              color: 'primary.main',
+                              fontSize: 20,
+                            }}
+                          >
+                            Proceso:
+                          </Typography>
+                          <CustomTextField
+                            borderRadius={4}
+                            name="process"
+                            value={addingStageAndProcess.process}
+                            onChange={handleAddStageAndProcess}
+                          />
+
+                          <Button
+                            onClick={() => {
+                              handleSaveNewStageAndProcess();
+                            }}
+                            style={{
+                              display: 'flex',
+                              fontSize: 20,
+                              backgroundColor: '#1D45B0',
+                              color: 'whitesmoke',
+                              width: '10rem',
+                            }}
+                          >
+                            Guardar
+                          </Button>
+                        </Grid>
+                        {/* right */}
+                        <Grid item xs={2}></Grid>
+                      </Grid>
+                    )}
+                  </>
+                )}
+                {editingProtocolScreen === 'editRemove' && (
+                  <Box
+                    justifyContent="center"
+                    justifyItems="center"
+                    display={'flex'}
+                    flexDirection={'column'}
+                  >
+                    <Typography
+                      sx={{
+                        color: 'primary.main',
+                        fontSize: 20,
+                        bgcolor: '#1e46b471',
+                      }}
+                    >
+                      Editar etapas y procesos
+                    </Typography>
+
+                    {protocolSnapshot?.trazability?.map((p, index) => (
+                      <Box
+                        key={p.name}
+                        sx={{ margin: 'auto', display: 'inline-block' }}
+                      >
+                        <List
+                          sx={{
+                            marginLeft: '20px',
+                            color: 'primary.main',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <ListItem>
+                            <Typography
+                              sx={{
+                                color: 'primary.main',
+                                fontSize: 20,
+                                marginRight: 1,
+                              }}
+                            >
+                              Etapa:
+                            </Typography>
+                            <Box
+                              width="50%"
+                              display="flex"
+                              justifySelf="center"
+                            >
+                              <CustomTextField
+                                display="flex"
+                                borderRadius={4}
+                                name={p.name}
+                                value={p.name}
+                                onChange={handleEditStage}
+                                style={{ width: '100%', marginBottom: '16px' }}
+                              />
+                              <IconButton
+                                onClick={() => handleDeleteStage(index)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          </ListItem>
+                          {p.line.map((l, lineIndex) => (
+                            <List
+                              key={l.name}
+                              sx={{
+                                display: 'flex',
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: 'primary.main',
+                                  fontSize: 20,
+                                  marginRight: 1,
+                                }}
+                              >
+                                Proceso:
+                              </Typography>
+                              <Box
+                                width="50%"
+                                display="flex"
+                                justifySelf="center"
+                              >
+                                <CustomTextField
+                                  display="flex"
+                                  borderRadius={4}
+                                  name={l.name}
+                                  value={l.name}
+                                  onChange={(e) =>
+                                    handleEditProcess(e, index, lineIndex)
+                                  }
+                                  style={{ width: '100%', marginBottom: '8px' }}
+                                />
+                                <IconButton
+                                  onClick={() =>
+                                    handleDeleteProcess(index, lineIndex)
+                                  }
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Box>
+                            </List>
+                          ))}
+                        </List>
+                        {index !== product.trazability.length - 1 && (
+                          <Divider />
+                        )}
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </>
+            )}
             {showCustomFirstTime && (
               <>
                 <Box>
@@ -492,7 +875,7 @@ const Producto = () => {
               </>
             )}
 
-            {!showCustomFirstTime && (
+            {!showCustomFirstTime && !isEditingProtocol && (
               <Box>
                 <Typography
                   sx={{
@@ -500,7 +883,7 @@ const Producto = () => {
                     fontSize: 24,
                   }}
                 >
-                  Complete los datos del hito
+                  Clasifica y completa los datos del hito productivo
                 </Typography>
                 <Trazability />
               </Box>
@@ -509,14 +892,23 @@ const Producto = () => {
         </Modal>
 
         <Box>
-          <Typography
-            sx={{
-              color: "primary.main",
-              fontSize: 24,
-            }}
-          >
-            {product.name}
-          </Typography>
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Typography
+              sx={{
+                color: 'primary.main',
+                fontSize: 24,
+                marginRight: '1rem',
+              }}
+            >
+              {product.name}
+            </Typography>
+            <FaEdit
+              color="#1d77c0"
+              size={24}
+              onClick={handleEditProtocol}
+              style={{ cursor: 'pointer' }}
+            />
+          </Box>
           {error && (
             <Typography sx={{ color: "#FF0000", fontSize: 20 }}>
               {error}
@@ -528,31 +920,72 @@ const Producto = () => {
 
           <Box
             sx={{
-              display: "flex",
+              display: 'flex',
+              flexDirection: isSmallScreen ? 'row' : 'column',
+              alignItems: isSmallScreen ? 'flex-start' : 'center',
+              justifyContent: 'space-between',
               gap: 2,
-
               left: isSmallScreen ? 240 : 25,
-
-              marginTop: "1rem",
+              marginTop: isSmallScreen ? '0' : '1rem',
             }}
           >
-            <Button
-              variant="contained"
-              onClick={createQRcode}
-              disabled={product?.qrcode ? true : false}
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyItems: 'flex-start',
+              }}
             >
-              Crear QR
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleOpenModal}
-              // disabled={product?.status !== "en curso"}
-            >
-              Certificar en blockchain
-            </Button>
+              <Button
+                variant="contained"
+                onClick={createQRcode}
+                disabled={product?.qrcode ? true : false}
+                sx={{ height: '2.5rem', marginRight: '1rem' }}
+              >
+                Crear QR
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleOpenModal}
+                // disabled={product?.status !== "en curso"}
+                sx={{ height: '2.5rem' }}
+              >
+                Certificar en blockchain
+              </Button>
+            </Box>
+            {product?.qrcode && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  marginTop: isSmallScreen ? '-8rem' : '0',
+                }}
+              >
+                <Box ref={ref}></Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
+                    Descargar QR
+                  </Button>
+                  <Button
+                    onClick={() => router.push(`/history/${router.query.id}`)}
+                    sx={{ fontSize: 12 }}
+                  >
+                    Visitar trazabilidad
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Box>
         </Box>
-        <Box>
+        {/* <Box>
           <IconButton
             size="large"
             sx={{
@@ -567,15 +1000,30 @@ const Producto = () => {
           >
             <AddOutlined sx={{ fontSize: 50, color: "whitesmoke" }} />
           </IconButton>
-        </Box>
+        </Box> */}
+
+        <Button
+          variant="contained"
+          sx={{
+            position: 'fixed',
+            top: '0rem',
+            right: '5%',
+            marginTop: '5rem',
+            // zIndex: 9999,
+          }}
+          onClick={handleOpen}
+        >
+          NUEVO HITO
+        </Button>
         <Box
           sx={{
-            position: "fixed",
-            right: isSmallScreen ? 105 : 25,
-            top: "12vh",
+            position: 'fixed',
+
+            right: isSmallScreen ? 65 : 25,
+            top: '50vh',
           }}
         >
-          {product?.qrcode && (
+          {/* {product?.qrcode && (
             <Box
               sx={{
                 display: "flex",
@@ -603,7 +1051,7 @@ const Producto = () => {
                 </Button>
               </Box>
             </Box>
-          )}
+          )} */}
         </Box>
       </HomeLayout>
     );

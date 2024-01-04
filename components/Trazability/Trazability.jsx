@@ -283,6 +283,15 @@ const Trazability = ({ initialMilestone, closeModal }) => {
     <>
       {showCategories && (
         <React.Fragment>
+          <Typography
+            sx={{
+              color: 'primary.main',
+              fontSize: 20,
+              bgcolor: '#1e46b471',
+            }}
+          >
+            Etapa productiva (seleccione una)
+          </Typography>
           <Grid display="flex" justifyContent="center">
             <Tabs
               variant="scrollable"
@@ -300,7 +309,16 @@ const Trazability = ({ initialMilestone, closeModal }) => {
               ))}
             </Tabs>
           </Grid>
-
+          <Typography
+            sx={{
+              color: 'primary.main',
+              fontSize: 20,
+              bgcolor: '#1e46b471',
+              marginTop: '1rem',
+            }}
+          >
+            Seleccione el proceso productivo (seleccione uno para comenzar)
+          </Typography>
           {product?.trazability?.map((element, index) => (
             // categoría
             <Box key={element.name}>
@@ -521,8 +539,8 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                                 color: "#0330ab",
                               }}
                             />
-                            <Typography sx={{ color: "primary.main" }}>
-                              Categoría
+                            <Typography sx={{ color: 'primary.main' }}>
+                              Clasificación
                             </Typography>
                           </Box>
                         </Grid>
