@@ -339,13 +339,6 @@ const Producto = () => {
     console.log('render');
   }, []);
   const handleBeginCustomProtocol = async () => {
-    // console.log(product);
-
-    // console.log(product.trazability);
-    // console.log(product.trazability[0].line);
-    // console.log(product.trazability[0]);
-    // console.log(initialMilestoneStageAndProtocol.stage);
-    // console.log(initialMilestoneStageAndProtocol.process);
     const trazability = [
       {
         ...product.trazability[0],
@@ -449,11 +442,26 @@ const Producto = () => {
 
   const handleEditProcess = (event, stageIndex, processIndex) => {
     const updatedValue = event.target.value;
-    setProductData((prevProduct) => {
-      const updatedTrazability = [...prevProduct.trazability];
+    setProtocolSnapshot((prevProduct) => {
+      const updatedTrazability = [...prevProduct?.trazability];
       updatedTrazability[stageIndex].line[processIndex].name = updatedValue;
       return { ...prevProduct, trazability: updatedTrazability };
     });
+  };
+
+  const handleEditStage = (event, stageIndex) => {
+    const updatedValue = event.target.value;
+    const updatedTrazability = [...protocolSnapshot?.trazability];
+    console.log(updatedValue);
+    console.log(protocolSnapshot.trazability[stageIndex]);
+    // console.log(protocolSnapshot[stageIndex]);
+    // console.log(updatedTrazability[stageIndex].line[processIndex].name);
+    updatedTrazability[stageIndex] = updatedValue;
+    const updatedProduct = {
+      ...protocolSnapshot,
+      trazability: updatedTrazability,
+    };
+    setProtocolSnapshot(updatedProduct);
   };
 
   const handleSaveNewStageAndProcess = async () => {
@@ -604,47 +612,6 @@ const Producto = () => {
                   <>
                     {editingProtocolScreen === 'add' && (
                       <Grid container direction="row" height="100%">
-                        {/* <Typography
-                          sx={{
-                            color: 'primary.main',
-                            fontSize: 20,
-                          }}
-                        >
-                          Etapa
-                        </Typography>
-                        <Box width="50%" display="flex" justifySelf="center">
-                          <CustomTextField
-                            display="flex"
-                            borderRadius={4}
-                            name="stage"
-                            value={addingStageAndProcess.stage}
-                            onChange={handleAddStageAndProcess}
-                            style={{ width: '100%', marginBottom: '8px' }}
-                          />
-                        </Box>
-                        <Typography
-                          sx={{
-                            color: 'primary.main',
-                            fontSize: 20,
-                          }}
-                        >
-                          Proceso
-                        </Typography>
-                        <CustomTextField
-                          borderRadius={4}
-                          name="process"
-                          value={addingStageAndProcess.process}
-                          onChange={handleAddStageAndProcess}
-                        /> */}
-                        {/* <Typography
-                          sx={{
-                            color: 'primary.main',
-                            fontSize: 24,
-                          }}
-                        >
-                          {product?.trazability.map((p) => p.name)}
-                        </Typography> */}
-
                         {/* left */}
                         <Grid item xs={2}></Grid>
                         {/* center */}
@@ -748,7 +715,7 @@ const Producto = () => {
                       Editar etapas y procesos
                     </Typography>
 
-                    {product?.trazability?.map((p, index) => (
+                    {protocolSnapshot?.trazability?.map((p, index) => (
                       <Box
                         key={p.name}
                         sx={{ margin: 'auto', display: 'inline-block' }}
@@ -778,9 +745,9 @@ const Producto = () => {
                               <CustomTextField
                                 display="flex"
                                 borderRadius={4}
-                                name="stage"
+                                name={p.name}
                                 value={p.name}
-                                onChange={handleAddStageAndProcess}
+                                onChange={handleEditStage}
                                 style={{ width: '100%', marginBottom: '16px' }}
                               />
                               <IconButton
@@ -814,7 +781,7 @@ const Producto = () => {
                                 <CustomTextField
                                   display="flex"
                                   borderRadius={4}
-                                  name="process"
+                                  name={l.name}
                                   value={l.name}
                                   onChange={(e) =>
                                     handleEditProcess(e, index, lineIndex)
