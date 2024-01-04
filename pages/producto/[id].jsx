@@ -420,8 +420,6 @@ const Producto = () => {
         ...prevProduct,
         trazability: updatedTrazability,
       };
-
-      // console.log(updatedProduct?.trazability);
       try {
         uploadProduct(updatedProduct);
       } catch (error) {
@@ -433,11 +431,20 @@ const Producto = () => {
   };
 
   const handleDeleteProcess = (stageIndex, processIndex) => {
-    setProductData((prevProduct) => {
-      const updatedTrazability = [...prevProduct.trazability];
+    const updatedProduct = setProtocolSnapshot((prevProduct) => {
+      const updatedTrazability = [...prevProduct?.trazability];
       updatedTrazability[stageIndex].line.splice(processIndex, 1);
-      return { ...prevProduct, trazability: updatedTrazability };
+      const updatedProduct = {
+        ...prevProduct,
+        trazability: updatedTrazability,
+      };
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
     });
+    router.reload();
   };
 
   const handleEditProcess = (event, stageIndex, processIndex) => {
