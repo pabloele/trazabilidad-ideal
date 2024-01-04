@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
-import { HomeLayout } from '../../layout';
+import React, { useState, useEffect, useRef } from "react";
+import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
+import { HomeLayout } from "../../layout";
 import {
   Box,
   Typography,
@@ -56,14 +56,20 @@ const CustomTextField = styled.textarea`
 const Producto = () => {
   const address = useAddress();
 
-  const isSmallScreen = useMediaQuery('(min-width: 600px)');
+  const isSmallScreen = useMediaQuery("(min-width: 600px)");
   const router = useRouter();
   const { user } = useAuth();
 
   const { product, setProductData } = useProductStore();
 
+  const {
+    onOpen: onOpenMilestoneModal,
+    onClose: onCloseMilestoneModal,
+    isOpen: isOpenMilestoneModal,
+  } = useAddModalStore();
+
   const [loading, setLoading] = useState(true);
-  const [path, setPath] = useState('');
+  const [path, setPath] = useState("");
   const [txHash, setTxHash] = useState();
   const [error, setError] = useState();
   const [isEditingProtocol, setIsEditingProtocol] = useState(false);
@@ -103,10 +109,6 @@ const Producto = () => {
   const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   useEffect(() => {
-    if (product.trazability?.length > 1) setShowCustomFirsTime(false);
-  });
-
-  useEffect(() => {
     if (typeof window !== 'undefined') {
       import('qr-code-styling').then((module) => {
         const QRCodeStyling = module.default;
@@ -135,14 +137,14 @@ const Producto = () => {
   const onDownloadClick = () => {
     if (!qrcode) return;
     qrcode.download({
-      extension: 'png',
+      extension: "png",
     });
   };
 
   const handleOpen = () => {
     setTabActive(0);
     setSubprocessSelected(null);
-    onOpen();
+    onOpenMilestoneModal();
   };
 
   const handleClose = () => {
@@ -169,16 +171,16 @@ const Producto = () => {
   };
 
   const handleChange = (event, newValue) => {
-    console.log('event', event.target.value);
-    console.log('value', newValue);
+    console.log("event", event.target.value);
+    console.log("value", newValue);
     setTabActive(newValue);
   };
 
   const saveMilestone = async (milestone) => {
     if (
-      milestone.image === '' ||
-      milestone.description === '' ||
-      milestone.name === ''
+      milestone.image === "" ||
+      milestone.description === "" ||
+      milestone.name === ""
     ) {
       alert(`Descripción, imagen y/o categoría faltantes`);
 
@@ -202,14 +204,14 @@ const Producto = () => {
       setMilestoneBox([0]);
       setMilestones([
         {
-          description: '',
-          image: '',
-          path: '',
+          description: "",
+          image: "",
+          path: "",
           milestoneUid: v4(),
           atachments: [],
         },
       ]);
-      setFileUri('');
+      setFileUri("");
       setSubprocessSelected(null);
       setTabActive(null);
       setOpen(false);
@@ -224,7 +226,7 @@ const Producto = () => {
 
       if (!address)
         throw new Error(
-          'Conecte una billetera para certificar la trazabilidad'
+          "Conecte una billetera para certificar la trazabilidad"
         );
 
       setLoading(true);
@@ -280,11 +282,11 @@ const Producto = () => {
         if (txHash) {
           const updated = await updateProduct(
             router.query.id,
-            'realizado',
+            "realizado",
             txHash
           );
         } else {
-          console.error('El valor de txHash es undefined.');
+          console.error("El valor de txHash es undefined.");
         }
       } catch (error) {
         setError(error.reason);
@@ -318,10 +320,10 @@ const Producto = () => {
       text: 'Esta acción no es reversible y será información pública',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Certificar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Certificar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         setOpenDialog(true);
@@ -334,10 +336,15 @@ const Producto = () => {
       }
     });
   };
-
   useEffect(() => {
-    console.log('render');
-  }, []);
+    if (product) {
+      console.log(product);
+
+      if (product.protocolName == "Diseña tu protocolo" && product.firstTime) {
+        setShowCustomFirsTime(true);
+      }
+    }
+  }, [product]);
   const handleBeginCustomProtocol = async () => {
     const trazability = [
       {
@@ -350,7 +357,7 @@ const Producto = () => {
     ];
 
     console.log(trazability);
-    const updatedProduct = { ...product, trazability };
+    const updatedProduct = { ...product, trazability, firstTime:false };
     console.log(updatedProduct);
     try {
       uploadProduct(updatedProduct);
@@ -360,11 +367,12 @@ const Producto = () => {
     }
   };
 
-  const [showCustomFirstTime, setShowCustomFirsTime] = useState(true);
+  const [showCustomFirstTime, setShowCustomFirsTime] = useState(false);
+
   const [
     initialMilestoneStageAndProtocol,
     setInitialMilestoneStageAndProtocol,
-  ] = useState({ stage: '', protocol: '' });
+  ] = useState({ stage: "", protocol: "" });
 
   const handleChangeMilestoneField = (e) => {
     setInitialMilestoneStageAndProtocol((prev) => ({
@@ -514,10 +522,10 @@ const Producto = () => {
         <Box
           container
           sx={{
-            height: '90vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            height: "90vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Spinner />
@@ -529,32 +537,33 @@ const Producto = () => {
       <HomeLayout>
         <DialogModal txHash={txHash} loading={loading} />
 
+
         <Modal open={isOpen} onClose={handleClose} sx={{ width: '100%' }}>
           <Box
             sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: isSmallScreen ? '95%' : '95%',
-              height: '90vh',
-              overflowY: 'auto',
-              bgcolor: 'background.paper',
-              border: '2px solid #000',
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: isSmallScreen ? "95%" : "95%",
+              height: "90vh",
+              overflowY: "auto",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
               boxShadow: 24,
-              margin: isSmallScreen ? '0' : 'auto',
-              textAlign: 'center',
-              justifyContent: 'center',
+              margin: isSmallScreen ? "0" : "auto",
+              textAlign: "center",
+              justifyContent: "center",
               p: 4,
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <CloseIcon
                 onClick={handleClose}
                 sx={{
-                  color: 'red',
-                  ':hover': {
-                    cursor: 'pointer',
+                  color: "red",
+                  ":hover": {
+                    cursor: "pointer",
                   },
                 }}
               />
@@ -813,19 +822,19 @@ const Producto = () => {
                 <Box>
                   <Typography
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                       fontSize: 20,
                     }}
                   >
                     Los hitos productivos se estructuran en etapas y procesos
-                    (por ejemplo Etapa: Producción - Proceso: Siembra). <br />{' '}
+                    (por ejemplo Etapa: Producción - Proceso: Siembra). <br />{" "}
                     Por favor defina la etapa y proceso de su primer hito
                     productivo para comenzar con su trazabilidad.
                   </Typography>
                   <br />
                   <Typography
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                       fontSize: 20,
                     }}
                   >
@@ -840,7 +849,7 @@ const Producto = () => {
                   <br />
                   <Typography
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                       fontSize: 20,
                     }}
                   >
@@ -857,8 +866,8 @@ const Producto = () => {
                   onClick={handleBeginCustomProtocol}
                   style={{
                     fontSize: 20,
-                    backgroundColor: '#1D45B0',
-                    color: 'whitesmoke',
+                    backgroundColor: "#1D45B0",
+                    color: "whitesmoke",
                   }}
                 >
                   Comenzar
@@ -870,7 +879,7 @@ const Producto = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: 'primary.main',
+                    color: "primary.main",
                     fontSize: 24,
                   }}
                 >
@@ -901,11 +910,11 @@ const Producto = () => {
             />
           </Box>
           {error && (
-            <Typography sx={{ color: '#FF0000', fontSize: 20 }}>
+            <Typography sx={{ color: "#FF0000", fontSize: 20 }}>
               {error}
             </Typography>
           )}
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
           </Box>
 
@@ -980,16 +989,16 @@ const Producto = () => {
           <IconButton
             size="large"
             sx={{
-              color: 'white',
-              backgroundColor: 'error.main',
-              ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
-              position: 'fixed',
+              color: "white",
+              backgroundColor: "error.main",
+              ":hover": { backgroundColor: "error.main", opacity: 0.9 },
+              position: "fixed",
               right: isSmallScreen ? 145 : 55,
-              top: isSmallScreen ? '48vh' : '40vh',
+              top: isSmallScreen ? "48vh" : "40vh",
             }}
             onClick={handleOpen}
           >
-            <AddOutlined sx={{ fontSize: 50, color: 'whitesmoke' }} />
+            <AddOutlined sx={{ fontSize: 50, color: "whitesmoke" }} />
           </IconButton>
         </Box> */}
 
@@ -1017,18 +1026,18 @@ const Producto = () => {
           {/* {product?.qrcode && (
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-start",
               }}
             >
               <Box ref={ref}></Box>
 
               <Box
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
                 <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
