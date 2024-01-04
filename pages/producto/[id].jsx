@@ -68,6 +68,7 @@ const Producto = () => {
   const [error, setError] = useState();
   const [isEditingProtocol, setIsEditingProtocol] = useState(false);
   const [editingProtocolScreen, setEditingProtocolScreen] = useState('select');
+  const [protocolSnapshot, setProtocolSnapshot] = useState({});
 
   const {
     DialogModal,
@@ -409,33 +410,45 @@ const Producto = () => {
   //   }));
   // };
 
-  // const handleSaveNewStageAndProcess = async () => {
-  //   const trazability = [
-  //     ...product.trazability,
-  //     {
-  //       name: addingStageAndProcess.stage,
-  //       line: [{ name: addingStageAndProcess.process, milestones: [] }],
-  //       path: v4(),
-  //     },
-  //   ];
+  const handleDeleteStage = (stageIndex) => {
+    const updatedProduct = setProtocolSnapshot((prevProduct) => {
+      const updatedTrazability = [...prevProduct?.trazability];
 
-  //   console.log(trazability);
-  //   const updatedProduct = { ...product, trazability };
-  //   console.log(updatedProduct);
-  //   try {
-  //     uploadProduct(updatedProduct);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  //   setIsEditingProtocol(false);
-  //   onClose();
-  //   router.reload();
-  // };
-  const handleCloseModal = () => {
-    isEditingProtocol(false);
-    setAddingStageAndProcess(false);
-    onClose();
+      updatedTrazability.splice(stageIndex, 1);
+
+      const updatedProduct = {
+        ...prevProduct,
+        trazability: updatedTrazability,
+      };
+
+      // console.log(updatedProduct?.trazability);
+      try {
+        uploadProduct(updatedProduct);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    router.reload();
   };
+
+  const handleDeleteProcess = (stageIndex, processIndex) => {
+    setProductData((prevProduct) => {
+      const updatedTrazability = [...prevProduct.trazability];
+      updatedTrazability[stageIndex].line.splice(processIndex, 1);
+      return { ...prevProduct, trazability: updatedTrazability };
+    });
+  };
+
+  const handleEditProcess = (event, stageIndex, processIndex) => {
+    const updatedValue = event.target.value;
+    setProductData((prevProduct) => {
+      const updatedTrazability = [...prevProduct.trazability];
+      updatedTrazability[stageIndex].line[processIndex].name = updatedValue;
+      return { ...prevProduct, trazability: updatedTrazability };
+    });
+  };
+
   const handleSaveNewStageAndProcess = async () => {
     const existingStage = product.trazability.find(
       (stage) => stage.name === addingStageAndProcess.stage
@@ -501,8 +514,6 @@ const Producto = () => {
       <HomeLayout>
         <DialogModal txHash={txHash} loading={loading} />
 
-        {/* <Button onClick={addProtocol}>agregar</Button> */}
-
         <Modal open={isOpen} onClose={handleClose} sx={{ width: '100%' }}>
           <Box
             sx={{
@@ -543,7 +554,8 @@ const Producto = () => {
                         fontSize: 24,
                       }}
                     >
-                      Agregar, editar o quitar etapas y procesos a tu procolo.
+                      Agregar, editar o quitar etapas y procesos a tu
+                      trazabilidad.
                     </Typography>
                     <Box
                       display="flex"
@@ -567,6 +579,7 @@ const Producto = () => {
                       <Button
                         onClick={() => {
                           setEditingProtocolScreen('editRemove');
+                          setProtocolSnapshot({ ...product });
                         }}
                         style={{
                           fontSize: 20,
@@ -728,7 +741,7 @@ const Producto = () => {
                       Editar etapas y procesos
                     </Typography>
 
-                    {product?.trazability.map((p, index) => (
+                    {product?.trazability?.map((p, index) => (
                       <Box
                         key={p.name}
                         sx={{ margin: 'auto', display: 'inline-block' }}
