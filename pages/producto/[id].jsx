@@ -12,11 +12,15 @@ import {
   useMediaQuery,
   Select,
   MenuItem,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from '@mui/material';
 import useProduct from '../../hooks/useProduct';
 import { useRouter } from 'next/router';
 import Modal from '@mui/material/Modal';
-import { AddOutlined } from '@mui/icons-material';
+import { AddOutlined, Delete } from '@mui/icons-material';
 import Trazability from '../../components/Trazability/Trazability';
 import TabPanel from '../../components/TabPanel/TabPanel';
 import useMilestone from '../../hooks/useMilestone';
@@ -35,7 +39,7 @@ import { useProductStore } from '../../store';
 import useModalStore from '../../store/useModalStore';
 import styled from 'styled-components';
 import { FaEdit } from 'react-icons/fa';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 const CustomTextField = styled.textarea`
   width: 30%;
   height: 2rem;
@@ -140,9 +144,10 @@ const Producto = () => {
     onOpen();
   };
 
-  const handleClose = () => onClose();
-  const handleCloseEditProtocol = () => {
+  const handleClose = () => {
     setIsEditingProtocol(false);
+    setAddingStageAndProcess(false);
+    setEditingProtocolScreen('select');
     onClose();
   };
   const handleClickSubprocess = ({ name, path }) => {
@@ -426,6 +431,11 @@ const Producto = () => {
   //   onClose();
   //   router.reload();
   // };
+  const handleCloseModal = () => {
+    isEditingProtocol(false);
+    setAddingStageAndProcess(false);
+    onClose();
+  };
   const handleSaveNewStageAndProcess = async () => {
     const existingStage = product.trazability.find(
       (stage) => stage.name === addingStageAndProcess.stage
@@ -514,7 +524,7 @@ const Producto = () => {
           >
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <CloseIcon
-                onClick={() => onClose()}
+                onClick={handleClose}
                 sx={{
                   color: 'red',
                   ':hover': {
@@ -573,42 +583,6 @@ const Producto = () => {
                 {editingProtocolScreen.substring(0, 3) === 'add' && (
                   <>
                     {editingProtocolScreen === 'add' && (
-                      <Box justifyContent="center">
-                        <Typography
-                          sx={{
-                            color: 'primary.main',
-                            fontSize: 24,
-                          }}
-                        >
-                          Agregar nueva etapa?
-                        </Typography>
-                        <Button
-                          onClick={() => {
-                            setEditingProtocolScreen('add2');
-                          }}
-                          style={{
-                            fontSize: 20,
-                            backgroundColor: '#1D45B0',
-                            color: 'whitesmoke',
-                          }}
-                        >
-                          Si
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setEditingProtocolScreen('add2');
-                          }}
-                          style={{
-                            fontSize: 20,
-                            backgroundColor: '#1D45B0',
-                            color: 'whitesmoke',
-                          }}
-                        >
-                          No
-                        </Button>
-                      </Box>
-                    )}
-                    {editingProtocolScreen === 'add2' && (
                       <Grid container direction="row" height="100%">
                         {/* <Typography
                           sx={{
@@ -735,42 +709,114 @@ const Producto = () => {
                         <Grid item xs={2}></Grid>
                       </Grid>
                     )}
-                    {editingProtocolScreen === 'add3' && (
-                      <Box justifyContent="center">
-                        <Typography
-                          sx={{
-                            color: 'primary.main',
-                            fontSize: 24,
-                          }}
-                        >
-                          Segunda pantalla
-                        </Typography>
-                        <Button
-                          onClick={() => {
-                            setEditingProtocolScreen('add2');
-                          }}
-                          style={{
-                            fontSize: 20,
-                            backgroundColor: '#1D45B0',
-                            color: 'whitesmoke',
-                          }}
-                        >
-                          Next
-                        </Button>
-                      </Box>
-                    )}
                   </>
                 )}
                 {editingProtocolScreen === 'editRemove' && (
-                  <Box justifyContent="center">
+                  <Box
+                    justifyContent="center"
+                    justifyItems="center"
+                    display={'flex'}
+                    flexDirection={'column'}
+                  >
                     <Typography
                       sx={{
                         color: 'primary.main',
-                        fontSize: 24,
+                        fontSize: 20,
+                        bgcolor: '#1e46b471',
                       }}
                     >
                       Editar etapas y procesos
                     </Typography>
+
+                    {product?.trazability.map((p, index) => (
+                      <Box
+                        key={p.name}
+                        sx={{ margin: 'auto', display: 'inline-block' }}
+                      >
+                        <List
+                          sx={{
+                            marginLeft: '20px',
+                            color: 'primary.main',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <ListItem>
+                            <Typography
+                              sx={{
+                                color: 'primary.main',
+                                fontSize: 20,
+                                marginRight: 1,
+                              }}
+                            >
+                              Etapa:
+                            </Typography>
+                            <Box
+                              width="50%"
+                              display="flex"
+                              justifySelf="center"
+                            >
+                              <CustomTextField
+                                display="flex"
+                                borderRadius={4}
+                                name="stage"
+                                value={p.name}
+                                onChange={handleAddStageAndProcess}
+                                style={{ width: '100%', marginBottom: '16px' }}
+                              />
+                              <IconButton
+                                onClick={() => handleDeleteStage(index)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          </ListItem>
+                          {p.line.map((l, lineIndex) => (
+                            <List
+                              key={l.name}
+                              sx={{
+                                display: 'flex',
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: 'primary.main',
+                                  fontSize: 20,
+                                  marginRight: 1,
+                                }}
+                              >
+                                Proceso:
+                              </Typography>
+                              <Box
+                                width="50%"
+                                display="flex"
+                                justifySelf="center"
+                              >
+                                <CustomTextField
+                                  display="flex"
+                                  borderRadius={4}
+                                  name="process"
+                                  value={l.name}
+                                  onChange={(e) =>
+                                    handleEditProcess(e, index, lineIndex)
+                                  }
+                                  style={{ width: '100%', marginBottom: '8px' }}
+                                />
+                                <IconButton
+                                  onClick={() =>
+                                    handleDeleteProcess(index, lineIndex)
+                                  }
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Box>
+                            </List>
+                          ))}
+                        </List>
+                        {index !== product.trazability.length - 1 && (
+                          <Divider />
+                        )}
+                      </Box>
+                    ))}
                   </Box>
                 )}
               </>
