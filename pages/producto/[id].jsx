@@ -354,10 +354,10 @@ const Producto = () => {
     console.log(updatedProduct);
     try {
       uploadProduct(updatedProduct);
+      setShowCustomFirsTime(false);
     } catch (error) {
       console.log(error);
     }
-    setShowCustomFirsTime(false);
   };
 
   const [showCustomFirstTime, setShowCustomFirsTime] = useState(true);
