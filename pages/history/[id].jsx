@@ -91,19 +91,15 @@ const ViewProduct = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                border: 'dotted',
-                // backgroundImage: `url("/images/bg-product.jpg")`,
-                backgroundImage: `url(${product?.productImage})`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
+                backgroundColor: 'InfoBackground',
                 direction: 'row',
               }}
             >
               <Image
                 style={{ objectFit: 'contain' }}
                 src={product?.productImage}
-                width={isSmallScreen ? 315 : 215}
-                height={isSmallScreen ? 315 : 215}
+                width={isSmallScreen ? 350 : 300}
+                height={isSmallScreen ? 350 : 300}
                 alt="Product Image"
               />
             </Grid>
