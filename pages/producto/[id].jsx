@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
 import { HomeLayout } from "../../layout";
 import {
   Box,
   Typography,
   IconButton,
-  Tab,
-  Tabs,
   Button,
   Grid,
   useMediaQuery,
@@ -14,19 +12,15 @@ import {
   MenuItem,
   List,
   ListItem,
-  ListItemText,
   Divider,
+  TextField,
 } from "@mui/material";
 import useProduct from "../../hooks/useProduct";
 import { useRouter } from "next/router";
 import Modal from "@mui/material/Modal";
-import { AddOutlined, Delete } from "@mui/icons-material";
 import Trazability from "../../components/Trazability/Trazability";
-import TabPanel from "../../components/TabPanel/TabPanel";
-import useMilestone from "../../hooks/useMilestone";
 import { ethers } from "ethers";
 import { contractAddress, contractAbi } from "../../contract/contract";
-import { useAuth } from "../../context/AuthContext";
 import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
 import ModalDialog from "../../components/Modals/ModalDialog";
 import Spinner from "../../components/Spinner/Spinner";
@@ -41,12 +35,13 @@ import styled from "styled-components";
 import { FaEdit } from "react-icons/fa";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAddModalStore from "../../store/useAddModalStore";
+import EditIcon from "@mui/icons-material/Edit";
 const CustomTextField = styled.textarea`
   width: 30%;
   height: 2rem;
   padding: 8px;
   margin-bottom: 2rem;
-  border: 1px solid #cfcdcd28;
+  border: 2px solid #e1e1e1;
   background-color: #cfcdcd28;
   border-radius: 4px;
   outline: none;
@@ -59,9 +54,12 @@ const Producto = () => {
 
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
   const router = useRouter();
-  const { user } = useAuth();
 
   const { product, setProductData } = useProductStore();
+
+  const [oldValue, setOldValue] = useState("");
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const {
     onOpen: onOpenMilestoneModal,
@@ -70,12 +68,25 @@ const Producto = () => {
   } = useAddModalStore();
 
   const [loading, setLoading] = useState(true);
-  const [path, setPath] = useState("");
   const [txHash, setTxHash] = useState();
   const [error, setError] = useState();
   const [isEditingProtocol, setIsEditingProtocol] = useState(false);
   const [editingProtocolScreen, setEditingProtocolScreen] = useState("select");
   const [protocolSnapshot, setProtocolSnapshot] = useState({});
+
+  const [editingStates, setEditingStates] = useState(
+    Array(protocolSnapshot?.trazability?.length).fill(false)
+  );
+
+  // const [editingProcess, setEditingProcess] = useState(
+  //   product?.trazability?.map((p) => Array(p.line.length).fill(false))
+  // );
+
+  const [editingProcess, setEditingProcess] = useState(
+    // product?.trazability?.map((p) => Array(p.line.length).fill(false))
+
+    Array(product?.trazability?.map((p) => p.line.length).fill(false))
+  );
 
   const {
     DialogModal,
@@ -88,24 +99,10 @@ const Producto = () => {
   const ref = useRef(null);
 
   const [tabActive, setTabActive] = useState(0);
-  const [open, setOpen] = useState(false);
-  const [boxIndex, setBoxIndex] = useState(0);
-
-  const [milestoneBox, setMilestoneBox] = useState([1]);
 
   const [subprocessSelected, setSubprocessSelected] = useState();
-  const [showCategories, setShowCategories] = useState(false);
-  const {
-    milestones,
-    setMilestones,
-    handleImageUpload,
-    fileUri,
-    setFileUri,
-    handleAddMilestone,
-    handleFileUpload,
-  } = useMilestone();
 
-  const { isOpen, onOpen, onClose } = useModalStore();
+  const { onClose } = useModalStore();
 
   const {
     uploadProduct,
@@ -158,72 +155,6 @@ const Producto = () => {
     setEditingProtocolScreen("select");
     onCloseMilestoneModal();
   };
-  const handleClickSubprocess = ({ name, path }) => {
-    const updatedMilestones = [...milestones];
-
-    updatedMilestones[boxIndex] = {
-      ...updatedMilestones[boxIndex],
-      name: name,
-      path: path,
-    };
-
-    const subprocess = name;
-
-    setSubprocessSelected(subprocess);
-    setPath(path);
-    setMilestones([...updatedMilestones]);
-    setShowCategories(false);
-  };
-
-  const handleChange = (event, newValue) => {
-    console.log("event", event.target.value);
-    console.log("value", newValue);
-    setTabActive(newValue);
-  };
-
-  const saveMilestone = async (milestone) => {
-    if (
-      milestone.image === "" ||
-      milestone.description === "" ||
-      milestone.name === ""
-    ) {
-      alert(`Descripción, imagen y/o categoría faltantes`);
-
-      return;
-    }
-
-    try {
-      const selectedStage = product.trazability[tabActive];
-      const selectedSubprocess = selectedStage.line.find(
-        (sub) => sub.name === subprocessSelected
-      );
-
-      milestones.forEach((element, index) => {
-        selectedSubprocess.milestones.push(element);
-      });
-
-      const updateProduct = { ...product };
-
-      uploadProduct(updateProduct);
-
-      setMilestoneBox([0]);
-      setMilestones([
-        {
-          description: "",
-          image: "",
-          path: "",
-          milestoneUid: v4(),
-          atachments: [],
-        },
-      ]);
-      setFileUri("");
-      setSubprocessSelected(null);
-      setTabActive(null);
-      setOpen(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const uploadToBlockChain = async () => {
     try {
@@ -247,8 +178,6 @@ const Producto = () => {
         trazability: trazability.path,
         productReference: productToIpfs.path,
       };
-
-      const formatedDescription = `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`;
 
       const tokenData = {
         name: product.name,
@@ -348,6 +277,7 @@ const Producto = () => {
       }
     }
   }, [product]);
+
   const handleBeginCustomProtocol = async () => {
     const trazability = [
       {
@@ -359,9 +289,7 @@ const Producto = () => {
       },
     ];
 
-    console.log(trazability);
     const updatedProduct = { ...product, trazability, firstTime: false };
-    console.log(updatedProduct);
     try {
       uploadProduct(updatedProduct);
       setShowCustomFirsTime(false);
@@ -403,78 +331,168 @@ const Producto = () => {
     }));
   };
 
-  const [selectedValue, setSelectedValue] = useState("");
-
-  // const handleChangeStages = (e) => {
-  //   const { name, value } = e.target;
-
-  //   setAddingStageAndProcess((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
-
   const handleDeleteStage = (stageIndex) => {
-    const updatedProduct = setProtocolSnapshot((prevProduct) => {
-      const updatedTrazability = [...prevProduct?.trazability];
+    Swal.fire({
+      title: "¿Seguro que deseas eliminar esta etapa?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const updatedProduct = setProtocolSnapshot((prevProduct) => {
+          const updatedTrazability = [...prevProduct?.trazability];
 
-      updatedTrazability.splice(stageIndex, 1);
+          updatedTrazability.splice(stageIndex, 1);
 
-      const updatedProduct = {
-        ...prevProduct,
-        trazability: updatedTrazability,
-      };
-      try {
-        uploadProduct(updatedProduct);
-        setProductData(updatedProduct);
-        setEditingProtocolScreen("select");
-        onCloseMilestoneModal();
-      } catch (error) {
-        console.log(error);
+          const updatedProduct = {
+            ...prevProduct,
+            trazability: updatedTrazability,
+          };
+          try {
+            uploadProduct(updatedProduct);
+            setProductData(updatedProduct);
+            setEditingProtocolScreen("select");
+            onCloseMilestoneModal();
+            Swal.fire({
+              title: "Etapa eliminada correctamente!",
+              icon: "success",
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Continuar",
+              cancelButtonText: "Cancelar",
+            });
+            // onCloseMilestoneModal();
+          } catch (error) {
+            console.log(error);
+          }
+        });
       }
     });
   };
 
   const handleDeleteProcess = (stageIndex, processIndex) => {
-    const updatedProduct = setProtocolSnapshot((prevProduct) => {
-      const updatedTrazability = [...prevProduct?.trazability];
-      updatedTrazability[stageIndex].line.splice(processIndex, 1);
-      const updatedProduct = {
-        ...prevProduct,
-        trazability: updatedTrazability,
-      };
-      try {
-        uploadProduct(updatedProduct);
-        setProductData(updatedProduct);
-        setEditingProtocolScreen("select");
+    Swal.fire({
+      title: "¿Seguro que deseas eliminar este proceso?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const updatedProduct = setProtocolSnapshot((prevProduct) => {
+          const updatedTrazability = [...prevProduct?.trazability];
+          updatedTrazability[stageIndex].line.splice(processIndex, 1);
+          const updatedProduct = {
+            ...prevProduct,
+            trazability: updatedTrazability,
+          };
+          try {
+            uploadProduct(updatedProduct);
+            setProductData(updatedProduct);
+            setEditingProtocolScreen("select");
 
-        onCloseMilestoneModal();
-      } catch (error) {
-        console.log(error);
+            onCloseMilestoneModal();
+
+            Swal.fire({
+              title: "Proceso eliminado correctamente!",
+              icon: "success",
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Continuar",
+              cancelButtonText: "Cancelar",
+            });
+            // onCloseMilestoneModal();
+          } catch (error) {
+            console.log(error);
+          }
+        });
       }
     });
   };
 
-  const handleEditProcess = (event, stageIndex, processIndex) => {
-    const updatedValue = event.target.value;
-    setProtocolSnapshot((prevProduct) => {
-      const updatedTrazability = [...prevProduct?.trazability];
-      updatedTrazability[stageIndex].line[processIndex].name = updatedValue;
-      return { ...prevProduct, trazability: updatedTrazability };
-    });
+  const handleEditClick = (index, oldText) => {
+    setIsEditing(true);
+    const newEditingStates = [...editingStates];
+    newEditingStates[index] = true;
+    setEditingStates(newEditingStates);
+
+    setOldValue(oldText);
   };
 
-  const handleEditStage = (event, stageIndex) => {
+  const handleEditSubprocessClick = (index, lineIndex, oldName) => {
+    setIsEditing(true);
+
+    const newEditingProcess = [...editingProcess];
+
+    // Verifica si el array en la posición index existe
+    if (!newEditingProcess[index]) {
+      newEditingProcess[index] = [];
+    }
+    newEditingProcess[index][lineIndex] = true;
+    setEditingProcess(newEditingProcess);
+    setOldValue(oldName);
+  };
+
+  const handleEditProcess = (event, stageIndex, processIndex) => {
+    // Actualiza el estado local sin afectar el estado global
     const updatedValue = event.target.value;
+
+    setOldValue(updatedValue);
+  };
+
+  const handleSaveSubProcessClick = async (index, lineIndex) => {
+    try {
+      const updatedTrazability = [...protocolSnapshot?.trazability];
+      updatedTrazability[index].line[lineIndex].name = oldValue;
+      console.log(updatedTrazability[index].line[lineIndex]);
+      setProtocolSnapshot((prevSnapshot) => ({
+        ...prevSnapshot,
+        trazability: updatedTrazability,
+      }));
+      const response = await uploadProduct({
+        ...protocolSnapshot,
+        trazability: updatedTrazability,
+      });
+      const newEditingProcess = [...editingProcess];
+      newEditingProcess[index][lineIndex] = false;
+      setEditingProcess(newEditingProcess);
+      setProductData({ ...product, trazability: updatedTrazability });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSaveProcessClick = async (index, processIndex) => {
     const updatedTrazability = [...protocolSnapshot?.trazability];
-    // console.log(protocolSnapshot[stageIndex]);
-    // console.log(updatedTrazability[stageIndex].line[processIndex].name);
-    updatedTrazability[stageIndex] = updatedValue;
-    const updatedProduct = {
-      ...protocolSnapshot,
+    updatedTrazability[index].name = oldValue;
+
+    setProtocolSnapshot((prevSnapshot) => ({
+      ...prevSnapshot,
       trazability: updatedTrazability,
-    };
-    setProtocolSnapshot(updatedProduct);
+    }));
+
+    try {
+      const response = await uploadProduct({
+        ...product,
+        trazability: updatedTrazability,
+      });
+      setProductData({ ...product, trazability: updatedTrazability });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.log(error);
+    }
+
+    const newEditingStates = [...editingStates];
+    newEditingStates[index] = false;
+    setEditingStates(newEditingStates);
   };
 
   const handleSaveNewStageAndProcess = async () => {
@@ -499,8 +517,16 @@ const Producto = () => {
         uploadProduct(updatedProduct);
         setProductData(updatedProduct);
         setEditingProtocolScreen("select");
-
         onCloseMilestoneModal();
+
+        Swal.fire({
+          title: "Agregado correctamente!",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Continuar",
+          cancelButtonText: "Cancelar",
+        });
       } catch (error) {
         console.log(error);
       }
@@ -739,7 +765,7 @@ const Producto = () => {
                       Editar etapas y procesos
                     </Typography>
 
-                    {protocolSnapshot?.trazability?.map((p, index) => (
+                    {protocolSnapshot?.trazability.map((p, index) => (
                       <Box
                         key={p.name}
                         sx={{ margin: "auto", display: "inline-block" }}
@@ -752,40 +778,73 @@ const Producto = () => {
                           }}
                         >
                           <ListItem>
-                            <Typography
-                              sx={{
-                                color: "primary.main",
-                                fontSize: 20,
-                                marginRight: 1,
-                              }}
-                            >
-                              Etapa:
-                            </Typography>
-                            <Box
-                              width="50%"
-                              display="flex"
-                              justifySelf="center"
-                            >
-                              <CustomTextField
-                                display="flex"
-                                borderRadius={4}
-                                name={p.name}
-                                value={p.name}
-                                onChange={handleEditStage}
-                                style={{ width: "100%", marginBottom: "16px" }}
-                              />
-                              <IconButton
-                                onClick={() => handleDeleteStage(index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Box>
+                            {editingStates[index] ? (
+                              <>
+                                <Box key={p.name} sx={{ display: "flex" }}>
+                                  <Typography
+                                    sx={{ fontWeight: "bold", fontSize: 24 }}
+                                  >
+                                    Etapa :
+                                  </Typography>
+                                  <TextField
+                                    label="Editar texto"
+                                    value={oldValue}
+                                    onChange={(e) =>
+                                      handleEditProcess(e, index)
+                                    }
+                                  />
+                                  <Button
+                                    onClick={() =>
+                                      handleSaveProcessClick(index)
+                                    }
+                                  >
+                                    Guardar
+                                  </Button>
+                                </Box>
+                              </>
+                            ) : (
+                              <>
+                                <Box
+                                  key={p.name}
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      color: "primary.main",
+                                      fontSize: 20,
+                                      marginRight: 1,
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    Etapa :
+                                  </Typography>
+                                  <Typography>{p.name}</Typography>
+                                  <IconButton
+                                    disabled={isEditing}
+                                    onClick={() =>
+                                      handleEditClick(index, p.name)
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    onClick={() => handleDeleteStage(index)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Box>
+                              </>
+                            )}
                           </ListItem>
                           {p.line.map((l, lineIndex) => (
-                            <List
+                            <ListItem
                               key={l.name}
                               sx={{
                                 display: "flex",
+                                alignItems: "center",
                               }}
                             >
                               <Typography
@@ -793,34 +852,59 @@ const Producto = () => {
                                   color: "primary.main",
                                   fontSize: 20,
                                   marginRight: 1,
+                                  fontWeight: "bold",
                                 }}
                               >
                                 Proceso:
                               </Typography>
-                              <Box
-                                width="50%"
-                                display="flex"
-                                justifySelf="center"
-                              >
-                                <CustomTextField
-                                  display="flex"
-                                  borderRadius={4}
-                                  name={l.name}
-                                  value={l.name}
-                                  onChange={(e) =>
-                                    handleEditProcess(e, index, lineIndex)
-                                  }
-                                  style={{ width: "100%", marginBottom: "8px" }}
-                                />
-                                <IconButton
-                                  onClick={() =>
-                                    handleDeleteProcess(index, lineIndex)
-                                  }
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
+                              <Box display="flex" alignItems={"center"}>
+                                {editingProcess[index] &&
+                                editingProcess[index][lineIndex] ? (
+                                  <>
+                                    <TextField
+                                      label="Editar texto"
+                                      value={oldValue} // ¿De dónde proviene oldValue?
+                                      onChange={(e) =>
+                                        handleEditProcess(e, l.name)
+                                      }
+                                    />
+                                    <Button
+                                      onClick={() =>
+                                        handleSaveSubProcessClick(
+                                          index,
+                                          lineIndex
+                                        )
+                                      }
+                                    >
+                                      Guardar
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Typography>{l.name}</Typography>
+                                    <IconButton
+                                      disabled={isEditing}
+                                      onClick={() =>
+                                        handleEditSubprocessClick(
+                                          index,
+                                          lineIndex,
+                                          l.name
+                                        )
+                                      }
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                    <IconButton
+                                      onClick={() =>
+                                        handleDeleteProcess(index, lineIndex)
+                                      }
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </>
+                                )}
                               </Box>
-                            </List>
+                            </ListItem>
                           ))}
                         </List>
                         {index !== product.trazability.length - 1 && (
@@ -1000,22 +1084,6 @@ const Producto = () => {
             )}
           </Box>
         </Box>
-        {/* <Box>
-          <IconButton
-            size="large"
-            sx={{
-              color: "white",
-              backgroundColor: "error.main",
-              ":hover": { backgroundColor: "error.main", opacity: 0.9 },
-              position: "fixed",
-              right: isSmallScreen ? 145 : 55,
-              top: isSmallScreen ? "48vh" : "40vh",
-            }}
-            onClick={handleOpen}
-          >
-            <AddOutlined sx={{ fontSize: 50, color: "whitesmoke" }} />
-          </IconButton>
-        </Box> */}
 
         <Button
           variant="contained"
@@ -1037,37 +1105,7 @@ const Producto = () => {
             right: isSmallScreen ? 65 : 25,
             top: "50vh",
           }}
-        >
-          {/* {product?.qrcode && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "flex-start",
-              }}
-            >
-              <Box ref={ref}></Box>
-
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
-                  Descargar QR
-                </Button>
-                <Button
-                  onClick={() => router.push(`/history/${router.query.id}`)}
-                  sx={{ fontSize: 12 }}
-                >
-                  Visitar trazabilidad
-                </Button>
-              </Box>
-            </Box>
-          )} */}
-        </Box>
+        ></Box>
       </HomeLayout>
     );
   }

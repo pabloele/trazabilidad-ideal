@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import useProduct from '../../hooks/useProduct';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import useProduct from "../../hooks/useProduct";
+import Image from "next/image";
 import {
   Typography,
   Box,
@@ -9,12 +9,12 @@ import {
   useMediaQuery,
   Paper,
   Grid,
-} from '@mui/material';
-import UserNavBar from '../../components/NavBar/UserNavBar';
-import { contractAddress, contractAbi } from '../../contract/contract';
-import { ethers } from 'ethers';
+} from "@mui/material";
+import UserNavBar from "../../components/NavBar/UserNavBar";
+import { contractAddress, contractAbi } from "../../contract/contract";
+import { ethers } from "ethers";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 const ViewProduct = () => {
   const router = useRouter();
@@ -22,8 +22,8 @@ const ViewProduct = () => {
 
   const [productData, setProductData] = useState({ data: [], success: false });
   const [loading, setLoading] = useState(false);
-  const isSmallScreen = useMediaQuery('(min-width: 720px)');
-  const isMediumScreen = useMediaQuery('(min-width: 10240px)');
+  const isSmallScreen = useMediaQuery("(min-width: 720px)");
+  const isMediumScreen = useMediaQuery("(min-width: 10240px)");
 
   const getBlockChainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -52,7 +52,7 @@ const ViewProduct = () => {
   }, []);
 
   return (
-    <Grid container justifyContent="center" direction={'column'}>
+    <Grid container justifyContent="center" direction={"column"}>
       <Grid item>
         <UserNavBar />
       </Grid>
@@ -61,10 +61,10 @@ const ViewProduct = () => {
       <Grid item marginY={4}>
         <Paper
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
+            display: "flex",
+            flexDirection: "row",
             padding: 4,
-            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
           }}
         >
           {/* Product data */}
@@ -72,32 +72,32 @@ const ViewProduct = () => {
             <Grid
               item
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                border: 'dotted',
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: "dotted",
                 // backgroundImage: `url("/images/bg-product.jpg")`,
                 backgroundImage: `url(${product?.productImage})`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                direction: 'row',
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                direction: "row",
               }}
             >
               <Image
-                style={{ objectFit: 'contain' }}
+                style={{ objectFit: "contain" }}
                 src={product?.productImage}
                 width={isSmallScreen ? 315 : 215}
                 height={isSmallScreen ? 315 : 215}
                 alt="Product Image"
               />
             </Grid>
-            <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            <Grid item sx={{ display: "flex", alignItems: "flex-end" }}>
               <Typography
                 sx={{
                   fontSize: 48,
-                  fontWeight: 'bold',
-                  color: 'primary.main',
-                  textJustify: 'auto',
+                  fontWeight: "bold",
+                  color: "primary.main",
+                  textJustify: "auto",
                 }}
               >
                 {product?.name}
@@ -107,12 +107,12 @@ const ViewProduct = () => {
               <Grid
                 item
                 sx={{
-                  backgroundColor: '#f5f5f5',
+                  backgroundColor: "#f5f5f5",
                   padding: 2,
-                  color: 'primary.main',
+                  color: "primary.main",
                 }}
               >
-                <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
                   Producto certificado
                 </Typography>
                 <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -120,7 +120,7 @@ const ViewProduct = () => {
                   tecnología blockchain
                 </Typography>
 
-                <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Link
                     target="_blank"
                     rel="noopener noreferrer "
@@ -129,16 +129,16 @@ const ViewProduct = () => {
                     <Button
                       variant="contained"
                       sx={{
-                        display: 'flex',
+                        display: "flex",
                         gap: 1,
-                        alignItems: 'center',
+                        alignItems: "center",
                         marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                       }}
                     >
                       Ver trazabilidad
                       <Image
-                        src={'/images/logo-ideal.png'}
+                        src={"/images/logo-ideal.png"}
                         width={50}
                         height={20}
                         alt="logo"
@@ -153,17 +153,17 @@ const ViewProduct = () => {
                 <Grid
                   item
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: 'dotted',
-                    direction: 'row',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "dotted",
+                    direction: "row",
                     backgroundImage:
                       'url("../../public/images/bg-product.jpg")',
                   }}
                 >
                   <Image
-                    style={{ objectFit: 'contain' }}
+                    style={{ objectFit: "contain" }}
                     src={product?.productImage}
                     width={isSmallScreen ? 315 : 215}
                     height={isSmallScreen ? 315 : 215}
@@ -172,13 +172,13 @@ const ViewProduct = () => {
                 </Grid>
                 <Grid item>
                   <Grid container direction="column">
-                    <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Grid item sx={{ display: "flex", alignItems: "flex-end" }}>
                       <Typography
                         sx={{
                           fontSize: 48,
-                          fontWeight: 'bold',
-                          color: 'primary.main',
-                          textJustify: 'auto',
+                          fontWeight: "bold",
+                          color: "primary.main",
+                          textJustify: "auto",
                         }}
                       >
                         {product?.name}
@@ -187,12 +187,12 @@ const ViewProduct = () => {
                     <Grid
                       item
                       sx={{
-                        backgroundColor: '#f5f5f5',
+                        backgroundColor: "#f5f5f5",
                         padding: 2,
-                        color: 'primary.main',
+                        color: "primary.main",
                       }}
                     >
-                      <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                      <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
                         Producto certificado
                       </Typography>
                       <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -201,22 +201,22 @@ const ViewProduct = () => {
                       </Typography>
                       <Grid
                         item
-                        sx={{ display: 'flex', justifyContent: 'flex-end' }}
+                        sx={{ display: "flex", justifyContent: "flex-end" }}
                       >
                         <Button
                           onClick={getBlockChainData}
                           variant="contained"
                           sx={{
-                            display: 'flex',
+                            display: "flex",
                             gap: 1,
-                            alignItems: 'center',
+                            alignItems: "center",
                             marginTop: 2,
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                           }}
                         >
                           Ver trazabilidad
                           <Image
-                            src={'/images/logo-ideal.png'}
+                            src={"/images/logo-ideal.png"}
                             width={50}
                             height={20}
                             alt="logo"
@@ -262,11 +262,11 @@ const ViewProduct = () => {
                   <Typography
                     sx={{
                       fontSize: 26,
-                      fontStyle: 'oblique',
-                      color: 'whitesmoke',
-                      backgroundColor: 'primary.main',
+                      fontStyle: "oblique",
+                      color: "whitesmoke",
+                      backgroundColor: "primary.main",
                       marginX: 10,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                     }}
                   >
                     {trazability.name}
@@ -284,20 +284,20 @@ const ViewProduct = () => {
                                     <Box
                                       sx={{
                                         padding: 2,
-                                        display: 'flex',
-                                        flexDirection: 'row',
+                                        display: "flex",
+                                        flexDirection: "row",
                                         gap: 5,
-                                        justifyContent: 'center',
+                                        justifyContent: "center",
                                       }}
                                       flexDirection={
-                                        isSmallScreen ? 'row' : 'column'
+                                        isSmallScreen ? "row" : "column"
                                       }
                                     >
                                       <Box
                                         sx={{
-                                          width: '200px',
-                                          height: '200px',
-                                          position: 'relative',
+                                          width: "200px",
+                                          height: "200px",
+                                          position: "relative",
                                         }}
                                       >
                                         <Image
@@ -313,18 +313,18 @@ const ViewProduct = () => {
                                           width={isSmallScreen ? 280 : 215}
                                           height={215}
                                           sx={{
-                                            backgroundColor: '#f5f5f5',
-                                            overflowY: 'auto',
-                                            color: 'primary.main',
-                                            minWidth: '800px',
-                                            minHeight: '200px',
+                                            backgroundColor: "#f5f5f5",
+                                            overflowY: "auto",
+                                            color: "primary.main",
+                                            minWidth: "800px",
+                                            minHeight: "200px",
                                           }}
                                         >
                                           <Typography
                                             sx={{
                                               fontSize: 28,
-                                              fontWeight: 'bold',
-                                              color: 'primary.main',
+                                              fontWeight: "bold",
+                                              color: "primary.main",
                                             }}
                                           >
                                             {line.name}
@@ -340,7 +340,7 @@ const ViewProduct = () => {
                                           <Typography
                                             sx={{
                                               fontSize: 20,
-                                              fontWeight: 'bold',
+                                              fontWeight: "bold",
                                               paddingTop: 1,
                                             }}
                                           >
@@ -352,14 +352,19 @@ const ViewProduct = () => {
                                                 key={atachment.name}
                                                 sx={{
                                                   fontSize: 14,
-                                                  fontWeight: 'bold',
-                                                  color: 'black',
-                                                  textDecoration: 'none',
+                                                  fontWeight: "bold",
+                                                  color: "black",
+                                                  textDecoration: "none",
                                                 }}
                                               >
-                                                <Link href={atachment.url}>
+                                                <a
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  href={`${atachment.url}?filename=${atachment.name}`}
+                                                  download={atachment.name}
+                                                >
                                                   {atachment.name}
-                                                </Link>
+                                                </a>
                                               </Typography>
                                             )
                                           )}

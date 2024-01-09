@@ -116,7 +116,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <AuthLayout title="Login" logingIn={logingIn}>
+      <AuthLayout title="Iniciar sesión" logingIn={logingIn}>
         <form
           // onSubmit={handleLogin}
           className="animate__animated animate__fadeIn animate__faster"
@@ -172,7 +172,7 @@ const LoginPage = () => {
                 variant="contained"
                 fullWidth
               >
-                <Typography sx={{ ml: 1 }}>Login</Typography>
+                <Typography sx={{ ml: 1 }}>Iniciar sesión</Typography>
               </Button>
             </Grid>
             <Grid item xs={12} sm={6}>
