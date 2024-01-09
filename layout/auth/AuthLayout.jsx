@@ -43,7 +43,7 @@ export const AuthLayout = ({ children, title = '', logingIn }) => {
               {title}
             </Typography>
 
-            <ConnectWallet className={styles.connectWallet} />
+            {/* <ConnectWallet className={styles.connectWallet} /> */}
           </Box>
           {children}
         </Grid>

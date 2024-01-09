@@ -93,9 +93,11 @@ const useMilestone = (
           const uniqueId = v4().substr(0, 8);
           const randomName = `${uniqueId}.${extension}`;
 
+          // const randomName = `${uniqueId}`;
+
           const result = await ipfs.add(file);
           const ipfsHash = result.path;
-          const urlFile = `https://ipfs.io/ipfs/${ipfsHash}`;
+          const urlFile = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
 
           const atachments = [
             ...milestone.atachments,

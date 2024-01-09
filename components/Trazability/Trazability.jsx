@@ -26,6 +26,8 @@ import useMilestone from "../../hooks/useMilestone";
 import { useProductStore } from "../../store";
 import useModalStore from "../../store/useModalStore";
 import Swal from "sweetalert2";
+import useAddModalStore from "../../store/useAddModalStore";
+
 const CustomTextField = styled.textarea`
   width: 100%;
   height: 150px;
@@ -44,13 +46,13 @@ const Trazability = ({ initialMilestone, closeModal }) => {
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
 
   const [showCategories, setShowCategories] = useState(true);
-  const [tabActive, setTabActive] = useState(0);
+
   const [subprocessSelected, setSubprocessSelected] = useState();
   const { setProduct, uploadProduct, uploadQr } = useProduct(router.query.id);
 
   const { product, setProductData } = useProductStore();
 
-  const { onClose, onOpen } = useModalStore();
+  const { tabActive, setTabActive, onOpen, onClose } = useAddModalStore();
 
   const modalStore = useModalStore();
 
@@ -154,7 +156,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
 
       await uploadProduct(updatedProduct);
 
-      modalStore.onClose();
+      onClose();
 
       Swal.fire({
         title: "Agregado correctamente",
@@ -281,13 +283,22 @@ const Trazability = ({ initialMilestone, closeModal }) => {
     <>
       {showCategories && (
         <React.Fragment>
+          <Typography
+            sx={{
+              color: "primary.main",
+              fontSize: 20,
+              bgcolor: "#1e46b471",
+            }}
+          >
+            Etapa productiva (seleccione una)
+          </Typography>
           <Grid display="flex" justifyContent="center">
             <Tabs
               variant="scrollable"
               onChange={handleChangeTab}
               value={tabActive}
             >
-              {product.trazability.map((element, index) => (
+              {product.trazability?.map((element, index) => (
                 <Tab
                   label={element.name}
                   sx={{
@@ -298,7 +309,16 @@ const Trazability = ({ initialMilestone, closeModal }) => {
               ))}
             </Tabs>
           </Grid>
-
+          <Typography
+            sx={{
+              color: "primary.main",
+              fontSize: 20,
+              bgcolor: "#1e46b471",
+              marginTop: "1rem",
+            }}
+          >
+            Seleccione el proceso productivo (seleccione uno para comenzar)
+          </Typography>
           {product?.trazability?.map((element, index) => (
             // categoría
             <Box key={element.name}>
@@ -520,7 +540,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                               }}
                             />
                             <Typography sx={{ color: "primary.main" }}>
-                              Categoría
+                              Clasificación
                             </Typography>
                           </Box>
                         </Grid>
