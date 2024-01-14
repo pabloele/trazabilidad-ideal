@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useProduct from '../../hooks/useProduct';
 import Image from 'next/image';
+import { HiZoomIn, HiZoomOut  } from "react-icons/hi";
+import { MdKeyboardArrowRight, MdKeyboardArrowLeft, MdKeyboardArrowUp, MdKeyboardArrowDown} from "react-icons/md";
+import { MdCropRotate,  MdOutlineDone} from "react-icons/md";
+import { BiRotateLeft, BiRotateRight } from 'react-icons/bi';
+
 import {
   Typography,
   Box,
@@ -67,6 +72,7 @@ const ViewProduct = () => {
         console.error('Error al descargar el archivo', error);
       });
   };
+  const [isAdjustingImage, setIsAdjustingImage] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1);
 
   const handleZoomIn = () => {
@@ -99,6 +105,20 @@ const ViewProduct = () => {
     }
   };
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const handleSaveAdjustedImage =()=>{
+    //TODO save image position
+    setIsAdjustingImage(false)
+
+  }
+
+  const [rotation, setRotation] = useState(0);
+  const handleRotateClockwise = () => {
+    setRotation(rotation + 15);
+  };
+
+  const handleRotateCounterclockwise = () => {
+    setRotation(rotation - 15);
+  };
   return (
     <Grid container justifyContent="center" direction={'column'}>
       <Grid item>
@@ -136,6 +156,7 @@ const ViewProduct = () => {
                 position: 'relative', overflow: 'hidden', width: '100%', height: '100%',
                 display: 'flex',
                 flexDirection: 'row',
+                bgcolor:"#d8cdd8",
                 // padding: 4,
                 boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
               }}
@@ -143,7 +164,7 @@ const ViewProduct = () => {
 
                   <Image
                       style={{
-                        transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px)`,
+                        transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
                         transition: 'transform 0.1s ease-in-out',
                       }}
                     src={product?.productImage}
@@ -151,126 +172,138 @@ const ViewProduct = () => {
                     height={isSmallScreen ? 350 : 300}
                     alt="Product Image"
                   />
+                  
               </Paper>
-              <Box style={{ position: 'absolute', top: 10, right: 10 }}>
-              <Button
-                      variant="contained"
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      }}
-                      onClick={handleZoomIn}
-                    >
-                      Zoom In
-                      {/* <Image
-                        src={'/images/logo-ideal.png'}
-                        width={50}
-                        height={20}
-                        alt="logo"
-                      /> */}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      }}
-                      onClick={handleZoomOut}
-                    >
-                      Zoom Out
-                      {/* <Image
-                        src={'/images/logo-ideal.png'}
-                        width={50}
-                        height={20}
-                        alt="logo"
-                      /> */}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      }}
-                     onClick={() => handleMove('right')}
-                    >
-                      Derecha
-                      {/* <Image
-                        src={'/images/logo-ideal.png'}
-                        width={50}
-                        height={20}
-                        alt="logo"
-                      /> */}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      }}
-                     onClick={() => handleMove('left')}
-                    >
-                      Izquierda
-                      {/* <Image
-                        src={'/images/logo-ideal.png'}
-                        width={50}
-                        height={20}
-                        alt="logo"
-                      /> */}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      }}
-                     onClick={() => handleMove('up')}
-                    >
-                      Arriba
-                      {/* <Image
-                        src={'/images/logo-ideal.png'}
-                        width={50}
-                        height={20}
-                        alt="logo"
-                      /> */}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      }}
-                     onClick={() => handleMove('down')}
-                    >
-                      Abajo
-                      {/* <Image
-                        src={'/images/logo-ideal.png'}
-                        width={50}
-                        height={20}
-                        alt="logo"
-                      /> */}
-                    </Button>
-    
-        </Box>
+            
             </Grid>
-            <Grid item xs={0.5}></Grid>
+            <Grid item xs={0.5}>
+
+            {isAdjustingImage && (<Box display="flex" flexDirection="column"  >
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={handleZoomIn}
+                      >
+                        <HiZoomIn/>
+
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={handleZoomOut}
+                      >
+                        <HiZoomOut/>
+                        
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('right')}
+                      >
+                        < MdKeyboardArrowRight/>
+                        
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('left')}
+                      >
+                        < MdKeyboardArrowLeft/>
+                      
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('up')}
+                      >
+                        < MdKeyboardArrowUp/>
+                      
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('down')}
+                      >
+                        < MdKeyboardArrowDown/>
+                        
+                      </Button>
+                      <Button variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }} onClick={handleRotateClockwise}>
+            <BiRotateRight />
+          </Button>
+          <Button variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }} onClick={handleRotateCounterclockwise}>
+            <BiRotateLeft />
+          </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                          color:"Highlight"
+                        }}
+                        onClick={handleSaveAdjustedImage}
+                      >
+                        < MdOutlineDone size={40}/>
+                        
+                      </Button>
+            </Box>)}
+            {!isAdjustingImage && (
+
+                  <MdCropRotate size={30} onClick={()=>setIsAdjustingImage(true)} cursor="pointer"/>
+            )}
+            </Grid>
               <Grid container xs={5} direction="column" sx={{display:"flex",alignContent: 'center', justifyContent:"center"}}>
 
                             <Grid item  display="flex" justifyContent="center">
