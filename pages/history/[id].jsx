@@ -9,6 +9,7 @@ import {
   useMediaQuery,
   Paper,
   Grid,
+  Divider,
 } from '@mui/material';
 import UserNavBar from '../../components/NavBar/UserNavBar';
 import { contractAddress, contractAbi } from '../../contract/contract';
@@ -66,7 +67,38 @@ const ViewProduct = () => {
         console.error('Error al descargar el archivo', error);
       });
   };
+  const [zoomLevel, setZoomLevel] = useState(1);
 
+  const handleZoomIn = () => {
+    setZoomLevel(zoomLevel + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    if (zoomLevel > 0.1) {
+      setZoomLevel(zoomLevel - 0.1);
+    }
+  };
+
+  const handleMove = (direction) => {
+    const step = 10; 
+    switch (direction) {
+      case 'up':
+        setPosition({ ...position, y: position.y - step });
+        break;
+      case 'down':
+        setPosition({ ...position, y: position.y + step });
+        break;
+      case 'left':
+        setPosition({ ...position, x: position.x - step });
+        break;
+      case 'right':
+        setPosition({ ...position, x: position.x + step });
+        break;
+      default:
+        break;
+    }
+  };
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   return (
     <Grid container justifyContent="center" direction={'column'}>
       <Grid item>
@@ -84,37 +116,219 @@ const ViewProduct = () => {
           }}
         >
           {/* Product data */}
-          <Grid container direction="column">
+          <Grid container direction="row" gap={1} >
             <Grid
               item
+              xs={5}
               sx={{
                 display: 'flex',
+                border:"primary.main",
+                // borderStyle:"outset",
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: 'InfoBackground',
                 direction: 'row',
               }}
             >
-              <Image
-                style={{ objectFit: 'contain' }}
-                src={product?.productImage}
-                width={isSmallScreen ? 350 : 300}
-                height={isSmallScreen ? 350 : 300}
-                alt="Product Image"
-              />
+
+            <Paper
+              sx={{
+                position: 'relative', overflow: 'hidden', width: '100%', height: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                // padding: 4,
+                boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+              }}
+            >
+
+                  <Image
+                      style={{
+                        transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px)`,
+                        transition: 'transform 0.1s ease-in-out',
+                      }}
+                    src={product?.productImage}
+                    width={isSmallScreen ? 350 : 300}
+                    height={isSmallScreen ? 350 : 300}
+                    alt="Product Image"
+                  />
+              </Paper>
+              <Box style={{ position: 'absolute', top: 10, right: 10 }}>
+              <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                      onClick={handleZoomIn}
+                    >
+                      Zoom In
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                      onClick={handleZoomOut}
+                    >
+                      Zoom Out
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                     onClick={() => handleMove('right')}
+                    >
+                      Derecha
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                     onClick={() => handleMove('left')}
+                    >
+                      Izquierda
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                     onClick={() => handleMove('up')}
+                    >
+                      Arriba
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                     onClick={() => handleMove('down')}
+                    >
+                      Abajo
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+    
+        </Box>
             </Grid>
-            <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              <Typography
-                sx={{
-                  fontSize: 48,
-                  fontWeight: 'bold',
-                  color: 'primary.main',
-                  textJustify: 'auto',
-                }}
-              >
-                {product?.name}
-              </Typography>
-            </Grid>
+            <Grid item xs={0.5}></Grid>
+              <Grid container xs={5} direction="column" sx={{display:"flex",alignContent: 'center', justifyContent:"center"}}>
+
+                            <Grid item  display="flex" justifyContent="center">
+                              <Typography
+                                
+                                sx={{
+                                  fontSize: 64,
+                                  fontWeight: 'bold',
+                                  color: 'primary.main',
+                                  textJustify: 'auto',
+                                }}
+                              >
+                                {product?.name}
+                              </Typography>
+                            </Grid>
+                            <Grid item display="flex" justifyContent="center" bgcolor="primary.main">
+                                    <Divider  sx={{display:"flex", width:"100%"}}></Divider>
+                            </Grid>
+                            <Grid item  display="flex" justifyContent="center">
+                              <Typography
+                                
+                                sx={{
+                                  fontSize: 32,
+                                  fontWeight: 'bold',
+                                  color: 'primary.main',
+                                  textJustify: 'auto',
+                                }}
+                              >
+                                 Bodegas Pepitón
+                              </Typography>
+                            </Grid>
+                            <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer "
+                    href="www.google.com"
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                    >
+                      Datos del productor
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                  </Link>
+                </Grid>
+              </Grid>
             {productData.success && (
               <Grid
                 item
