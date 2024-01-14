@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useProduct from '../../hooks/useProduct';
 import Image from 'next/image';
+import { HiZoomIn, HiZoomOut  } from "react-icons/hi";
+import { MdKeyboardArrowRight, MdKeyboardArrowLeft, MdKeyboardArrowUp, MdKeyboardArrowDown} from "react-icons/md";
+import { MdCropRotate,  MdOutlineDone} from "react-icons/md";
+import { BiRotateLeft, BiRotateRight } from 'react-icons/bi';
+
 import {
   Typography,
   Box,
@@ -9,6 +14,7 @@ import {
   useMediaQuery,
   Paper,
   Grid,
+  Divider,
 } from '@mui/material';
 import UserNavBar from '../../components/NavBar/UserNavBar';
 import { contractAddress, contractAbi } from '../../contract/contract';
@@ -66,7 +72,53 @@ const ViewProduct = () => {
         console.error('Error al descargar el archivo', error);
       });
   };
+  const [isAdjustingImage, setIsAdjustingImage] = useState(false)
+  const [zoomLevel, setZoomLevel] = useState(1);
 
+  const handleZoomIn = () => {
+    setZoomLevel(zoomLevel + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    if (zoomLevel > 0.1) {
+      setZoomLevel(zoomLevel - 0.1);
+    }
+  };
+
+  const handleMove = (direction) => {
+    const step = 10; 
+    switch (direction) {
+      case 'up':
+        setPosition({ ...position, y: position.y - step });
+        break;
+      case 'down':
+        setPosition({ ...position, y: position.y + step });
+        break;
+      case 'left':
+        setPosition({ ...position, x: position.x - step });
+        break;
+      case 'right':
+        setPosition({ ...position, x: position.x + step });
+        break;
+      default:
+        break;
+    }
+  };
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const handleSaveAdjustedImage =()=>{
+    //TODO save image position
+    setIsAdjustingImage(false)
+
+  }
+
+  const [rotation, setRotation] = useState(0);
+  const handleRotateClockwise = () => {
+    setRotation(rotation + 15);
+  };
+
+  const handleRotateCounterclockwise = () => {
+    setRotation(rotation - 15);
+  };
   return (
     <Grid container justifyContent="center" direction={'column'}>
       <Grid item>
@@ -84,37 +136,232 @@ const ViewProduct = () => {
           }}
         >
           {/* Product data */}
-          <Grid container direction="column">
+          <Grid container direction="row" gap={1} >
             <Grid
               item
+              xs={5}
               sx={{
                 display: 'flex',
+                border:"primary.main",
+                // borderStyle:"outset",
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: 'InfoBackground',
                 direction: 'row',
               }}
             >
-              <Image
-                style={{ objectFit: 'contain' }}
-                src={product?.productImage}
-                width={isSmallScreen ? 350 : 300}
-                height={isSmallScreen ? 350 : 300}
-                alt="Product Image"
-              />
+
+            <Paper
+              sx={{
+                position: 'relative', overflow: 'hidden', width: '100%', height: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                bgcolor:"#d8cdd8",
+                // padding: 4,
+                boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+              }}
+            >
+
+                  <Image
+                      style={{
+                        transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
+                        transition: 'transform 0.1s ease-in-out',
+                      }}
+                    src={product?.productImage}
+                    width={isSmallScreen ? 350 : 300}
+                    height={isSmallScreen ? 350 : 300}
+                    alt="Product Image"
+                  />
+                  
+              </Paper>
+            
             </Grid>
-            <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              <Typography
-                sx={{
-                  fontSize: 48,
-                  fontWeight: 'bold',
-                  color: 'primary.main',
-                  textJustify: 'auto',
-                }}
-              >
-                {product?.name}
-              </Typography>
+            <Grid item xs={0.5}>
+
+            {isAdjustingImage && (<Box display="flex" flexDirection="column"  >
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={handleZoomIn}
+                      >
+                        <HiZoomIn/>
+
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={handleZoomOut}
+                      >
+                        <HiZoomOut/>
+                        
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('right')}
+                      >
+                        < MdKeyboardArrowRight/>
+                        
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('left')}
+                      >
+                        < MdKeyboardArrowLeft/>
+                      
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('up')}
+                      >
+                        < MdKeyboardArrowUp/>
+                      
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }}
+                        onClick={() => handleMove('down')}
+                      >
+                        < MdKeyboardArrowDown/>
+                        
+                      </Button>
+                      <Button variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }} onClick={handleRotateClockwise}>
+            <BiRotateRight />
+          </Button>
+          <Button variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        }} onClick={handleRotateCounterclockwise}>
+            <BiRotateLeft />
+          </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          alignItems: 'center',
+                          marginTop: 2,
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                          color:"Highlight"
+                        }}
+                        onClick={handleSaveAdjustedImage}
+                      >
+                        < MdOutlineDone size={40}/>
+                        
+                      </Button>
+            </Box>)}
+            {!isAdjustingImage && (
+
+                  <MdCropRotate size={30} onClick={()=>setIsAdjustingImage(true)} cursor="pointer"/>
+            )}
             </Grid>
+              <Grid container xs={5} direction="column" sx={{display:"flex",alignContent: 'center', justifyContent:"center"}}>
+
+                            <Grid item  display="flex" justifyContent="center">
+                              <Typography
+                                
+                                sx={{
+                                  fontSize: 64,
+                                  fontWeight: 'bold',
+                                  color: 'primary.main',
+                                  textJustify: 'auto',
+                                }}
+                              >
+                                {product?.name}
+                              </Typography>
+                            </Grid>
+                            <Grid item display="flex" justifyContent="center" bgcolor="primary.main">
+                                    <Divider  sx={{display:"flex", width:"100%"}}></Divider>
+                            </Grid>
+                            <Grid item  display="flex" justifyContent="center">
+                              <Typography
+                                
+                                sx={{
+                                  fontSize: 32,
+                                  fontWeight: 'bold',
+                                  color: 'primary.main',
+                                  textJustify: 'auto',
+                                }}
+                              >
+                                 Bodegas Pepitón
+                              </Typography>
+                            </Grid>
+                            <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer "
+                    href="www.google.com"
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        marginTop: 2,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      }}
+                    >
+                      Datos del productor
+                      {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                    </Button>
+                  </Link>
+                </Grid>
+              </Grid>
             {productData.success && (
               <Grid
                 item
