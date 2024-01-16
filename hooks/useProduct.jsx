@@ -15,7 +15,7 @@ const useProduct = (productId) => {
       if (response.exists()) {
         const productData = response.data();
 
-        setProductData(productData);
+        setProductData({ ...productData, id: productId });
       }
     } catch (error) {
       console.log(error);
@@ -48,7 +48,7 @@ const useProduct = (productId) => {
     getProduct();
   }, [productId]);
 
-  return { product, uploadProduct, uploadQr,setProductData };
+  return { product, uploadProduct, uploadQr, setProductData };
 };
 
 export default useProduct;
