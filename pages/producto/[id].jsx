@@ -571,13 +571,6 @@ const Producto = () => {
       <HomeLayout>
         <DialogModal txHash={txHash} loading={loading} />
 
-        <EditProduct
-          isOpen={openEditModal}
-          setIsOpen={setOpenEditModal}
-          product={product}
-          setProductData={setProductData}
-        />
-
         <Modal
           open={isOpenMilestoneModal}
           onClose={handleClose}
@@ -766,8 +759,14 @@ const Producto = () => {
                         bgcolor: "#1e46b471",
                       }}
                     >
-                      Editar etapas y procesos
+                      Editar productos etapas y procesos
                     </Typography>
+                    <EditProduct
+                      isOpen={openEditModal}
+                      setIsOpen={setOpenEditModal}
+                      product={product}
+                      setProductData={setProductData}
+                    />
                     <Grid
                       container
                       // display="flex"
@@ -1032,20 +1031,7 @@ const Producto = () => {
             >
               {product.name}
             </Typography>
-            <Tooltip title="Editar producto">
-              <IconButton
-                onClick={() => {
-                  setOpenEditModal(true);
-                }}
-              >
-                <FaEdit
-                  color="#1d77c0"
-                  size={24}
-                  style={{ cursor: "pointer" }}
-                />
-                <Typography>Editar producto</Typography>
-              </IconButton>
-            </Tooltip>
+
             <Tooltip title="Agregar, editar o quitar etapas y procesos">
               <IconButton onClick={handleEditProtocol}>
                 <FaEdit
