@@ -19,7 +19,5 @@ body {
 }
 
 .swal2-container {
-  z-index: 1400!important; /* Ajusta según sea necesario */
+  z-index: 1400 !important; /* Ajusta según sea necesario */
 }
-
-

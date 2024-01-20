@@ -59,12 +59,6 @@ const useMilestone = (
             const ipfsHash = result.path;
             const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
 
-            // setFileUri((prevFileUri) => {
-            //   const newFileUri = [...prevFileUri];
-            //   newFileUri[index] = urlImage;
-            //   return newFileUri;
-            // });
-
             setMilestone((prev) => ({
               ...prev,
               image: urlImage,

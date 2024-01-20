@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import { uplaodImageIPFS } from "../../contract/toBlockChain";
 import SaveIcon from "@mui/icons-material/Save";
-import { doc, getDoc, setDoc } from "firebase/firestore/lite";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore/lite";
 import { db } from "../../firebase/config";
 import Swal from "sweetalert2";
 
@@ -27,10 +27,6 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
   const [editedName, setEditedName] = useState(product.name);
   const [editedCompany, setEditedCompany] = useState(product.company);
 
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
   const handleNameEdit = () => {
     setIsEditingName(true);
   };
@@ -39,14 +35,46 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
     setIsEditingCompany(true);
   };
 
-  const handleNameSave = () => {
-    setProductData({ ...product, name: editedName });
-    setIsEditingName(false);
+  const handleNameSave = async () => {
+    try {
+      setProductData({ ...product, name: editedName });
+
+      const productRef = doc(db, "products", product.id);
+
+      const productDoc = await getDoc(productRef);
+
+      const updateData = {
+        ...productDoc.data(),
+        name: editedName,
+      };
+
+      console.log(updateData);
+
+      await updateDoc(productRef, updateData);
+      setIsEditingName(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleCompanySave = () => {
-    setProductData({ ...product, company: editedCompany });
-    setIsEditingCompany(false);
+  const handleCompanySave = async () => {
+    try {
+      setProductData({ ...product, company: editedCompany });
+
+      const productRef = doc(db, "products", product.id);
+
+      const productDoc = await getDoc(productRef);
+
+      const updateData = {
+        ...productDoc.data(),
+        company: editedCompany,
+      };
+
+      await updateDoc(productRef, updateData);
+      setIsEditingCompany(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleImageUpload = async () => {
@@ -74,27 +102,6 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
       input.click();
     } catch (error) {
       console.error("Error al subir la imagen:", error);
-    }
-  };
-
-  const handleUpdateChanges = async () => {
-    console.log(product);
-
-    try {
-      const updateProduct = { ...product };
-      const productRef = doc(db, "products", product.id);
-
-      const response = await setDoc(productRef, updateProduct, { merge: true });
-
-      Swal.fire({
-        title: "Producto editado correctamente",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Continuar",
-      });
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -165,7 +172,7 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
               />
-              <Button variant="contained" onClick={handleCompanySave}>
+              <Button variant="contained" onClick={handleNameSave}>
                 Guardar
               </Button>
               <Button
@@ -223,9 +230,6 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
             </>
           )}
         </Box>
-        <Button variant="contained" onClick={handleUpdateChanges}>
-          Guardar cambios
-        </Button>
       </Box>
     </Box>
     // </Modal>
