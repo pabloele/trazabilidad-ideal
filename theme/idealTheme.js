@@ -30,7 +30,7 @@ export const idealTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: 'Poppins, sans-serif',
   },
   components: {
     MuiLink: {

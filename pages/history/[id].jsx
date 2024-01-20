@@ -332,17 +332,18 @@ const ViewProduct = () => {
                                   textJustify: 'auto',
                                 }}
                               >
-                                 Bodegas Pepitón
+                                 Bodegas Bianchi
                               </Typography>
                             </Grid>
                             <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Link
                     target="_blank"
                     rel="noopener noreferrer "
-                    href="www.google.com"
+                    href="/profile"
                   >
                     <Button
                       variant="contained"
+               
                       sx={{
                         display: 'flex',
                         gap: 1,
@@ -552,13 +553,16 @@ const ViewProduct = () => {
                                         isSmallScreen ? 'row' : 'column'
                                       }
                                     >
-                                      <Box
-                                        sx={{
-                                          width: '200px',
-                                          height: '200px',
-                                          position: 'relative',
-                                        }}
-                                      >
+                                       <Box
+                                            sx={{
+                                              width: '200px',
+                                              height: '200px',
+                                              position: 'relative',
+                                              border: '1px solid',
+                                              bgcolor: '#f0f0f0',
+                                              boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                                            }}
+                                          >
                                         <Image
                                           src={milestone.image}
                                           alt="Milestone Image"
