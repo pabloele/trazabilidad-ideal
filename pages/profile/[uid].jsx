@@ -1,210 +1,270 @@
-
-import { Container, Grid, Paper, Avatar, Typography, Box, IconButton, Button,  TextField, useMediaQuery,} from '@mui/material';
-import { useEffect, useState } from "react";
-// import {
-//   IconButton,
-//   useMediaQuery,
-//   Typography,
-//   Button,
-//   Grid,
-//   TextField,
-//   Box,
-// } from "@mui/material";
-import { AddOutlined, Image, MailOutlined } from "@mui/icons-material";
-import { HomeLayout } from "../../layout";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthContext";
-import Welcome from "../../components/Welcome/Welcome";
-import { TrazabilityContent } from "../../components";
+import { useState } from "react";
 import {
-  addMilestone,
-  addUserProduct,
-  deleteUserDoc,
-  getUserProducts,
-  getUsers,
-} from "../../firebase/controllers/firestoreControllers";
-import Recent from "../../components/recentProducts/Recent";
-import { useProductStore } from "../../store";
+  Container,
+  Grid,
+  Paper,
+  Avatar,
+  Typography,
+  Box,
+  IconButton,
+  Button,
+  TextField,
+  useMediaQuery,
+} from "@mui/material";
+import { useAuth } from "../../context/AuthContext";
+import { HomeLayout } from "../../layout";
+import { useRouter } from "next/router";
+import useUser from "../../hooks/useUser";
+import EditIcon from "@mui/icons-material/Edit";
+import { TextareaAutosize } from "@mui/base";
 
-const activeProduct = 0;
-
-
-
-
-
-// const HomePage = () => {
-
-//   return (
-//     <HomeLayout>
-//       <h1>TODO: PROFILE</h1>
-//     </HomeLayout>
-//   );
-// };
-
-// export default HomePage;
 const Profile = () => {
-    const [users, setUsers] = useState([]);
-  const [products, setProducts] = useState();
-  const { setProductData } = useProductStore();
-  const handleGetProducts = async (uid) => {
-    const products = await getUserProducts(uid);
-    setProductData(products);
+  const router = useRouter();
+  const { user, handleEditImage, handleSaveDescription, handleEditWallpaper } =
+    useUser(router.query.uid);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const [isHoveredWallpaper, setIsHoveredWallpaper] = useState(false);
+
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+
+  const [description, setDescription] = useState(user?.data?.description);
+  const { user: userAuth } = useAuth();
+
+  const handleSaveWallpaper = async () => {
+    await handleEditWallpaper();
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const usersDocs = await getUsers();
-      setUsers(usersDocs);
-    };
+  const handleSave = async () => {
+    handleSaveDescription(description);
 
-    fetchUsers();
-  }, []);
+    setIsEditingDescription(false);
+  };
 
-  const { user, logout } = useAuth();
+  if (!user) {
+    return (
+      <>
+        <HomeLayout>
+          <Typography>No se encontro el usuario</Typography>
+        </HomeLayout>
+      </>
+    );
+  }
 
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user) router.push("/");
-    handleGetProducts(user?.uid);
-  }, [user, router]);
-
-  const isMediumScreen = useMediaQuery("(min-width: 600px)");
+  console.log(user);
   return (
     <HomeLayout>
-          <Container>
-            <Grid container >
-              {/* Portada */}
-              <Grid item xs={12}  >
-                <Paper
-                  elevation={3}
+      <Container>
+        <Grid container>
+          {/* Portada */}
+          <Grid item xs={12}>
+            <Paper
+              elevation={3}
+              sx={{
+                // padding: '20px',
+                margin: 0,
+                padding: 0,
+                paddingLeft: 0,
+                marginLeft: 0,
+                bgcolor: "purple",
+                textAlign: "center",
+                position: "relative",
+                backgroundImage: `url(${user?.data?.wallpaperImg})`,
+                // "url('https://www.mdzol.com/u/fotografias/m/2021/4/26/f1456x819-1048511_1218881_2453.jpeg')",
+                // backgroundImage: "url('https://via.placeholder.com/1200x200')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                width: "100%",
+                height: "50vh",
+              }}
+              onMouseEnter={() => setIsHoveredWallpaper(true)}
+              onMouseLeave={() => setIsHoveredWallpaper(false)}
+            >
+              {isHoveredWallpaper && (
+                <IconButton
                   sx={{
-                    // padding: '20px',
-                    margin:0,
-                    padding:0,
-                    paddingLeft:0,
-                    marginLeft:0,
-                    bgcolor:"purple",
-                    textAlign: 'center',
-                    backgroundImage: "url('https://www.mdzol.com/u/fotografias/m/2021/4/26/f1456x819-1048511_1218881_2453.jpeg')",
-                    // backgroundImage: "url('https://via.placeholder.com/1200x200')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    position: 'relative',
-                    width:"100%",
-                    height:'50vh',
+                    position: "absolute",
+                    right: "20px",
                   }}
                 >
-                  <Grid container direction="column"  >
-                  <Grid item xs={6} display="flex" justifyItems="flex-start" alignItems="flex-start"  >
-                      
+                  <EditIcon onClick={handleSaveWallpaper} />
+                </IconButton>
+              )}
+              <Grid container direction="column">
+                <Grid
+                  item
+                  xs={6}
+                  display="flex"
+                  justifyItems="flex-start"
+                  alignItems="flex-start"
+                >
                   <Box bgcolor="primary.main" height="20vh"></Box>
-                  </Grid>
-                  <Grid item xs={6} display="flex" justifyItems="flex-start" alignItems="flex-start" >
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  display="flex"
+                  justifyItems="flex-start"
+                  alignItems="flex-start"
+                >
+                  <Box height="25vh"></Box>
 
-                            <Box height="25vh"></Box>
-                          {/* Foto de perfil, nombre y descripción */}
-
-                          {/* <Paper
-                            elevation={3}
-                            style={{
-                              textAlign: 'center',
-                              position: 'absolute',
-                              bottom: 0,
-                              left: '10%',
-                              marginBottom:"1rem",
-                              // transform: 'translateX(-50%)',
-                              backgroundColor: 'rgba(255, 255, 255, 0)',
-                      
-                            }}
-                          > */}
-                            <Box
+                  <Box
+                    sx={{
+                      textAlign: "center",
+                      position: "absolute",
+                      bottom: 0,
+                      left: "10%",
+                      marginBottom: "1rem",
+                      backgroundColor: "rgba(255, 255, 255, 0)",
+                      // Agrega sombras a Box
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        position: "relative",
+                      }}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <Avatar
+                        alt="Foto de perfil"
+                        src={`${
+                          user?.data?.profileImg
+                            ? user.data.profileImg
+                            : "/images/defaultProfile.webp"
+                        }`}
                         sx={{
-                          textAlign: 'center',
-                          position: 'absolute',
-                          bottom: 0,
-                          left: '10%',
-                          marginBottom: '1rem',
-                          backgroundColor: 'rgba(255, 255, 255, 0)',
-                          // Agrega sombras a Box
-                          
+                          width: "150px",
+                          height: "150px",
+                          marginLeft: "25%",
+
+                          boxShadow: "0px 0px 10px rgba(0, 1, 0, 1)",
                         }}
-                      >
-                        <Avatar
-                          alt="Foto de perfil"
-                          src="https://www.buenosairesinforma.com/var/buenosairesinforma_com/storage/images/notas/bodegas-bianchi-recibe-un-reconocimiento-de-la-plataforma-de-viajes-tripadvisor/50381-1-esl-AR/Bodegas-Bianchi-recibe-un-reconocimiento-de-la-plataforma-de-viajes-TripAdvisor.jpg"
-                          sx={{ width: '150px', height: '150px', margin: '0 auto', backgroundColor: 'whitesmoke', boxShadow: '0px 0px 10px rgba(0, 1, 0, 1)', }}
+                      />
+
+                      {isHovered && user?.uid === userAuth?.uid && (
+                        <EditIcon
+                          onClick={handleEditImage}
+                          sx={{
+                            position: "absolute",
+                            top: "45%",
+                            left: "45%",
+                            cursor: "pointer",
+                          }}
                         />
-                    
-                        <Typography variant="h3" sx={{ marginTop: '10px', color: 'whitesmoke', fontWeight: 'bold', textShadow: '2px 2px 4px rgba(1, 1, 1, 1)'}}>
-                          Bodegas Bianchi
-                        </Typography>
-                      </Box>
-                          {/* </Paper> */}
-                          
-                          </Grid>
+                      )}
+                    </Box>
 
-                  </Grid>
-                </Paper>
+                    <Typography
+                      variant="h3"
+                      sx={{
+                        marginTop: "10px",
+                        color: "whitesmoke",
+                        fontWeight: "bold",
+                        textShadow: "2px 2px 4px rgba(1, 1, 1, 1)",
+                      }}
+                    >
+                      {user?.data?.name}
+                    </Typography>
+                  </Box>
+                  {/* </Paper> */}
+                </Grid>
               </Grid>
+            </Paper>
+          </Grid>
 
-              {/* Descripción */}
-              <Grid item xs={12}  marginTop={2}>
-                      <Paper
-                        elevation={3}
-                        sx={{
-                          display:"flex",
-                          flexDirection:"column",
-                          justifyContent:"center",
-                          margin:0,
-                          padding:0,
-                          paddingLeft:0,
-                          marginLeft:0,
-                          bgcolor:"whitesmoke",
-                          textAlign: 'center',
-                  
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          position: 'relative',
-                          width:"100%",
-                          height:'auto',
-                          minHeight:"4rem",
-                        }}
-                      >
-                                  <Typography variant="h5" color="textSecondary">
-                                    Descripción general del perfil.
-                          
-                                  </Typography>
-                        </Paper>
-              </Grid>
-              {/* Módulos con datos */}
-              <Grid item xs={12}  marginTop={2}>
-                      <Paper
-                        elevation={3}
-                        sx={{
-                          display:"flex",
-                          flexDirection:"column",
-                          justifyContent:"center",
-                          margin:0,
-                          padding:0,
-                          paddingLeft:0,
-                          marginLeft:0,
-                          bgcolor:"whitesmoke",
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          position: 'relative',
-                          width:"100%",
-                          height:'auto',
-                          minHeight:"10rem",
-                        }}
-                      >
-                                  <Typography  variant="body2" color="textSecondary" >
-                                    Descripción general del perfil. Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.Descripción general del perfil.
-                                  </Typography>
-                        </Paper>
-              </Grid>
-            </Grid>
-          </Container>
+          {/* Descripción */}
+          <Grid item xs={12} marginTop={2}>
+            <Paper
+              elevation={3}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                margin: 0,
+                padding: 0,
+                paddingLeft: 0,
+                marginLeft: 0,
+                bgcolor: "whitesmoke",
+                textAlign: "center",
+
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                width: "100%",
+                height: "auto",
+                minHeight: "4rem",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h5" color="textSecondary">
+                  Descripción general del perfil.
+                </Typography>
+
+                <IconButton onClick={() => setIsEditingDescription(true)}>
+                  <EditIcon />
+                </IconButton>
+              </Box>
+            </Paper>
+          </Grid>
+          {/* Módulos con datos */}
+          <Grid item xs={12} marginTop={2}>
+            <Paper
+              elevation={3}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                margin: 0,
+                padding: 0,
+                paddingLeft: 0,
+                marginLeft: 0,
+                bgcolor: "whitesmoke",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                width: "100%",
+                height: "auto",
+                minHeight: "10rem",
+              }}
+            >
+              {isEditingDescription ? (
+                <>
+                  <TextareaAutosize
+                    onChange={(e) => setDescription(e.target.value)}
+                    minRows={20}
+                    value={description}
+                  />
+
+                  <Button variant="contained" onClick={handleSave}>
+                    Guardar
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Typography variant="body2" color="textSecondary">
+                    {user?.data?.description
+                      ? user.data.description
+                      : "Sin descripcion"}
+                  </Typography>
+                </>
+              )}
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
     </HomeLayout>
   );
 };
@@ -243,7 +303,6 @@ export default Profile;
 //           </Paper>
 //         </Grid>
 
-
 //         {/* Módulos con datos */}
 //         <Grid item xs={12} md={9}>
 //           <Grid container spacing={3}>
@@ -273,7 +332,6 @@ export default Profile;
 // };
 
 // export default Profile;
-
 
 // import React, { useEffect, useState } from "react";
 // import { Box, Button, TextField, Typography } from "@mui/material";
@@ -834,11 +892,11 @@ export default Profile;
 //     border-radius: 8px;
 //     cursor: default;
 //     user-select: none;
-  
+
 //     &:last-of-type {
 //       border-bottom: none;
 //     }
-  
+
 //     &.${menuItemClasses.focusVisible} {
 //       outline: 3px solid ${
 //         theme.palette.mode === "dark" ? blue[600] : blue[200]
@@ -848,11 +906,11 @@ export default Profile;
 //       };
 //       color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
 //     }
-  
+
 //     &.${menuItemClasses.disabled} {
 //       color: ${theme.palette.mode === "dark" ? grey[700] : grey[400]};
 //     }
-  
+
 //     &:hover:not(.${menuItemClasses.disabled}) {
 //       background-color: ${theme.palette.mode === "dark" ? blue[900] : blue[50]};
 //       color: ${theme.palette.mode === "dark" ? blue[100] : blue[900]};
@@ -878,16 +936,16 @@ export default Profile;
 //     border: 1px solid ${theme.palette.mode === "dark" ? blue[700] : blue[700]};
 //     color: ${theme.palette.mode === "dark" ? grey[200] : grey[900]};
 //     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  
+
 //     &:hover {
 //       background: ${theme.palette.mode === "dark" ? grey[800] : grey[50]};
 //       border-color: ${theme.palette.mode === "dark" ? grey[600] : grey[300]};
 //     }
-  
+
 //     &:active {
 //       background: ${theme.palette.mode === "dark" ? grey[700] : grey[100]};
 //     }
-  
+
 //     &:focus-visible {
 //       box-shadow: 0 0 0 4px ${
 //         theme.palette.mode === "dark" ? blue[300] : blue[200]
@@ -898,7 +956,6 @@ export default Profile;
 // );
 
 // export default ProtocolPage;
-
 
 // import { useEffect, useState } from "react";
 // import {
@@ -927,4 +984,3 @@ export default Profile;
 // import { useProductStore } from "../../store";
 
 // const activeProduct = 0;
-

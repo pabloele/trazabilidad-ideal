@@ -1039,7 +1039,6 @@ const Producto = () => {
                   size={24}
                   style={{ cursor: "pointer" }}
                 />
-                <Typography>Editar protocolo</Typography>
               </IconButton>
             </Tooltip>
           </Box>
