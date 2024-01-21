@@ -120,7 +120,7 @@ const ViewProduct = () => {
     setRotation(rotation - 15);
   };
   return (
-    <Grid container justifyContent="center" direction={'column'}>
+    <Grid container justifyContent="center" direction={'column'} bgcolor="secondary.main">
       <Grid item>
         <UserNavBar />
       </Grid>
@@ -343,13 +343,14 @@ const ViewProduct = () => {
                   >
                     <Button
                       variant="contained"
-               
+                   
                       sx={{
                         display: 'flex',
                         gap: 1,
                         alignItems: 'center',
                         marginTop: 2,
                         boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        color:"#3BCED6",
                       }}
                     >
                       Datos del productor
@@ -523,9 +524,10 @@ const ViewProduct = () => {
                     sx={{
                       fontSize: 26,
                       fontStyle: 'oblique',
-                      color: 'whitesmoke',
+                      color: 'white.main',
                       backgroundColor: 'primary.main',
                       marginX: 10,
+                      paddingX:2,
                       boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
                     }}
                   >
@@ -559,7 +561,7 @@ const ViewProduct = () => {
                                               height: '200px',
                                               position: 'relative',
                                               border: '1px solid',
-                                              bgcolor: '#f0f0f0',
+                                              bgcolor: 'yellow.main',
                                               boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
                                             }}
                                           >
@@ -576,7 +578,7 @@ const ViewProduct = () => {
                                           width={isSmallScreen ? 280 : 215}
                                           height={215}
                                           sx={{
-                                            backgroundColor: '#f5f5f5',
+                                            backgroundColor: 'white.main',
                                             overflowY: 'auto',
                                             color: 'primary.main',
                                             minWidth: '800px',
