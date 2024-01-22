@@ -745,6 +745,7 @@ const Producto = () => {
                     )}
                   </>
                 )}
+
                 {editingProtocolScreen === "editRemove" && (
                   <Box
                     justifyContent="center"
@@ -761,27 +762,35 @@ const Producto = () => {
                     >
                       Editar productos etapas y procesos
                     </Typography>
-                    <EditProduct
-                      isOpen={openEditModal}
-                      setIsOpen={setOpenEditModal}
-                      product={product}
-                      setProductData={setProductData}
-                    />
-                    <Grid
+
+                  
+
+                    {/* <Grid
                       container
                       // display="flex"
                       // flexDirection="column"
-
+                     
                       alignContent="flex-start"
-                    >
-                      <Grid item xs={3}></Grid>
-                      <Grid container xs={9} direction="column">
+                    > */}
+                   
+                      {/* <Grid item xs={3.5}></Grid> */}
+                      <Grid container xs={12} direction="column" alignItems="center">
+                          <EditProduct
+                                isOpen={openEditModal}
+                                setIsOpen={setOpenEditModal}
+                                product={product}
+                                setProductData={setProductData}
+                        />
                         {protocolSnapshot?.trazability.map((p, index) => (
-                          <Grid container key={p.name} direction="row">
-                            <Grid item>
+                     <>
+                   
+
+                    
+                          <Grid container key={p.name} direction="row" justifyContent="center" >
+                            <Grid item >
                               {editingStates[index] ? (
                                 <>
-                                  <Box key={p.name} sx={{ display: "flex" }}>
+                                  <Box key={p.name}  sx={{ display: "flex" }}>
                                     <Typography
                                       sx={{
                                         fontWeight: "bold",
@@ -791,7 +800,7 @@ const Producto = () => {
                                       Etapa:
                                     </Typography>
                                     <TextField
-                                      label="Editar texto"
+                                      label=""
                                       value={oldValue}
                                       onChange={(e) =>
                                         handleEditProcess(e, index)
@@ -858,90 +867,101 @@ const Producto = () => {
                                 </>
                               )}
                             </Grid>
-                            <Grid container direction="column">
-                              <Grid item xs={3}></Grid>
-                              <Grid container direction="column" xs={10}>
+                            <Grid container direction="column" bgcolor="green" alignContent="center">
+                        
+                              <Grid container direction="column" xs={8} bgcolor="purple" justifyItems="center">
+                              
                                 {p.line.map((l, lineIndex) => (
                                   <Grid
                                     key={l.name}
                                     sx={{
                                       display: "flex",
                                       alignItems: "center",
+                                      justifyContent:"center",
                                     }}
                                   >
-                                    <Typography
-                                      sx={{
-                                        color: "primary.main",
-                                        fontSize: 20,
-                                        marginRight: 1,
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      Proceso:
-                                    </Typography>
-                                    <Box display="flex" alignItems={"center"}>
-                                      {editingProcess[index] &&
-                                      editingProcess[index][lineIndex] ? (
-                                        <>
-                                          <TextField
-                                            label="Editar texto"
-                                            value={oldValue}
-                                            onChange={(e) =>
-                                              handleEditProcess(e, l.name)
-                                            }
-                                          />
-                                          <Button
-                                            onClick={() =>
-                                              handleSaveSubProcessClick(
-                                                index,
-                                                lineIndex
-                                              )
-                                            }
+                                    
+
+                                          <Typography
+                                            sx={{
+                                              color: "primary.main",
+                                              fontSize: 20,
+                                              marginRight: 1,
+                                              fontWeight: "bold",
+                                            }}
                                           >
-                                            Guardar
-                                          </Button>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Typography color="GrayText">
-                                            {l.name}
+                                            Proceso:
                                           </Typography>
-                                          <IconButton
-                                            disabled={isEditing}
-                                            onClick={() =>
-                                              handleEditSubprocessClick(
-                                                index,
-                                                lineIndex,
-                                                l.name
-                                              )
-                                            }
-                                          >
-                                            <EditIcon />
-                                          </IconButton>
-                                          <IconButton
-                                            onClick={() =>
-                                              handleDeleteProcess(
-                                                index,
-                                                lineIndex
-                                              )
-                                            }
-                                          >
-                                            <DeleteIcon />
-                                          </IconButton>
-                                        </>
-                                      )}
-                                    </Box>
+                                          <Box display="flex" alignItems={"center"}>
+                                            {editingProcess[index] &&
+                                            editingProcess[index][lineIndex] ? (
+                                              <>
+                                                <TextField
+                                                  size="small"
+                                                  label=""
+                                                  value={oldValue}
+                                                  onChange={(e) =>
+                                                    handleEditProcess(e, l.name)
+                                                  }
+                                                />
+                                                <Button
+                                                  onClick={() =>
+                                                    handleSaveSubProcessClick(
+                                                      index,
+                                                      lineIndex
+                                                    )
+                                                  }
+                                                >
+                                                  Guardar
+                                                </Button>
+                                              </>
+                                            ) : (
+                                              <>
+                                                <Typography color="GrayText">
+                                                  {l.name}
+                                                </Typography>
+                                                <IconButton
+                                                  disabled={isEditing}
+                                                  onClick={() =>
+                                                    handleEditSubprocessClick(
+                                                      index,
+                                                      lineIndex,
+                                                      l.name
+                                                    )
+                                                  }
+                                                >
+                                                  <EditIcon />
+                                                </IconButton>
+                                                <IconButton
+                                                  onClick={() =>
+                                                    handleDeleteProcess(
+                                                      index,
+                                                      lineIndex
+                                                    )
+                                                  }
+                                                >
+                                                  <DeleteIcon />
+                                                </IconButton>
+                                              </>
+                                            )}
+                                          </Box>
+                                 
+                                  
+                                  
                                   </Grid>
                                 ))}
+                                {/* </Box> */}
                               </Grid>
                             </Grid>
                             {index !== product.trazability.length - 1 && (
                               <Divider />
                             )}
                           </Grid>
+                        
+                     </>
                         ))}
                       </Grid>
-                    </Grid>
+                    {/* </Grid> */}
                   </Box>
                 )}
               </>

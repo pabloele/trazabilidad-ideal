@@ -8,7 +8,7 @@ const UserNavBar = () => {
 
   return (
     <Box
-      sx={{ bgcolor: 'primary.main', height: 90, paddingX: 2, width: '100%' }}
+      sx={{ bgcolor: 'primary.main', height: 90, paddingX: 2, width: '100%', paddingX:"2rem" }}
     >
       <Box
         sx={{ display: 'flex' }}
@@ -34,10 +34,10 @@ const UserNavBar = () => {
           }}
           justifyContent={"right"}
         >
-          <Link style={{ color: '#fff', fontSize: 18 }} href={'#'}>
+          <Link style={{ color: '#fff', fontSize: 18 }} href={'https://ideal.org.ar/'} target="_blank">
             Sobre nosotros
           </Link>
-          <Link style={{ color: '#fff', fontSize: 18 }} href={'#'}>
+          <Link style={{ color: '#fff', fontSize: 18 }} href={'https://ideal.org.ar/'} target="_blank">
             Tecnología
           </Link>
         </Box>
