@@ -10,12 +10,22 @@ const LinkBehaviour = forwardRef(function LinkBehaviour(props, ref) {
 export const idealTheme = createTheme({
   palette: {
     primary: {
-      main: '#0330abe4',
-      // main: "#0330ab",
-      // main: '#EEEEEE',
+      main: '#0330AC',
+    },
+    yelow: {
+      main: '#F4DE71',
+    },
+    orange: {
+      main: 'F4924A',
+    },
+    lightBlue: {
+      main: '#3BCED6',
+    },
+    lilac: {
+      main: '#BA67F4',
     },
     secondary: {
-      main: '#ffff',
+      main: '#f9faff',
       black: '#000',
     },
     crypto: {
@@ -23,14 +33,14 @@ export const idealTheme = createTheme({
     },
 
     white: {
-      main: 'white',
+      main: '#ffffff',
     },
     error: {
       main: red.A400,
     },
   },
   typography: {
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: 'Poppins, sans-serif',
   },
   components: {
     MuiLink: {
