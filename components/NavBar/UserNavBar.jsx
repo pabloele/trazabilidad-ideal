@@ -8,21 +8,23 @@ const UserNavBar = () => {
 
   return (
     <Box
-      sx={{ bgcolor: 'primary.main', height: 90, paddingX: 2, width: '100%' }}
+      sx={{ bgcolor: 'primary.main', height: 90, paddingX: 2, width: '100%', paddingX:"2rem" }}
     >
       <Box
         sx={{ display: 'flex' }}
-        flexDirection={isSmallScreen ? 'row' : 'column'}
+ 
         justifyContent={isSmallScreen ? 'center' : 'center'}
         alignItems={'center'}
         height={100}
       >
-        <Image
+          <Box>
+      <Image
           src={'/images/logo-ideal.png'}
           width={130}
           height={45}
           alt="logo"
         />
+      </Box>
 
         <Box
           sx={{
@@ -30,15 +32,16 @@ const UserNavBar = () => {
             gap: 2,
             width: '100%',
           }}
-          justifyContent={isSmallScreen ? 'center' : 'space-evenly'}
+          justifyContent={"right"}
         >
-          <Link style={{ color: '#fff', fontSize: 18 }} href={'#'}>
+          <Link style={{ color: '#fff', fontSize: 18 }} href={'https://ideal.org.ar/'} target="_blank">
             Sobre nosotros
           </Link>
-          <Link style={{ color: '#fff', fontSize: 18 }} href={'#'}>
+          <Link style={{ color: '#fff', fontSize: 18 }} href={'https://ideal.org.ar/'} target="_blank">
             Tecnología
           </Link>
         </Box>
+   
       </Box>
     </Box>
   );
