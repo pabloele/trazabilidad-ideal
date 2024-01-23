@@ -91,6 +91,17 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
             const result = await uplaodImageIPFS(file);
 
             setProductData({ ...product, productImage: result.url });
+
+            const productRef = doc(db, "products", product.id);
+
+            const productDoc = await getDoc(productRef);
+
+            const updateData = {
+              ...productDoc.data(),
+              imageUrl: result.url,
+            };
+
+            await updateDoc(productRef, updateData);
           } catch (error) {
             console.error("Error al subir la imagen a IPFS:", error);
           } finally {
