@@ -8,8 +8,15 @@ import {
 	Element,
 	Transforms,
 } from "slate";
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
+import {
+	Slate,
+	Editable,
+	withReact,
+	ReactEditor,
+	useSlateStatic,
+} from "slate-react";
 import { withEmbeds } from "../../utils";
+import YouTubeEmbed from "react-youtube";
 
 const initialValue = [
 	{
@@ -42,7 +49,7 @@ const CustomEditor = {
 				const url = text;
 				const embed = { type, url, children: [{ text: url }] };
 				Transforms.insertNodes(editor, {
-					children: [{ text }],
+					children: [{ text: "" }],
 					type,
 					youtubeId: match[1],
 				});
@@ -103,12 +110,23 @@ const CodeElement = (props) => {
 	);
 };
 
-const YouTube = (props) => (
-	<span {...props.attributes}>
-		Youtube ID: {props.element.youtubeId}
-		{props.children}
-	</span>
-);
+const YouTube = (props) => {
+	const { attributes, children, element } = props;
+	const { youtubeId } = element;
+
+	return (
+		<div {...attributes}>
+			<div contentEditable={false}>
+				<YouTubeEmbed contentEditable={false} videoId={youtubeId} />
+				{children}
+			</div>
+		</div>
+	);
+	// <span {...props.attributes}>
+	// 	Youtube ID: {props.element.youtubeId}
+	// 	{props.children}
+	// </span>
+};
 
 const DefaultElement = (props) => <p {...props.attributes}>{props.children}</p>;
 
