@@ -14,10 +14,13 @@ import {
 	withReact,
 	ReactEditor,
 	useSlateStatic,
+	useSelected,
+	useFocused,
 } from "slate-react";
 import { withEmbeds } from "../../utils";
 import { YouTube } from "../../components/Editor";
-
+import { FaLink, FaUnlink } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 const initialValue = [
 	{
 		type: "paragraph",
@@ -36,6 +39,44 @@ const embedRegexes = [
 		type: "youtube",
 	},
 ];
+
+const Link = ({ attributes, element, children }) => {
+	const router = useRouter();
+
+	const editor = useSlateStatic();
+	const selected = useSelected();
+	const focused = useFocused();
+	console.log(element.url);
+	return (
+		<div>
+			<a
+				{...attributes}
+				href={element.url}
+				target='_blank'
+				rel='noreferrer'
+				style={{ cursor: "pointer" }}
+			>
+				{children}
+			</a>
+			{selected && focused && (
+				<div
+					className='popup'
+					contentEditable={false}
+					style={{ cursor: "pointer" }}
+					onClick={() => {
+						window.open(element.url, "_blank");
+					}}
+				>
+					<FaLink />
+					{element.url}
+					{/* <button onClick={() => CustomEditor.removeLink(editor)}>
+						<FaUnlink marginLeft='5rem' />
+					</button> */}
+				</div>
+			)}
+		</div>
+	);
+};
 
 const CustomEditor = {
 	handleEmbed(editor, event) {
@@ -65,11 +106,11 @@ const CustomEditor = {
 		const marks = Editor.marks(editor);
 		return marks ? marks.bold === true : false;
 	},
-	isCodeBlockActive(editor) {
-		const [match] = Editor.nodes(editor, {
-			match: (n) => n.type === "code",
-		});
-	},
+	// isCodeBlockActive(editor) {
+	// 	const [match] = Editor.nodes(editor, {
+	// 		match: (n) => n.type === "code",
+	// 	});
+	// },
 
 	toggleBoldMark(editor) {
 		const isActive = CustomEditor.isBoldMarkActive(editor);
@@ -123,50 +164,131 @@ const CustomEditor = {
 			{ match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
 		);
 	},
-	toggleCodeBlock(editor) {
-		const isActive = CustomEditor.isCodeBlockActive(editor);
-		Transforms.setNodes(
-			editor,
-			{ type: isActive ? null : "code" },
-			{ match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
-		);
+
+	createLinkNode(href, text) {
+		return {
+			type: "link",
+			href,
+			children: [{ text }],
+		};
 	},
+
+	removeLink(editor, opts = {}) {
+		Transforms.unwrapNodes(editor, {
+			...opts,
+			match: (n) =>
+				!Editor.isEditor(n) && Element.isElement(n) && n.type === "link",
+		});
+	},
+
+	insertLink(editor, url) {
+		if (!url) return;
+
+		const { selection } = editor;
+		const link = CustomEditor.createLinkNode(url, "New Link");
+
+		ReactEditor.focus(editor);
+
+		if (!!selection) {
+			const [parentNode, parentPath] = Editor.parent(
+				editor,
+				selection.focus?.path
+			);
+
+			// Remove the Link node if we're inserting a new link node inside of another link.
+			if (parentNode.type === "link") {
+				CustomEditor.removeLink(editor);
+			}
+
+			if (editor.isVoid(parentNode)) {
+				// Insert the new link after the void node.
+				Transforms.insertNodes(editor, createParagraphNode([link]), {
+					at: Path.next(parentPath),
+					select: true,
+				});
+			} else if (Range.isCollapsed(selection)) {
+				// Insert the new link in our last known location.
+				Transforms.insertNodes(editor, link, { select: true });
+			} else {
+				// Wrap the currently selected range of text into a Link.
+				Transforms.wrapNodes(editor, link, { split: true });
+				// Remove the highlight and move the cursor to the end of the highlight.
+				Transforms.collapse(editor, { edge: "end" });
+			}
+		} else {
+			// Insert the new link node at the bottom of the Editor when selection
+			// is falsey.
+			Transforms.insertNodes(editor, createParagraphNode([link]));
+		}
+	},
+	toggleLink(editor, url) {
+		const isLinkActive = CustomEditor.isLinkActive(editor);
+
+		if (isLinkActive) {
+			// If a link is active, unwrap the nodes
+			Transforms.unwrapNodes(editor, { match: (n) => n.type === "link" });
+		} else {
+			// If no link is active, insert the link node
+			const link = { type: "link", url, children: [{ text: "" }] };
+			Transforms.wrapNodes(editor, link, { split: true });
+			Transforms.collapse(editor, { edge: "end" }); // Move the cursor after the link
+		}
+	},
+
+	isLinkActive(editor) {
+		const [link] = Editor.nodes(editor, { match: (n) => n.type === "link" });
+		return !!link;
+	},
+	// toggleCodeBlock(editor) {
+	// 	const isActive = CustomEditor.isCodeBlockActive(editor);
+	// 	Transforms.setNodes(
+	// 		editor,
+	// 		{ type: isActive ? null : "code" },
+	// 		{ match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
+	// 	);
+	// },
 };
 
 const CustomImage = (props) => (
 	<img {...props.attributes} src={props.element.url} alt='img' />
 );
 
-// const CodeElement = props => {
-//   <pre {...props.attributes} style={{backgroundColor: "black", color:"white"}}>
-
-//   </pre>
-// }
-const CodeElement = (props) => {
-	return (
-		<pre
-			{...props.attributes}
-			style={{ backgroundColor: "black", color: "white" }}
-		>
-			{props.children}
-		</pre>
-	);
-};
+// const CodeElement = (props) => {
+// 	return (
+// 		<pre
+// 			{...props.attributes}
+// 			style={{ backgroundColor: "black", color: "white" }}
+// 		>
+// 			{props.children}
+// 		</pre>
+// 	);
+// };
 
 const DefaultElement = (props) => <p {...props.attributes}>{props.children}</p>;
 
-const Leaf = (props) => (
-	<span
-		{...props.attributes}
-		style={{
-			fontWeight: props.leaf.bold ? "bold" : "normal",
-			fontStyle: props.leaf.italic ? "italic" : "normal",
-			textDecoration: props.leaf.underline ? "underline" : "none",
-		}}
-	>
-		{props.children}
-	</span>
-);
+const Leaf = (props) => {
+	return (
+		<span
+			{...props.attributes}
+			style={{
+				fontWeight: props.leaf.bold ? "bold" : "normal",
+				fontStyle: props.leaf.italic ? "italic" : "normal",
+				textDecoration: props.leaf.underline ? "underline" : "none",
+				color: props.leaf.link ? "blue" : "inherit",
+			}}
+		>
+			{props.leaf.link ? (
+				<>
+					<a href={props.leaf.url} target='_blank' rel='noopener noreferrer'>
+						{props.children}
+					</a>
+				</>
+			) : (
+				props.children
+			)}
+		</span>
+	);
+};
 
 const Posts = () => {
 	// const [editor] = useState(()=>withReact(createEditor))
@@ -174,8 +296,8 @@ const Posts = () => {
 
 	const renderElement = useCallback((props) => {
 		switch (props.element.type) {
-			case "code":
-				return <CodeElement {...props} />;
+			// case "code":
+			// 	return <CodeElement {...props} />;
 			case "image":
 				return <CustomImage {...props} />;
 			case "h1":
@@ -184,6 +306,8 @@ const Posts = () => {
 				return <h2 {...props.attributes}>{props.children}</h2>;
 			case "youtube":
 				return <YouTube {...props} />;
+			case "link":
+				return <Link {...props} />;
 			default:
 				return <DefaultElement {...props} />;
 		}
@@ -217,7 +341,7 @@ const Posts = () => {
 					>
 						Bold
 					</Button>
-					<Button
+					{/* <Button
 						onMouseDown={(event) => {
 							event.preventDefault();
 							CustomEditor.toggleCodeBlock(editor);
@@ -225,7 +349,7 @@ const Posts = () => {
 						sx={{ marginLeft: "1rem" }}
 					>
 						Code BLock
-					</Button>
+					</Button> */}
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
@@ -247,7 +371,11 @@ const Posts = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							const url = prompt("Enter the URL:");
+							console.log("/////////////////////", url);
+							if (url) {
+								CustomEditor.toggleLink(editor, url);
+							}
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
@@ -309,9 +437,9 @@ const Posts = () => {
 					</Button>
 				</Grid>
 
-				<Typography variant='h1' color='primary.main'>
+				{/* <Typography variant='h1' color='primary.main'>
 					New post
-				</Typography>
+				</Typography> */}
 				<Editable
 					style={{ color: "black" }}
 					onChange={(value) => {
