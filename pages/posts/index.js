@@ -16,7 +16,7 @@ import {
 	useSlateStatic,
 } from "slate-react";
 import { withEmbeds } from "../../utils";
-import YouTubeEmbed from "react-youtube";
+import { YouTube } from "../../components/Editor";
 
 const initialValue = [
 	{
@@ -60,7 +60,6 @@ const CustomEditor = {
 	},
 	handlePaste(editor, event) {
 		CustomEditor.handleEmbed(editor, event);
-		// console.log("onPaste", text);
 	},
 	isBoldMarkActive(editor) {
 		const marks = Editor.marks(editor);
@@ -79,6 +78,50 @@ const CustomEditor = {
 		} else {
 			Editor.addMark(editor, "bold", true);
 		}
+	},
+	toggleItalicMark(editor) {
+		const isActive = Editor.marks(editor).italic;
+		if (isActive) {
+			Editor.removeMark(editor, "italic");
+		} else {
+			Editor.addMark(editor, "italic", true);
+		}
+	},
+	toggleUnderlineMark(editor) {
+		const isActive = Editor.marks(editor).underline;
+		if (isActive) {
+			Editor.removeMark(editor, "underline");
+		} else {
+			Editor.addMark(editor, "underline", true);
+		}
+	},
+	toggleHeading1(editor) {
+		Transforms.setNodes(
+			editor,
+			{ type: CustomEditor.isHeading1Active(editor) ? null : "h1" },
+			{ match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
+		);
+	},
+	isHeading1Active(editor) {
+		const [match] = Editor.nodes(editor, {
+			match: (n) => Element.isElement(n) && n.type === "h1",
+		});
+		return !!match;
+	},
+
+	isHeading2Active(editor) {
+		const [match] = Editor.nodes(editor, {
+			match: (n) => Element.isElement(n) && n.type === "h2",
+		});
+		return !!match;
+	},
+
+	toggleHeading2(editor) {
+		Transforms.setNodes(
+			editor,
+			{ type: CustomEditor.isHeading2Active(editor) ? null : "h2" },
+			{ match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
+		);
 	},
 	toggleCodeBlock(editor) {
 		const isActive = CustomEditor.isCodeBlockActive(editor);
@@ -110,30 +153,16 @@ const CodeElement = (props) => {
 	);
 };
 
-const YouTube = (props) => {
-	const { attributes, children, element } = props;
-	const { youtubeId } = element;
-
-	return (
-		<div {...attributes}>
-			<div contentEditable={false}>
-				<YouTubeEmbed contentEditable={false} videoId={youtubeId} />
-				{children}
-			</div>
-		</div>
-	);
-	// <span {...props.attributes}>
-	// 	Youtube ID: {props.element.youtubeId}
-	// 	{props.children}
-	// </span>
-};
-
 const DefaultElement = (props) => <p {...props.attributes}>{props.children}</p>;
 
 const Leaf = (props) => (
 	<span
 		{...props.attributes}
-		style={{ fontWeight: props.leaf.bold ? "bold" : "normal" }}
+		style={{
+			fontWeight: props.leaf.bold ? "bold" : "normal",
+			fontStyle: props.leaf.italic ? "italic" : "normal",
+			textDecoration: props.leaf.underline ? "underline" : "none",
+		}}
 	>
 		{props.children}
 	</span>
@@ -149,6 +178,10 @@ const Posts = () => {
 				return <CodeElement {...props} />;
 			case "image":
 				return <CustomImage {...props} />;
+			case "h1":
+				return <h1 {...props.attributes}>{props.children}</h1>;
+			case "h2":
+				return <h2 {...props.attributes}>{props.children}</h2>;
 			case "youtube":
 				return <YouTube {...props} />;
 			default:
@@ -196,7 +229,7 @@ const Posts = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							CustomEditor.toggleItalicMark(editor);
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
@@ -205,7 +238,7 @@ const Posts = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							CustomEditor.toggleUnderlineMark(editor);
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
@@ -241,7 +274,7 @@ const Posts = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							CustomEditor.toggleHeading1(editor);
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
@@ -250,7 +283,7 @@ const Posts = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							CustomEditor.toggleHeading2(editor);
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
