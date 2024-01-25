@@ -72,6 +72,69 @@ const Link = ({ attributes, element, children }) => {
   );
 };
 
+const CustomImage = ({ attributes, children, element }) => {
+  const editor = useSlateStatic();
+  const path = ReactEditor.findPath(editor, element);
+
+  const selected = useSelected();
+  const focused = useFocused();
+  return (
+    <div {...attributes}>
+      {children}
+      <div contentEditable={false} style={{ position: 'relative' }}>
+        <img
+          src={element.url}
+          style={{
+            display: 'block',
+            maxWidth: '100%',
+            maxHeight: '20rem',
+            boxShadow: selected && focused ? '0 0 0 3px #B4D5FF' : 'none',
+          }}
+        />
+        {/* <Button
+          active
+          onClick={() => Transforms.removeNodes(editor, { at: path })}
+          style={{
+            display: selected && focused ? 'inline' : 'none',
+            position: 'absolute',
+            top: '0.5em',
+            left: '0.5em',
+            // backgroundColor: 'white',
+          }}
+        >
+          <MdDelete size="6rem" />
+        </Button> */}
+      </div>
+    </div>
+  );
+};
+
+const DefaultElement = (props) => <p {...props.attributes}>{props.children}</p>;
+
+const Leaf = (props) => {
+  return (
+    <span
+      {...props.attributes}
+      style={{
+        fontWeight: props.leaf.bold ? 'bold' : 'normal',
+        fontStyle: props.leaf.italic ? 'italic' : 'normal',
+        textDecoration: props.leaf.underline ? 'underline' : 'none',
+        color: props.leaf.link ? 'blue' : 'inherit',
+      }}
+    >
+      {props.leaf.link ? (
+        <>
+          <a href={props.leaf.url} target="_blank" rel="noopener noreferrer">
+            {props.children}
+          </a>
+        </>
+      ) : (
+        props.children
+      )}
+    </span>
+  );
+};
+
 const CustomEditor = {
   handleEmbed(editor, event) {
     const text = event.clipboardData.getData('text/plain');
@@ -262,71 +325,7 @@ const CustomEditor = {
   },
 };
 
-const CustomImage = ({ attributes, children, element }) => {
-  const editor = useSlateStatic();
-  const path = ReactEditor.findPath(editor, element);
-
-  const selected = useSelected();
-  const focused = useFocused();
-  return (
-    <div {...attributes}>
-      {children}
-      <div contentEditable={false} style={{ position: 'relative' }}>
-        <img
-          src={element.url}
-          style={{
-            display: 'block',
-            maxWidth: '100%',
-            maxHeight: '20rem',
-            boxShadow: selected && focused ? '0 0 0 3px #B4D5FF' : 'none',
-          }}
-        />
-        {/* <Button
-          active
-          onClick={() => Transforms.removeNodes(editor, { at: path })}
-          style={{
-            display: selected && focused ? 'inline' : 'none',
-            position: 'absolute',
-            top: '0.5em',
-            left: '0.5em',
-            // backgroundColor: 'white',
-          }}
-        >
-          <MdDelete size="6rem" />
-        </Button> */}
-      </div>
-    </div>
-  );
-};
-
-const DefaultElement = (props) => <p {...props.attributes}>{props.children}</p>;
-
-const Leaf = (props) => {
-  return (
-    <span
-      {...props.attributes}
-      style={{
-        fontWeight: props.leaf.bold ? 'bold' : 'normal',
-        fontStyle: props.leaf.italic ? 'italic' : 'normal',
-        textDecoration: props.leaf.underline ? 'underline' : 'none',
-        color: props.leaf.link ? 'blue' : 'inherit',
-      }}
-    >
-      {props.leaf.link ? (
-        <>
-          <a href={props.leaf.url} target="_blank" rel="noopener noreferrer">
-            {props.children}
-          </a>
-        </>
-      ) : (
-        props.children
-      )}
-    </span>
-  );
-};
-
 const Posts = () => {
-  // const [editor] = useState(()=>withReact(createEditor))
   const editor = useMemo(() => withEmbeds(withReact(createEditor()), []));
 
   const renderElement = useCallback((props) => {
