@@ -1,5 +1,5 @@
 import { Button, Grid, Icon, Typography } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	createEditor,
 	BaseEditor,
@@ -22,17 +22,6 @@ import { YouTube } from "../../components/Editor";
 import { FaLink, FaUnlink } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { MdDelete } from "react-icons/md";
-const initialValue = [
-	{
-		type: "paragraph",
-		children: [{ text: "A line of text in a paragraph" }],
-	},
-	{
-		type: "image",
-		children: [{ text: "" }],
-		url: "https://ladatamix.com/wp-content/uploads/2023/09/Globo-aeroestatico.jpeg",
-	},
-];
 
 const Link = ({ attributes, element, children }) => {
 	const router = useRouter();
@@ -85,25 +74,25 @@ const CustomImage = ({ attributes, children, element }) => {
 				<img
 					src={element.url}
 					style={{
-						display: "block",
+						display: "flex",
 						maxWidth: "100%",
 						maxHeight: "20rem",
 						boxShadow: selected && focused ? "0 0 0 3px #B4D5FF" : "none",
 					}}
 				/>
-				{/* <Button
-          active
-          onClick={() => Transforms.removeNodes(editor, { at: path })}
-          style={{
-            display: selected && focused ? 'inline' : 'none',
-            position: 'absolute',
-            top: '0.5em',
-            left: '0.5em',
-            // backgroundColor: 'white',
-          }}
-        >
-          <MdDelete size="6rem" />
-        </Button> */}
+				<Button
+					active
+					onClick={() => Transforms.removeNodes(editor, { at: path })}
+					style={{
+						display: selected && focused ? "inline" : "none",
+						position: "absolute",
+						top: "0.5em",
+						left: "0.5em",
+						// backgroundColor: 'white',
+					}}
+				>
+					<MdDelete size='6rem' />
+				</Button>
 			</div>
 		</div>
 	);
@@ -323,9 +312,42 @@ const CustomEditor = {
 		const [link] = Editor.nodes(editor, { match: (n) => n.type === "link" });
 		return !!link;
 	},
+	toggleNumberedList(editor) {
+		const isActive = CustomEditor.isNumberedListActive(editor);
+		Transforms.setNodes(
+			editor,
+			{ type: isActive ? null : "numbered-list" },
+			{ match: (n) => Editor.isBlock(editor, n) }
+		);
+	},
+
+	toggleBulletList(editor) {
+		const isActive = CustomEditor.isBulletListActive(editor);
+		Transforms.setNodes(
+			editor,
+			{ type: isActive ? null : "bullet-list" },
+			{ match: (n) => Editor.isBlock(editor, n) }
+		);
+	},
+
+	isNumberedListActive(editor) {
+		const [match] = Editor.nodes(editor, {
+			match: (n) => Element.isElement(n) && n.type === "numbered-list",
+		});
+		return !!match;
+	},
+
+	isBulletListActive(editor) {
+		const [match] = Editor.nodes(editor, {
+			match: (n) => Element.isElement(n) && n.type === "bullet-list",
+		});
+		return !!match;
+	},
 };
 
-export const RichText = () => {
+export const RichText = (props) => {
+	const { initialValue } = props;
+	console.log(props);
 	const editor = useMemo(() => withEmbeds(withReact(createEditor()), []));
 
 	const renderElement = useCallback((props) => {
@@ -340,13 +362,24 @@ export const RichText = () => {
 				return <YouTube {...props} />;
 			case "link":
 				return <Link {...props} />;
+			case "numbered-list":
+				return <ol {...props.attributes}>{props.children}</ol>;
+			case "list-item":
+				return <li {...props.attributes}>{props.children}</li>;
+			case "bullet-list":
+				return <ul {...props.attributes}>{props.children}</ul>;
 			default:
 				return <DefaultElement {...props} />;
 		}
 	}, []);
 
 	const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-
+	useEffect(() => {
+		if (initialValue) {
+			const content = JSON.stringify(initialValue);
+			localStorage.setItem("content", content);
+		}
+	}, [initialValue]);
 	return (
 		<Grid container direction='column'>
 			<Slate
@@ -407,20 +440,21 @@ export const RichText = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							CustomEditor.toggleNumberedList(editor);
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
-						Numbered list
+						Numbered List
 					</Button>
+
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							CustomEditor.toggleCodeBlock(editor);
+							CustomEditor.toggleBulletList(editor);
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
-						Bullet points
+						Bullet Points
 					</Button>
 					<Button
 						onMouseDown={(event) => {
@@ -457,7 +491,10 @@ export const RichText = () => {
 					<Button
 						onMouseDown={(event) => {
 							event.preventDefault();
-							console.log(editor.children);
+							const storedContent = localStorage.getItem("content");
+							console.log("///////////////////", storedContent);
+							alert(storedContent);
+							//TODO save stored content to database
 						}}
 						sx={{ marginLeft: "1rem" }}
 					>
@@ -466,7 +503,7 @@ export const RichText = () => {
 				</Grid>
 
 				<Editable
-					style={{ color: "black" }}
+					style={{ color: "black", padding: "1rem", borderColor: "gray" }}
 					onChange={(value) => {
 						console.log("onChange", value);
 					}}

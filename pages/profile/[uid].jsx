@@ -18,7 +18,17 @@ import useUser from "../../hooks/useUser";
 import EditIcon from "@mui/icons-material/Edit";
 import { TextareaAutosize } from "@mui/base";
 import { RichText } from "../../components";
-
+const initialValue = [
+	{
+		type: "paragraph",
+		children: [{ text: "" }],
+	},
+	// {
+	// 	type: "image",
+	// 	children: [{ text: "" }],
+	// 	url: "https://ladatamix.com/wp-content/uploads/2023/09/Globo-aeroestatico.jpeg",
+	// },
+];
 const Profile = () => {
 	const router = useRouter();
 	const { user, handleEditImage, handleSaveDescription, handleEditWallpaper } =
@@ -244,7 +254,7 @@ const Profile = () => {
 										minRows={20}
 										value={description}
 									/> */}
-									<RichText />
+									<RichText initialValue={initialValue} />
 
 									<Button variant='contained' onClick={handleSave}>
 										Guardar
