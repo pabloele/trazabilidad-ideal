@@ -1,15 +1,15 @@
 import { useState } from "react";
 import {
-  Container,
-  Grid,
-  Paper,
-  Avatar,
-  Typography,
-  Box,
-  IconButton,
-  Button,
-  TextField,
-  useMediaQuery,
+	Container,
+	Grid,
+	Paper,
+	Avatar,
+	Typography,
+	Box,
+	IconButton,
+	Button,
+	TextField,
+	useMediaQuery,
 } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { HomeLayout } from "../../layout";
@@ -17,256 +17,257 @@ import { useRouter } from "next/router";
 import useUser from "../../hooks/useUser";
 import EditIcon from "@mui/icons-material/Edit";
 import { TextareaAutosize } from "@mui/base";
+import { RichText } from "../../components";
 
 const Profile = () => {
-  const router = useRouter();
-  const { user, handleEditImage, handleSaveDescription, handleEditWallpaper } =
-    useUser(router.query.uid);
-  const [isHovered, setIsHovered] = useState(false);
+	const router = useRouter();
+	const { user, handleEditImage, handleSaveDescription, handleEditWallpaper } =
+		useUser(router.query.uid);
+	const [isHovered, setIsHovered] = useState(false);
 
-  const [isHoveredWallpaper, setIsHoveredWallpaper] = useState(false);
+	const [isHoveredWallpaper, setIsHoveredWallpaper] = useState(false);
 
-  const [isEditingDescription, setIsEditingDescription] = useState(false);
+	const [isEditingDescription, setIsEditingDescription] = useState(false);
 
-  const [description, setDescription] = useState(user?.data?.description);
-  const { user: userAuth } = useAuth();
+	const [description, setDescription] = useState(user?.data?.description);
+	const { user: userAuth } = useAuth();
 
-  const handleSaveWallpaper = async () => {
-    await handleEditWallpaper();
-  };
+	const handleSaveWallpaper = async () => {
+		await handleEditWallpaper();
+	};
 
-  const handleSave = async () => {
-    handleSaveDescription(description);
+	const handleSave = async () => {
+		handleSaveDescription(description);
 
-    setIsEditingDescription(false);
-  };
+		setIsEditingDescription(false);
+	};
 
-  if (!user) {
-    return (
-      <>
-        <HomeLayout>
-          <Typography>No se encontro el usuario</Typography>
-        </HomeLayout>
-      </>
-    );
-  }
+	if (!user) {
+		return (
+			<>
+				<HomeLayout>
+					<Typography>No se encontro el usuario</Typography>
+				</HomeLayout>
+			</>
+		);
+	}
 
-  console.log(user);
-  return (
-    <HomeLayout>
-      <Container>
-        <Grid container>
-          {/* Portada */}
-          <Grid item xs={12}>
-            <Paper
-              elevation={3}
-              sx={{
-                // padding: '20px',
-                margin: 0,
-                padding: 0,
-                paddingLeft: 0,
-                marginLeft: 0,
-                bgcolor: "purple",
-                textAlign: "center",
-                position: "relative",
-                backgroundImage: `url(${user?.data?.wallpaperImg})`,
-                // "url('https://www.mdzol.com/u/fotografias/m/2021/4/26/f1456x819-1048511_1218881_2453.jpeg')",
-                // backgroundImage: "url('https://via.placeholder.com/1200x200')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                position: "relative",
-                width: "100%",
-                height: "50vh",
-              }}
-              onMouseEnter={() => setIsHoveredWallpaper(true)}
-              onMouseLeave={() => setIsHoveredWallpaper(false)}
-            >
-              {isHoveredWallpaper && (
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    right: "20px",
-                  }}
-                >
-                  <EditIcon onClick={handleSaveWallpaper} />
-                </IconButton>
-              )}
-              <Grid container direction="column">
-                <Grid
-                  item
-                  xs={6}
-                  display="flex"
-                  justifyItems="flex-start"
-                  alignItems="flex-start"
-                >
-                  <Box bgcolor="primary.main" height="20vh"></Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={6}
-                  display="flex"
-                  justifyItems="flex-start"
-                  alignItems="flex-start"
-                >
-                  <Box height="25vh"></Box>
+	console.log(user);
+	return (
+		<HomeLayout>
+			<Container>
+				<Grid container>
+					{/* Portada */}
+					<Grid item xs={12}>
+						<Paper
+							elevation={3}
+							sx={{
+								// padding: '20px',
+								margin: 0,
+								padding: 0,
+								paddingLeft: 0,
+								marginLeft: 0,
+								bgcolor: "purple",
+								textAlign: "center",
+								position: "relative",
+								backgroundImage: `url(${user?.data?.wallpaperImg})`,
+								// "url('https://www.mdzol.com/u/fotografias/m/2021/4/26/f1456x819-1048511_1218881_2453.jpeg')",
+								// backgroundImage: "url('https://via.placeholder.com/1200x200')",
+								backgroundSize: "cover",
+								backgroundPosition: "center",
+								position: "relative",
+								width: "100%",
+								height: "50vh",
+							}}
+							onMouseEnter={() => setIsHoveredWallpaper(true)}
+							onMouseLeave={() => setIsHoveredWallpaper(false)}
+						>
+							{isHoveredWallpaper && (
+								<IconButton
+									sx={{
+										position: "absolute",
+										right: "20px",
+									}}
+								>
+									<EditIcon onClick={handleSaveWallpaper} />
+								</IconButton>
+							)}
+							<Grid container direction='column'>
+								<Grid
+									item
+									xs={6}
+									display='flex'
+									justifyItems='flex-start'
+									alignItems='flex-start'
+								>
+									<Box bgcolor='primary.main' height='20vh'></Box>
+								</Grid>
+								<Grid
+									item
+									xs={6}
+									display='flex'
+									justifyItems='flex-start'
+									alignItems='flex-start'
+								>
+									<Box height='25vh'></Box>
 
-                  <Box
-                    sx={{
-                      textAlign: "center",
-                      position: "absolute",
-                      bottom: 0,
-                      left: "10%",
-                      marginBottom: "1rem",
-                      backgroundColor: "rgba(255, 255, 255, 0)",
-                      // Agrega sombras a Box
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        position: "relative",
-                      }}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      <Avatar
-                        alt="Foto de perfil"
-                        src={`${
-                          user?.data?.profileImg
-                            ? user.data.profileImg
-                            : "/images/defaultProfile.webp"
-                        }`}
-                        sx={{
-                          width: "150px",
-                          height: "150px",
-                          marginLeft: "25%",
+									<Box
+										sx={{
+											textAlign: "center",
+											position: "absolute",
+											bottom: 0,
+											left: "10%",
+											marginBottom: "1rem",
+											backgroundColor: "rgba(255, 255, 255, 0)",
+											// Agrega sombras a Box
+										}}
+									>
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												gap: 2,
+												position: "relative",
+											}}
+											onMouseEnter={() => setIsHovered(true)}
+											onMouseLeave={() => setIsHovered(false)}
+										>
+											<Avatar
+												alt='Foto de perfil'
+												src={`${
+													user?.data?.profileImg
+														? user.data.profileImg
+														: "/images/defaultProfile.webp"
+												}`}
+												sx={{
+													width: "150px",
+													height: "150px",
+													marginLeft: "25%",
 
-                          boxShadow: "0px 0px 10px rgba(0, 1, 0, 1)",
-                        }}
-                      />
+													boxShadow: "0px 0px 10px rgba(0, 1, 0, 1)",
+												}}
+											/>
 
-                      {isHovered && user?.uid === userAuth?.uid && (
-                        <EditIcon
-                          onClick={handleEditImage}
-                          sx={{
-                            position: "absolute",
-                            top: "45%",
-                            left: "45%",
-                            cursor: "pointer",
-                          }}
-                        />
-                      )}
-                    </Box>
+											{isHovered && user?.uid === userAuth?.uid && (
+												<EditIcon
+													onClick={handleEditImage}
+													sx={{
+														position: "absolute",
+														top: "45%",
+														left: "45%",
+														cursor: "pointer",
+													}}
+												/>
+											)}
+										</Box>
 
-                    <Typography
-                      variant="h3"
-                      sx={{
-                        marginTop: "10px",
-                        color: "whitesmoke",
-                        fontWeight: "bold",
-                        textShadow: "2px 2px 4px rgba(1, 1, 1, 1)",
-                      }}
-                    >
-                      {user?.data?.name}
-                    </Typography>
-                  </Box>
-                  {/* </Paper> */}
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
+										<Typography
+											variant='h3'
+											sx={{
+												marginTop: "10px",
+												color: "whitesmoke",
+												fontWeight: "bold",
+												textShadow: "2px 2px 4px rgba(1, 1, 1, 1)",
+											}}
+										>
+											{user?.data?.name}
+										</Typography>
+									</Box>
+									{/* </Paper> */}
+								</Grid>
+							</Grid>
+						</Paper>
+					</Grid>
 
-          {/* Descripción */}
-          <Grid item xs={12} marginTop={2}>
-            <Paper
-              elevation={3}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                margin: 0,
-                padding: 0,
-                paddingLeft: 0,
-                marginLeft: 0,
-                bgcolor: "whitesmoke",
-                textAlign: "center",
+					{/* Descripción */}
+					<Grid item xs={12} marginTop={2}>
+						<Paper
+							elevation={3}
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								margin: 0,
+								padding: 0,
+								paddingLeft: 0,
+								marginLeft: 0,
+								bgcolor: "whitesmoke",
+								textAlign: "center",
 
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                position: "relative",
-                width: "100%",
-                height: "auto",
-                minHeight: "4rem",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h5" color="textSecondary">
-                  Descripción general del perfil.
-                </Typography>
+								backgroundSize: "cover",
+								backgroundPosition: "center",
+								position: "relative",
+								width: "100%",
+								height: "auto",
+								minHeight: "4rem",
+							}}
+						>
+							<Box
+								sx={{
+									display: "flex",
+									gap: 2,
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<Typography variant='h5' color='textSecondary'>
+									Descripción general del perfil.
+								</Typography>
+							</Box>
+						</Paper>
+					</Grid>
+					{/* Módulos con datos */}
+					<Grid item xs={12} marginTop={2}>
+						<Paper
+							elevation={3}
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								margin: 0,
+								padding: 0,
+								paddingLeft: 0,
+								marginLeft: 0,
+								bgcolor: "whitesmoke",
+								backgroundSize: "cover",
+								backgroundPosition: "center",
+								position: "relative",
+								width: "100%",
+								height: "auto",
+								minHeight: "10rem",
+							}}
+						>
+							{isEditingDescription ? (
+								<>
+									{/* <TextareaAutosize
+										onChange={(e) => setDescription(e.target.value)}
+										minRows={20}
+										value={description}
+									/> */}
+									<RichText />
 
-                <IconButton onClick={() => setIsEditingDescription(true)}>
-                  <EditIcon />
-                </IconButton>
-              </Box>
-            </Paper>
-          </Grid>
-          {/* Módulos con datos */}
-          <Grid item xs={12} marginTop={2}>
-            <Paper
-              elevation={3}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                margin: 0,
-                padding: 0,
-                paddingLeft: 0,
-                marginLeft: 0,
-                bgcolor: "whitesmoke",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                position: "relative",
-                width: "100%",
-                height: "auto",
-                minHeight: "10rem",
-              }}
-            >
-              {isEditingDescription ? (
-                <>
-                  <TextareaAutosize
-                    onChange={(e) => setDescription(e.target.value)}
-                    minRows={20}
-                    value={description}
-                  />
-
-                  <Button variant="contained" onClick={handleSave}>
-                    Guardar
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Typography variant="body2" color="textSecondary">
-                    {user?.data?.description
-                      ? user.data.description
-                      : "Sin descripcion"}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-        </Grid>
-      </Container>
-    </HomeLayout>
-  );
+									<Button variant='contained' onClick={handleSave}>
+										Guardar
+									</Button>
+								</>
+							) : (
+								<>
+									<Typography variant='body2' color='textSecondary'>
+										{user?.data?.description
+											? user.data.description
+											: "Sin descripcion"}
+									</Typography>
+									<IconButton onClick={() => setIsEditingDescription(true)}>
+										<EditIcon />
+									</IconButton>
+								</>
+							)}
+						</Paper>
+					</Grid>
+				</Grid>
+			</Container>
+		</HomeLayout>
+	);
 };
 
 export default Profile;
