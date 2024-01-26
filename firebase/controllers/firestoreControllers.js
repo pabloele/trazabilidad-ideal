@@ -111,6 +111,7 @@ export const addUserProduct = async (uid, product) => {
     console.log(error);
   }
 };
+
 export const addMilestone = async (uid, path, milestone) => {
   const milestoneId = uuidv4();
   const id = await getDocId(uid);
@@ -540,6 +541,26 @@ export const updateWallpaperImg = async (id, url) => {
     });
   } catch (error) {
     console.error("Error updating wallpaper image:", error);
+  }
+};
+
+export const productUpdate = async (id, updatedProduct) => {
+  try {
+    const productRef = doc(db, "products", id);
+
+    // Obtén el documento actual
+    const productDoc = await getDoc(productRef);
+
+console.log("//////////////////////|||||||||||||   " , productDoc.data());
+
+  
+ const response = await updateDoc(productRef, {
+      ...updatedProduct,
+    });
+    console.log(response)
+
+  } catch (error) {
+    console.error("Error updating product:", error);
   }
 };
 

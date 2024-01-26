@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 import { useProductStore } from "../store";
+import { productUpdate } from "../firebase/controllers/firestoreControllers"
 
 const useProduct = (productId) => {
   const { setProductData, product } = useProductStore();
@@ -44,11 +45,19 @@ const useProduct = (productId) => {
     }
   };
 
+  const updateProductById  = async (updatedProduct) => {
+    try {
+      productUpdate(productId, updatedProduct);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getProduct();
   }, [productId]);
 
-  return { product, uploadProduct, uploadQr, setProductData };
+  return { product, uploadProduct, uploadQr, setProductData, updateProductById};
 };
 
 export default useProduct;

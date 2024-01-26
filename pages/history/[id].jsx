@@ -24,9 +24,9 @@ import Link from 'next/link';
 
 const ViewProduct = () => {
   const router = useRouter();
-  const { product } = useProduct(router.query.id);
+  const { product,  updateProductById} = useProduct(router.query.id);
 
-  const [productData, setProductData] = useState({ data: [], success: false });
+  const [productData, setProductDataLocal] = useState({ data: [], success: false });
   const [loading, setLoading] = useState(false);
   const isSmallScreen = useMediaQuery('(min-width: 720px)');
   const isMediumScreen = useMediaQuery('(min-width: 10240px)');
@@ -53,6 +53,7 @@ const ViewProduct = () => {
     }
   };
 
+
   useEffect(() => {
     getBlockChainData();
   }, []);
@@ -72,8 +73,7 @@ const ViewProduct = () => {
         console.error('Error al descargar el archivo', error);
       });
   };
-  const [isAdjustingImage, setIsAdjustingImage] = useState(false)
-  const [zoomLevel, setZoomLevel] = useState(1);
+
 
   const handleZoomIn = () => {
     setZoomLevel(zoomLevel + 0.1);
@@ -104,21 +104,36 @@ const ViewProduct = () => {
         break;
     }
   };
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const handleSaveAdjustedImage =()=>{
-    //TODO save image position
-    setIsAdjustingImage(false)
 
-  }
-
-  const [rotation, setRotation] = useState(0);
+  const [isAdjustingImage, setIsAdjustingImage] = useState(false)
+  const [zoomLevel, setZoomLevel] = useState(product.productImagePlacementData?.zoomLevel || 1);
+  const [position, setPosition] = useState({ x:product.productImagePlacementData?.x || 0, y:product.productImagePlacementData?.y || 0 });
+  const [rotation, setRotation] = useState(product.productImagePlacementData?.rotation || 0);
   const handleRotateClockwise = () => {
     setRotation(rotation + 15);
   };
-
+  
   const handleRotateCounterclockwise = () => {
     setRotation(rotation - 15);
   };
+
+  const handleSaveAdjustedImage = ()=>{
+    console.log(product);
+  const {x,y} = position
+
+  const updatedProduct ={...product, productImagePlacementData:{x, y, zoomLevel, rotation}}
+
+  updateProductById(updatedProduct)
+  setIsAdjustingImage(false)
+
+  }
+
+  // useEffect(() => {
+  //   console.log("////////////////////////////////////////*****",product.productImagePlacementData?.x, product.productImagePlacementData?.y, product.productImagePlacementData?.zoomLevel, product.productImagePlacementData?.rotation);
+  //   // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxx", product.productImagePlacementData.x,"yyyyyyyyyyyyyyyyyyyy",productImagePlacementData.y);
+  //   // setPosition({x:product.productImagePlacementData.x,  y:product.productImagePlacementData.y})
+  // }, []);
+
   return (
     <Grid container justifyContent="center" direction={'column'} bgcolor="secondary.main">
       <Grid item>
@@ -143,7 +158,6 @@ const ViewProduct = () => {
               sx={{
                 display: 'flex',
                 border:"primary.main",
-                // borderStyle:"outset",
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: 'InfoBackground',
@@ -157,7 +171,6 @@ const ViewProduct = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 bgcolor:"#d8cdd8",
-                // padding: 4,
                 boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
               }}
             >
@@ -332,7 +345,7 @@ const ViewProduct = () => {
                                   textJustify: 'auto',
                                 }}
                               >
-                                 Bodegas Bianchi
+                                 {product?.company}
                               </Typography>
                             </Grid>
                             <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>

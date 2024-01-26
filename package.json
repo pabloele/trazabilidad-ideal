@@ -28,6 +28,7 @@
     "install": "^0.13.0",
     "ipfs-http-client": "^60.0.1",
     "ipfs-mini": "^1.1.5",
+    "is-url": "^1.2.4",
     "next": "^13",
     "npm": "^10.2.3",
     "qr-code-styling": "^1.6.0-rc.1",
@@ -35,7 +36,10 @@
     "react-dom": "^18.2",
     "react-icons": "^4.11.0",
     "react-qr-code": "^2.0.12",
+    "react-youtube": "^10.1.0",
     "sass": "^1.69.5",
+    "slate": "^0.101.5",
+    "slate-react": "^0.101.5",
     "styled-components": "^5.3.1",
     "sweetalert2": "^11.10.0",
     "zustand": "^4.4.6"
