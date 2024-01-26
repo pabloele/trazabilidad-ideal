@@ -551,14 +551,12 @@ export const productUpdate = async (id, updatedProduct) => {
     // Obtén el documento actual
     const productDoc = await getDoc(productRef);
 
-console.log("//////////////////////|||||||||||||   " , productDoc.data());
 
-  
- const response = await updateDoc(productRef, {
-      ...updatedProduct,
+    console.log(updatedProduct.productImagePlacementData);
+    const response = await updateDoc(productRef, {
+      productImagePlacementData: updatedProduct.productImagePlacementData,
     });
-    console.log(response)
-
+    console.log(response);
   } catch (error) {
     console.error("Error updating product:", error);
   }
