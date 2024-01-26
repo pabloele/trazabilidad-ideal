@@ -8,26 +8,26 @@ import {
   getDoc,
   query,
   where,
-} from 'firebase/firestore/lite';
-import { db } from '../config';
-import { v4 as uuidv4 } from 'uuid';
+} from "firebase/firestore/lite";
+import { db } from "../config";
+import { v4 as uuidv4 } from "uuid";
 
-export const usersCollectionRef = collection(db, 'users');
+export const usersCollectionRef = collection(db, "users");
 
 export const deleteProduct = async (uid) => {
   try {
-    const productDoc = doc(db, 'products', uid);
+    const productDoc = doc(db, "products", uid);
 
     const docSnapshot = await getDoc(productDoc);
 
     if (docSnapshot.exists()) {
       await deleteDoc(productDoc);
-      console.log('Documento eliminado correctamente.');
+      console.log("Documento eliminado correctamente.");
     } else {
-      console.log('El documento no existe en la base de datos.');
+      console.log("El documento no existe en la base de datos.");
     }
   } catch (error) {
-    console.error('Error al intentar eliminar el documento:', error.message);
+    console.error("Error al intentar eliminar el documento:", error.message);
   }
 };
 
@@ -44,7 +44,7 @@ export const getUsers = async () => {
 
 export const getUserByUid = async (uid) => {
   try {
-    const q = query(collection(db, 'users'), where('uid', '==', uid));
+    const q = query(collection(db, "users"), where("uid", "==", uid));
     const userSnapshot = await getDocs(q);
 
     if (!userSnapshot.empty) {
@@ -55,11 +55,11 @@ export const getUserByUid = async (uid) => {
       };
       return userData;
     } else {
-      console.log('No se encontró ningún usuario con el UID proporcionado.');
+      console.log("No se encontró ningún usuario con el UID proporcionado.");
       return null;
     }
   } catch (error) {
-    console.error('Error al obtener el usuario:', error);
+    console.error("Error al obtener el usuario:", error);
     throw error;
   }
 };
@@ -68,16 +68,16 @@ export const createUser = async (payload) => {
   const { uid } = payload;
 
   // Verificar si el usuario ya existe en la colección de usuarios
-  const usersQuery = query(usersCollectionRef, where('uid', '==', uid));
+  const usersQuery = query(usersCollectionRef, where("uid", "==", uid));
   const userDocs = await getDocs(usersQuery);
 
   if (userDocs.empty) {
     // El usuario no existe, entonces podemos crearlo
     await addDoc(usersCollectionRef, { ...payload });
-    console.log('Usuario creado exitosamente.');
+    console.log("Usuario creado exitosamente.");
   } else {
     // El usuario ya existe, muestra un mensaje de error o realiza alguna otra acción
-    console.log('El usuario ya existe en la base de datos.');
+    console.log("El usuario ya existe en la base de datos.");
   }
 };
 
@@ -98,13 +98,13 @@ export const getDocId = async (uid) => {
 
 export const addUserProduct = async (uid, product) => {
   try {
-    const productsCollection = collection(db, 'products');
+    const productsCollection = collection(db, "products");
     console.log(product);
     const docRef = await addDoc(productsCollection, {
       ...product,
       ownerUid: uid,
     });
-    console.log('Documento agregado con éxito', docRef.id);
+    console.log("Documento agregado con éxito", docRef.id);
 
     return docRef.id;
   } catch (error) {
@@ -115,7 +115,7 @@ export const addUserProduct = async (uid, product) => {
 export const addMilestone = async (uid, path, milestone) => {
   const milestoneId = uuidv4();
   const id = await getDocId(uid);
-  const userDocumentRef = await doc(db, 'users', id);
+  const userDocumentRef = await doc(db, "users", id);
   const documentSnapshot = await getDoc(userDocumentRef);
   const userData = await documentSnapshot.data();
 
@@ -156,13 +156,13 @@ export const addMilestone = async (uid, path, milestone) => {
 
 export const deleteUserDoc = async (uid) => {
   const id = await getDocId(uid);
-  const userDoc = doc(db, 'users', id);
+  const userDoc = doc(db, "users", id);
   await deleteDoc(userDoc);
 };
 
 export const getProducts = async () => {
   try {
-    const productsCollection = collection(db, 'products');
+    const productsCollection = collection(db, "products");
 
     const querySnapshot = await getDocs(productsCollection);
 
@@ -174,7 +174,7 @@ export const getProducts = async () => {
     console.log(productsArray);
     return productsArray;
   } catch (error) {
-    console.error('Error obteniendo los productos:', error);
+    console.error("Error obteniendo los productos:", error);
     return [];
   }
 };
@@ -190,277 +190,277 @@ export const getUserProducts = async (uid) => {
     console.log(userProducts);
     return userProducts;
   } catch (error) {
-    console.error('Error obteniendo los productos del usuario:', error);
+    console.error("Error obteniendo los productos del usuario:", error);
     return [];
   }
 };
 
 export const addProtocol = async () => {
-  const protocolRef = collection(db, 'protocols');
+  const protocolRef = collection(db, "protocols");
 
   await addDoc(protocolRef, {
-    name: 'Protocolo Ambiental',
+    name: "Protocolo Ambiental",
     trazability: [
       {
-        path: 'location',
+        path: "location",
         line: [
           {
-            name: 'Ubicación real',
+            name: "Ubicación real",
             milestones: [],
           },
           {
-            path: 'influenceAreas',
-            name: 'Áreas de influencia',
+            path: "influenceAreas",
+            name: "Áreas de influencia",
             milestones: [],
           },
           {
-            path: 'compensationAreas',
-            name: 'Áreas para compensación',
+            path: "compensationAreas",
+            name: "Áreas para compensación",
             milestones: [],
           },
           {
-            path: 'controlAreas',
-            name: 'Áreas de control',
+            path: "controlAreas",
+            name: "Áreas de control",
             milestones: [],
           },
         ],
-        name: 'Localización Geográfica',
+        name: "Localización Geográfica",
       },
       {
-        path: 'habilitations',
+        path: "habilitations",
         line: [
           {
-            name: 'Declaración de Impacto Ambiental',
+            name: "Declaración de Impacto Ambiental",
             milestones: [],
           },
           {
-            name: 'Estudios específicos de impacto o de sensibilidad ambiental',
+            name: "Estudios específicos de impacto o de sensibilidad ambiental",
             milestones: [],
           },
           {
-            name: 'Habilitaciones locales o regionales',
+            name: "Habilitaciones locales o regionales",
             milestones: [],
           },
         ],
-        name: 'Requerimientos y Habilitaciones',
+        name: "Requerimientos y Habilitaciones",
       },
       {
-        path: 'requirements',
+        path: "requirements",
         line: [
           {
-            name: 'Normas y otros requisitos',
+            name: "Normas y otros requisitos",
             milestones: [],
           },
           {
-            path: 'audit',
-            name: 'Auditorías externas',
+            path: "audit",
+            name: "Auditorías externas",
             milestones: [],
           },
         ],
-        name: 'Normativa Ambiental',
+        name: "Normativa Ambiental",
       },
       {
-        path: 'rawMaterials',
+        path: "rawMaterials",
         line: [
           {
-            name: 'Requisitos ambientales de compra o contratación',
+            name: "Requisitos ambientales de compra o contratación",
             milestones: [],
           },
           {
-            path: 'environmentAspects',
-            name: 'Aspectos ambientales y sus impactos asociados',
+            path: "environmentAspects",
+            name: "Aspectos ambientales y sus impactos asociados",
             milestones: [],
           },
           {
-            path: 'goodPractices',
-            name: 'Buenas Prácticas Ambientales',
+            path: "goodPractices",
+            name: "Buenas Prácticas Ambientales",
             milestones: [],
           },
           {
-            path: 'abnormalConditions',
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
+            path: "abnormalConditions",
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
             milestones: [],
           },
           {
-            path: 'preventionPlans',
-            name: 'Planes de prevención, contingencia y/o mitigación',
+            path: "preventionPlans",
+            name: "Planes de prevención, contingencia y/o mitigación",
             milestones: [],
           },
         ],
-        name: 'Recepción y Almacenamiento de Materias Primas e Insumos - Subcontratación de Servicios',
+        name: "Recepción y Almacenamiento de Materias Primas e Insumos - Subcontratación de Servicios",
       },
       {
-        path: 'storage',
+        path: "storage",
         line: [
           {
-            name: 'Aspectos ambientales y sus impactos asociados',
+            name: "Aspectos ambientales y sus impactos asociados",
             milestones: [],
           },
           {
-            path: 'goodPracticesEnv',
-            name: 'Buenas Prácticas Ambientales',
+            path: "goodPracticesEnv",
+            name: "Buenas Prácticas Ambientales",
             milestones: [],
           },
           {
-            path: 'abnormalOrEmergency',
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
+            path: "abnormalOrEmergency",
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
             milestones: [],
           },
           {
-            path: 'preventionContingencyMitigate',
-            name: 'Planes de prevención, contingencia y/o mitigación',
+            path: "preventionContingencyMitigate",
+            name: "Planes de prevención, contingencia y/o mitigación",
             milestones: [],
           },
         ],
-        name: 'Almacenamiento de Subproductos o Productos Finales',
+        name: "Almacenamiento de Subproductos o Productos Finales",
       },
       {
-        path: 'distribution',
+        path: "distribution",
         line: [
           {
-            name: 'Requisitos ambientales de venta o transporte',
+            name: "Requisitos ambientales de venta o transporte",
             milestones: [],
           },
           {
-            path: 'environmentAspectsAndImpact',
-            name: 'Aspectos ambientales y sus impactos asociados',
+            path: "environmentAspectsAndImpact",
+            name: "Aspectos ambientales y sus impactos asociados",
             milestones: [],
           },
           {
-            path: 'goodPracticesDist',
-            name: 'Buenas Prácticas Ambientales',
+            path: "goodPracticesDist",
+            name: "Buenas Prácticas Ambientales",
             milestones: [],
           },
           {
-            path: 'abnormalOrEmergencyDist',
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
+            path: "abnormalOrEmergencyDist",
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
             milestones: [],
           },
           {
-            path: 'preventionPlanDist',
-            name: 'Planes de prevención, contingencia y/o mitigación',
+            path: "preventionPlanDist",
+            name: "Planes de prevención, contingencia y/o mitigación",
             milestones: [],
           },
         ],
-        name: 'Despacho y Distribución de Subproductos o Productos Finales',
+        name: "Despacho y Distribución de Subproductos o Productos Finales",
       },
       {
-        path: 'commerce',
+        path: "commerce",
         line: [
           {
-            name: 'Requisitos ambientales de comercialización',
+            name: "Requisitos ambientales de comercialización",
             milestones: [],
           },
           {
-            name: 'Aspectos ambientales y sus impactos asociados',
+            name: "Aspectos ambientales y sus impactos asociados",
             milestones: [],
           },
           {
-            name: 'Buenas Prácticas Ambientales',
+            name: "Buenas Prácticas Ambientales",
             milestones: [],
           },
           {
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
             milestones: [],
           },
           {
-            name: 'Planes de prevención, contingencia y/o mitigación',
+            name: "Planes de prevención, contingencia y/o mitigación",
             milestones: [],
           },
         ],
-        name: 'Comercialización de   Productos y/o Servicios',
+        name: "Comercialización de   Productos y/o Servicios",
       },
       {
-        path: 'support',
+        path: "support",
         line: [
           {
-            name: 'Aspectos ambientales y sus impactos asociados',
+            name: "Aspectos ambientales y sus impactos asociados",
             milestones: [],
           },
           {
-            name: 'Criterios de operación de los procesos',
+            name: "Criterios de operación de los procesos",
             milestones: [],
           },
           {
-            name: 'Procedimientos de control de los procesos',
+            name: "Procedimientos de control de los procesos",
             milestones: [],
           },
           {
-            name: 'Buenas Prácticas Ambientales',
+            name: "Buenas Prácticas Ambientales",
             milestones: [],
           },
           {
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
             milestones: [],
           },
           {
-            name: 'Planes de prevención, contingencia y/o mitigación',
+            name: "Planes de prevención, contingencia y/o mitigación",
             milestones: [],
           },
         ],
-        name: 'Sistemas de Apoyo y Servicios Auxiliares',
+        name: "Sistemas de Apoyo y Servicios Auxiliares",
       },
       {
-        path: 'treatment',
+        path: "treatment",
         line: [
           {
-            name: 'Aspectos ambientales y sus impactos asociados',
+            name: "Aspectos ambientales y sus impactos asociados",
             milestones: [],
           },
           {
-            name: 'Requisitos ambientales de los procesos e instalaciones',
+            name: "Requisitos ambientales de los procesos e instalaciones",
             milestones: [],
           },
           {
-            name: 'Buenas Prácticas Ambientales',
+            name: "Buenas Prácticas Ambientales",
             milestones: [],
           },
           {
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
+            name: "Condiciones anormales o situaciones de emergencia previsibles",
             milestones: [],
           },
           {
-            name: 'Planes de prevención, contingencia y/o mitigación',
+            name: "Planes de prevención, contingencia y/o mitigación",
             milestones: [],
           },
         ],
-        name: 'Tratamiento, Transporte y/o Disposición Final de Residuos',
+        name: "Tratamiento, Transporte y/o Disposición Final de Residuos",
       },
       {
-        path: 'performance',
+        path: "performance",
         line: [
           {
-            name: 'Estrategias y resultados',
+            name: "Estrategias y resultados",
             milestones: [],
           },
           {
-            name: 'Auditorías ambientales internas',
+            name: "Auditorías ambientales internas",
             milestones: [],
           },
           {
-            name: 'Personal afectado por la gestión ambiental',
+            name: "Personal afectado por la gestión ambiental",
             milestones: [],
           },
         ],
-        name: 'Evaluación de Desempeño',
+        name: "Evaluación de Desempeño",
       },
       {
-        path: 'kaizen',
+        path: "kaizen",
         line: [
           {
-            name: 'Plan de mejora continua',
+            name: "Plan de mejora continua",
             milestones: [],
           },
           {
-            name: 'Concientización y/o capacitación del personal',
+            name: "Concientización y/o capacitación del personal",
             milestones: [],
           },
           {
-            name: 'Programas específicos de relacionamiento comunitario',
+            name: "Programas específicos de relacionamiento comunitario",
             milestones: [],
           },
         ],
-        name: 'Mejora Continua',
+        name: "Mejora Continua",
       },
     ],
   });
@@ -468,7 +468,7 @@ export const addProtocol = async () => {
 
 export const updateProduct = async (id, status, txHash) => {
   try {
-    const productRef = doc(db, 'products', id);
+    const productRef = doc(db, "products", id);
 
     const response = await updateDoc(productRef, {
       status: status,
@@ -481,7 +481,7 @@ export const updateProduct = async (id, status, txHash) => {
 
 export const updateDescription = async (id, description) => {
   try {
-    const userRef = doc(db, 'users', id);
+    const userRef = doc(db, "users", id);
 
     const userDoc = await getDoc(userRef);
 
@@ -502,7 +502,7 @@ export const updateDescription = async (id, description) => {
 
 export const updateProfileImage = async (id, url) => {
   try {
-    const userRef = doc(db, 'users', id);
+    const userRef = doc(db, "users", id);
 
     // Obtén el documento actual
     const userDoc = await getDoc(userRef);
@@ -518,13 +518,13 @@ export const updateProfileImage = async (id, url) => {
       data: updatedData,
     });
   } catch (error) {
-    console.error('Error updating profile image:', error);
+    console.error("Error updating profile image:", error);
   }
 };
 
 export const updateWallpaperImg = async (id, url) => {
   try {
-    const userRef = doc(db, 'users', id);
+    const userRef = doc(db, "users", id);
 
     // Obtén el documento actual
     const userDoc = await getDoc(userRef);
@@ -540,35 +540,31 @@ export const updateWallpaperImg = async (id, url) => {
       data: updatedData,
     });
   } catch (error) {
-    console.error('Error updating wallpaper image:', error);
+    console.error("Error updating wallpaper image:", error);
   }
 };
 
 export const productUpdate = async (id, updatedProduct) => {
   try {
-    const productRef = doc(db, 'products', id);
+    const productRef = doc(db, "products", id);
 
     // Obtén el documento actual
     const productDoc = await getDoc(productRef);
 
-    console.log('//////////////////////|||||||||||||   ', productDoc.data());
 
-    const updatedData = {
-      ...productDoc.data(), // Mantén las demás propiedades dentro de 'data'
-      productImagePlacementData: updatedProduct.productImagePlacementData,
-    };
+    console.log(updatedProduct.productImagePlacementData);
     const response = await updateDoc(productRef, {
-      ...updatedData,
+      productImagePlacementData: updatedProduct.productImagePlacementData,
     });
     console.log(response);
   } catch (error) {
-    console.error('Error updating product:', error);
+    console.error("Error updating product:", error);
   }
 };
 
 export const switchNetwork = async (userProvider) => {
   const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
-  await userProvider.send('eth_requestAccounts', []);
+  await userProvider.send("eth_requestAccounts", []);
 
   const userNetwork = await userProvider.getNetwork();
 
@@ -580,10 +576,10 @@ export const switchNetwork = async (userProvider) => {
 
   if (userNetwork.chainId !== Number(chainId)) {
     // El usuario no está en la red correcta, esperar cambio de red
-    await userProvider.send('wallet_addEthereumChain', [networkToAdd]);
+    await userProvider.send("wallet_addEthereumChain", [networkToAdd]);
   } else {
     // El proveedor está listo, cambiar de red si es necesario
-    await userProvider.send('wallet_switchEthereumChain', [
+    await userProvider.send("wallet_switchEthereumChain", [
       { chainId: process.env.NEXT_PUBLIC_NETWORK_TARGET_ID },
     ]);
   }
