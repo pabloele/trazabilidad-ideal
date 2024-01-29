@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   getUserByUid,
   updateDescription,
+  updateHistory,
   updateProfileImage,
   updateWallpaperImg,
-} from "../firebase/controllers/firestoreControllers";
-import { create } from "ipfs-http-client";
+} from '../firebase/controllers/firestoreControllers';
+import { create } from 'ipfs-http-client';
 
 const useUser = (id) => {
   const [user, setUser] = useState();
 
   const fetchUser = async () => {
     try {
-      console.log(id);
       const response = await getUserByUid(id);
       console.log(response);
       setUser(response);
@@ -26,18 +26,18 @@ const useUser = (id) => {
   }, []);
 
   const auth =
-    "Basic " +
+    'Basic ' +
     Buffer.from(
       process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ":" +
+        ':' +
         process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString("base64");
+    ).toString('base64');
 
   const ipfs = create({
-    host: "ipfs.infura.io",
+    host: 'ipfs.infura.io',
     port: 5001,
-    protocol: "https",
-    apiPath: "/api/v0",
+    protocol: 'https',
+    apiPath: '/api/v0',
     headers: {
       authorization: auth,
     },
@@ -45,9 +45,9 @@ const useUser = (id) => {
 
   const handleEditImage = async () => {
     try {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
 
       input.onchange = async (e) => {
         const file = e.target.files[0];
@@ -73,15 +73,15 @@ const useUser = (id) => {
 
       input.click();
     } catch (error) {
-      console.error("Error al subir la imagen:", error);
+      console.error('Error al subir la imagen:', error);
     }
   };
 
   const handleEditWallpaper = async () => {
     try {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
 
       input.onchange = async (e) => {
         const file = e.target.files[0];
@@ -107,13 +107,14 @@ const useUser = (id) => {
 
       input.click();
     } catch (error) {
-      console.error("Error al subir la imagen:", error);
+      console.error('Error al subir la imagen:', error);
     }
   };
 
   const handleSaveDescription = async (description) => {
     try {
       console.log(user.id);
+      console.log(description);
       await updateDescription(user.id, description);
     } catch (error) {
       console.log(error);
@@ -126,12 +127,29 @@ const useUser = (id) => {
       },
     }));
   };
+  const handleSaveHistory = async (history) => {
+    try {
+      console.log(user.id);
+      console.log(history);
+      await updateHistory(user.id, history);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setUser((prevUser) => ({
+      data: {
+        ...prevUser.data,
+        history: history,
+      },
+    }));
+  };
 
   return {
     user,
     setUser,
     handleEditImage,
     handleSaveDescription,
+    handleSaveHistory,
     handleEditWallpaper,
   };
 };

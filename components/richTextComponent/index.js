@@ -1,1 +1,2 @@
-export * from "./richTextComponent";
+export * from './richTextComponent';
+export * from './toolbarOptions';
