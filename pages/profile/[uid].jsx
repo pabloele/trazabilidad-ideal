@@ -50,18 +50,6 @@ const Profile = () => {
     await handleEditWallpaper();
   };
 
-  const handleSave = async () => {
-    handleSaveDescription(description);
-
-    setIsEditingDescription(false);
-  };
-
-  // const saveHistory = async () => {
-  //   console.log(history);
-  //   handleSaveHistory(history);
-
-  //   setIsEditingHistory(false);
-  // };
   const saveHistory = async () => {
     const sanitizedContent = history.replace(/<[^>]*>/g, '').trim();
 
@@ -74,6 +62,7 @@ const Profile = () => {
 
     setIsEditingHistory(false);
   };
+
   const handleEditDescription = () => {
     setIsEditingDescription(true);
   };
@@ -85,7 +74,7 @@ const Profile = () => {
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value.slice(0, 140));
   };
-  const handleDescriptionSave = () => {
+  const saveDescription = () => {
     handleSaveDescription(description);
     setIsEditingDescription(false);
   };
@@ -98,7 +87,7 @@ const Profile = () => {
       </>
     );
   }
-  console.log(user.data.history);
+
   return (
     <HomeLayout>
       <Container>
@@ -264,7 +253,7 @@ const Profile = () => {
                     {description?.length}/140
                   </Typography>
                   <Box display="flex" flexDirection="row">
-                    <IconButton onClick={handleDescriptionSave}>
+                    <IconButton onClick={saveDescription}>
                       <MdOutlineSave />
                     </IconButton>
                     <IconButton onClick={handleCancelEditDescription}>
