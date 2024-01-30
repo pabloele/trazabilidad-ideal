@@ -41,6 +41,7 @@ const Profile = () => {
 
   const [description, setDescription] = useState(user?.data?.description);
   const [history, setHistory] = useState(user?.data?.history);
+
   const handleToggleEditHistory = () => {
     setHistory(user?.data?.history);
     setIsEditingHistory(true);
@@ -78,6 +79,7 @@ const Profile = () => {
     handleSaveDescription(description);
     setIsEditingDescription(false);
   };
+
   if (!user) {
     return (
       <>
@@ -275,7 +277,7 @@ const Profile = () => {
                   <Typography variant="h5" color="textSecondary">
                     {user?.data?.description
                       ? user.data.description
-                      : 'Sin descripcion'}
+                      : 'Sin descripción'}
                   </Typography>
                   {descriptionIsHovered && (
                     <IconButton onClick={handleEditDescription}>

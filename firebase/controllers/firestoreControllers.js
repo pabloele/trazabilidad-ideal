@@ -195,275 +195,10 @@ export const getUserProducts = async (uid) => {
   }
 };
 
-export const addProtocol = async () => {
+export const addProtocol = async (protocol) => {
   const protocolRef = collection(db, 'protocols');
 
-  await addDoc(protocolRef, {
-    name: 'Protocolo Ambiental',
-    trazability: [
-      {
-        path: 'location',
-        line: [
-          {
-            name: 'Ubicación real',
-            milestones: [],
-          },
-          {
-            path: 'influenceAreas',
-            name: 'Áreas de influencia',
-            milestones: [],
-          },
-          {
-            path: 'compensationAreas',
-            name: 'Áreas para compensación',
-            milestones: [],
-          },
-          {
-            path: 'controlAreas',
-            name: 'Áreas de control',
-            milestones: [],
-          },
-        ],
-        name: 'Localización Geográfica',
-      },
-      {
-        path: 'habilitations',
-        line: [
-          {
-            name: 'Declaración de Impacto Ambiental',
-            milestones: [],
-          },
-          {
-            name: 'Estudios específicos de impacto o de sensibilidad ambiental',
-            milestones: [],
-          },
-          {
-            name: 'Habilitaciones locales o regionales',
-            milestones: [],
-          },
-        ],
-        name: 'Requerimientos y Habilitaciones',
-      },
-      {
-        path: 'requirements',
-        line: [
-          {
-            name: 'Normas y otros requisitos',
-            milestones: [],
-          },
-          {
-            path: 'audit',
-            name: 'Auditorías externas',
-            milestones: [],
-          },
-        ],
-        name: 'Normativa Ambiental',
-      },
-      {
-        path: 'rawMaterials',
-        line: [
-          {
-            name: 'Requisitos ambientales de compra o contratación',
-            milestones: [],
-          },
-          {
-            path: 'environmentAspects',
-            name: 'Aspectos ambientales y sus impactos asociados',
-            milestones: [],
-          },
-          {
-            path: 'goodPractices',
-            name: 'Buenas Prácticas Ambientales',
-            milestones: [],
-          },
-          {
-            path: 'abnormalConditions',
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
-            milestones: [],
-          },
-          {
-            path: 'preventionPlans',
-            name: 'Planes de prevención, contingencia y/o mitigación',
-            milestones: [],
-          },
-        ],
-        name: 'Recepción y Almacenamiento de Materias Primas e Insumos - Subcontratación de Servicios',
-      },
-      {
-        path: 'storage',
-        line: [
-          {
-            name: 'Aspectos ambientales y sus impactos asociados',
-            milestones: [],
-          },
-          {
-            path: 'goodPracticesEnv',
-            name: 'Buenas Prácticas Ambientales',
-            milestones: [],
-          },
-          {
-            path: 'abnormalOrEmergency',
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
-            milestones: [],
-          },
-          {
-            path: 'preventionContingencyMitigate',
-            name: 'Planes de prevención, contingencia y/o mitigación',
-            milestones: [],
-          },
-        ],
-        name: 'Almacenamiento de Subproductos o Productos Finales',
-      },
-      {
-        path: 'distribution',
-        line: [
-          {
-            name: 'Requisitos ambientales de venta o transporte',
-            milestones: [],
-          },
-          {
-            path: 'environmentAspectsAndImpact',
-            name: 'Aspectos ambientales y sus impactos asociados',
-            milestones: [],
-          },
-          {
-            path: 'goodPracticesDist',
-            name: 'Buenas Prácticas Ambientales',
-            milestones: [],
-          },
-          {
-            path: 'abnormalOrEmergencyDist',
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
-            milestones: [],
-          },
-          {
-            path: 'preventionPlanDist',
-            name: 'Planes de prevención, contingencia y/o mitigación',
-            milestones: [],
-          },
-        ],
-        name: 'Despacho y Distribución de Subproductos o Productos Finales',
-      },
-      {
-        path: 'commerce',
-        line: [
-          {
-            name: 'Requisitos ambientales de comercialización',
-            milestones: [],
-          },
-          {
-            name: 'Aspectos ambientales y sus impactos asociados',
-            milestones: [],
-          },
-          {
-            name: 'Buenas Prácticas Ambientales',
-            milestones: [],
-          },
-          {
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
-            milestones: [],
-          },
-          {
-            name: 'Planes de prevención, contingencia y/o mitigación',
-            milestones: [],
-          },
-        ],
-        name: 'Comercialización de   Productos y/o Servicios',
-      },
-      {
-        path: 'support',
-        line: [
-          {
-            name: 'Aspectos ambientales y sus impactos asociados',
-            milestones: [],
-          },
-          {
-            name: 'Criterios de operación de los procesos',
-            milestones: [],
-          },
-          {
-            name: 'Procedimientos de control de los procesos',
-            milestones: [],
-          },
-          {
-            name: 'Buenas Prácticas Ambientales',
-            milestones: [],
-          },
-          {
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
-            milestones: [],
-          },
-          {
-            name: 'Planes de prevención, contingencia y/o mitigación',
-            milestones: [],
-          },
-        ],
-        name: 'Sistemas de Apoyo y Servicios Auxiliares',
-      },
-      {
-        path: 'treatment',
-        line: [
-          {
-            name: 'Aspectos ambientales y sus impactos asociados',
-            milestones: [],
-          },
-          {
-            name: 'Requisitos ambientales de los procesos e instalaciones',
-            milestones: [],
-          },
-          {
-            name: 'Buenas Prácticas Ambientales',
-            milestones: [],
-          },
-          {
-            name: 'Condiciones anormales o situaciones de emergencia previsibles',
-            milestones: [],
-          },
-          {
-            name: 'Planes de prevención, contingencia y/o mitigación',
-            milestones: [],
-          },
-        ],
-        name: 'Tratamiento, Transporte y/o Disposición Final de Residuos',
-      },
-      {
-        path: 'performance',
-        line: [
-          {
-            name: 'Estrategias y resultados',
-            milestones: [],
-          },
-          {
-            name: 'Auditorías ambientales internas',
-            milestones: [],
-          },
-          {
-            name: 'Personal afectado por la gestión ambiental',
-            milestones: [],
-          },
-        ],
-        name: 'Evaluación de Desempeño',
-      },
-      {
-        path: 'kaizen',
-        line: [
-          {
-            name: 'Plan de mejora continua',
-            milestones: [],
-          },
-          {
-            name: 'Concientización y/o capacitación del personal',
-            milestones: [],
-          },
-          {
-            name: 'Programas específicos de relacionamiento comunitario',
-            milestones: [],
-          },
-        ],
-        name: 'Mejora Continua',
-      },
-    ],
-  });
+  await addDoc(protocolRef, protocol);
 };
 
 export const updateProduct = async (id, status, txHash) => {
@@ -499,6 +234,7 @@ export const updateDescription = async (id, description) => {
     console.log(error);
   }
 };
+
 export const updateHistory = async (id, history) => {
   try {
     const userRef = doc(db, 'users', id);
@@ -524,16 +260,13 @@ export const updateProfileImage = async (id, url) => {
   try {
     const userRef = doc(db, 'users', id);
 
-    // Obtén el documento actual
     const userDoc = await getDoc(userRef);
 
-    // Actualiza solo la propiedad 'profileImg' dentro de 'data'
     const updatedData = {
-      ...userDoc.data().data, // Mantén las demás propiedades dentro de 'data'
+      ...userDoc.data().data,
       profileImg: url,
     };
 
-    // Actualiza el documento con la nueva información
     await updateDoc(userRef, {
       data: updatedData,
     });
@@ -546,16 +279,13 @@ export const updateWallpaperImg = async (id, url) => {
   try {
     const userRef = doc(db, 'users', id);
 
-    // Obtén el documento actual
     const userDoc = await getDoc(userRef);
 
-    // Actualiza solo la propiedad 'profileImg' dentro de 'data'
     const updatedData = {
-      ...userDoc.data().data, // Mantén las demás propiedades dentro de 'data'
+      ...userDoc.data().data,
       wallpaperImg: url,
     };
 
-    // Actualiza el documento con la nueva información
     await updateDoc(userRef, {
       data: updatedData,
     });
