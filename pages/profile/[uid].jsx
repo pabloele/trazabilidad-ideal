@@ -41,6 +41,10 @@ const Profile = () => {
 
   const [description, setDescription] = useState(user?.data?.description);
   const [history, setHistory] = useState(user?.data?.history);
+  const handleToggleEditHistory = () => {
+    setHistory(user?.data?.history);
+    setIsEditingHistory(true);
+  };
 
   const handleSaveWallpaper = async () => {
     await handleEditWallpaper();
@@ -52,13 +56,24 @@ const Profile = () => {
     setIsEditingDescription(false);
   };
 
+  // const saveHistory = async () => {
+  //   console.log(history);
+  //   handleSaveHistory(history);
+
+  //   setIsEditingHistory(false);
+  // };
   const saveHistory = async () => {
-    console.log(history);
-    handleSaveHistory(history);
+    const sanitizedContent = history.replace(/<[^>]*>/g, '').trim();
+
+    if (sanitizedContent === '') {
+      setHistory('');
+      handleSaveHistory('');
+    } else {
+      handleSaveHistory(history);
+    }
 
     setIsEditingHistory(false);
   };
-
   const handleEditDescription = () => {
     setIsEditingDescription(true);
   };
@@ -83,7 +98,7 @@ const Profile = () => {
       </>
     );
   }
-
+  console.log(user.data.history);
   return (
     <HomeLayout>
       <Container>
@@ -342,16 +357,19 @@ const Profile = () => {
                     ) : (
                       <Box display="flex" justifyContent="center">
                         <IoTextSharp
+                          cursor="pointer"
                           size="4rem"
-                          onClick={() => setIsEditingHistory(true)}
+                          onClick={handleToggleEditHistory}
                         />
                       </Box>
                     )}
                   </Typography>
                   <Box display="flex" justifyContent="center">
-                    <IconButton onClick={() => setIsEditingHistory(true)}>
-                      <EditIcon />
-                    </IconButton>
+                    {user.data.history && (
+                      <IconButton onClick={handleToggleEditHistory}>
+                        <EditIcon />
+                      </IconButton>
+                    )}
                   </Box>
                 </>
               )}
