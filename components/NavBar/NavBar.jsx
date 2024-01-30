@@ -39,14 +39,18 @@ export const NavBar = ({ drawerWidth }) => {
     <AppBar
       position="fixed"
       sx={{
-        width: { sm: `calc(100% - ${drawerWidth}px)` },
-        ml: { sm: `${drawerWidth}px` },
+        width: '100%',
       }}
+      // sx={{
+      //   width: { sm: `calc(100% - ${drawerWidth}px)` },
+      //   ml: { sm: `${drawerWidth}px` },
+      // }}
     >
       <Toolbar>
         <IconButton
           edge="start"
-          sx={{ mr: 2, color: 'secondary.main', display: { sm: 'none' } }}
+          sx={{ mr: 2, color: 'secondary.main', display: 'flex' }}
+          // sx={{ mr: 2, color: 'secondary.main', display: { sm: 'none' } }}
         >
           <MenuOutlined onClick={onOpen} />
         </IconButton>
