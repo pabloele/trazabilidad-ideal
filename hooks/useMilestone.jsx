@@ -52,6 +52,7 @@ const useMilestone = (
 
       input.onchange = async (e) => {
         const rawFile = e.target.files[0];
+        console.log(rawFile);
         const file = await imageCompression(rawFile, options);
         if (file) {
           try {

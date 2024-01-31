@@ -186,8 +186,6 @@ export const getUserProducts = async (uid) => {
     const userProducts = allProducts.filter(
       (product) => product.ownerUid === uid
     );
-
-    console.log(userProducts);
     return userProducts;
   } catch (error) {
     console.error("Error obteniendo los productos del usuario:", error);
@@ -550,7 +548,6 @@ export const productUpdate = async (id, updatedProduct) => {
 
     // Obtén el documento actual
     const productDoc = await getDoc(productRef);
-
 
     console.log(updatedProduct.productImagePlacementData);
     const response = await updateDoc(productRef, {

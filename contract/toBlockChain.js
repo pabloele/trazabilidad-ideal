@@ -63,31 +63,35 @@ export const uploadIPFS = async (file) => {
 };
 
 export const uplaodImageIPFS = async (file) => {
-  const auth =
-    "Basic " +
-    Buffer.from(
-      process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ":" +
-        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString("base64");
+  try {
+    const auth =
+      "Basic " +
+      Buffer.from(
+        process.env.NEXT_PUBLIC_IPFS_API_KEY +
+          ":" +
+          process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
+      ).toString("base64");
 
-  const ipfs = create({
-    host: "ipfs.infura.io",
-    port: 5001,
-    protocol: "https",
-    apiPath: "/api/v0",
-    headers: {
-      authorization: auth,
-    },
-  });
-  const fileToIPFS = await ipfs.add(file);
+    const ipfs = create({
+      host: "ipfs.infura.io",
+      port: 5001,
+      protocol: "https",
+      apiPath: "/api/v0",
+      headers: {
+        authorization: auth,
+      },
+    });
+    const fileToIPFS = await ipfs.add(file);
 
-  const fileToIPFSURL = `https://trazabilidadideal.infura-ipfs.io/ipfs/${fileToIPFS.path}`;
+    const fileToIPFSURL = `https://trazabilidadideal.infura-ipfs.io/ipfs/${fileToIPFS.path}`;
 
-  return {
-    path: fileToIPFS.path,
-    url: fileToIPFSURL,
-  };
+    return {
+      path: fileToIPFS.path,
+      url: fileToIPFSURL,
+    };
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const uploadFileToIpfs = async (file) => {

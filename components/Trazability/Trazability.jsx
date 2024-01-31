@@ -389,16 +389,6 @@ const Trazability = ({ initialMilestone, closeModal }) => {
               gap: 2,
             }}
           >
-            {/* <AddBoxIcon
-            onClick={addMilestoneBox}
-            sx={{
-              color: 'primary.main',
-              ':hover': {
-                cursor: 'pointer',
-              },
-            }}
-          /> */}
-
             <React.Fragment>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <Box
