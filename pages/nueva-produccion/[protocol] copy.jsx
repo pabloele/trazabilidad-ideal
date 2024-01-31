@@ -293,16 +293,7 @@ const ProtocolPage = () => {
             }}
           >
             Protocolo seleccionado:
-            <span
-              style={{
-                fontWeight: 'bold',
-                marginLeft: '1rem',
-                fontSize: '24',
-                backgroundColor: '#091492',
-                color: 'whitesmoke',
-                padding: '1rem',
-              }}
-            >
+            <span style={{ fontWeight: 'bold', marginLeft: '1rem' }}>
               {protocolSelected?.name}
             </span>
           </Typography>
@@ -354,16 +345,16 @@ const ProtocolPage = () => {
             />
           </Box>
         </Box>
-        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}>
-          {/* <Typography sx={{ color: 'primary.main', fontSize: 20 }}>
+        <Box sx={{ marginTop: 2 }}>
+          <Typography sx={{ color: 'primary.main', fontSize: 20 }}>
             Imagen del producto
-          </Typography> */}
+          </Typography>
           <Box
             onClick={handleImageUpload}
             sx={{
               backgroundColor: '#e1e1e1',
-              width: 480,
-              height: 240,
+              width: 240,
+              height: 120,
               color: '#000',
               display: 'flex',
               flexDirection: 'column',
@@ -374,29 +365,14 @@ const ProtocolPage = () => {
             }}
           >
             {fileUri ? (
-              <img
-                src={fileUri}
-                alt="Uploaded Image"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
+              <Image src={fileUri} width={240} height={120} />
             ) : loadingImage ? (
               <Spinner />
             ) : (
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignContent="center"
-              >
-                <Box display="flex" justifyContent="center">
-                  <ImageIcon />
-                </Box>
-                <Typography>Selecciona una imágen</Typography>
-              </Box>
+              <>
+                <ImageIcon />
+                <Typography>Selecciona una imagen</Typography>
+              </>
             )}
           </Box>
 
@@ -435,21 +411,13 @@ const ProtocolPage = () => {
                     }}
                   >
                     {field.value ? (
-                      <img
-                        src={fileUri}
-                        alt="Uploaded Image"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                      />
+                      <Image src={field.value} width={240} height={120} />
                     ) : loadingImage ? (
                       <Spinner />
                     ) : (
                       <>
                         <ImageIcon />
-                        <Typography>Selecciona una imágen</Typography>
+                        <Typography>Selecciona una imagen</Typography>
                       </>
                     )}
                   </Box>
@@ -475,14 +443,7 @@ const ProtocolPage = () => {
           </Box>
         </Box>
 
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 8,
-            marginTop: 4,
-            justifyContent: 'space-between',
-          }}
-        >
+        <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
           <Dropdown>
             <MenuButton>Agregar un nuevo campo</MenuButton>
             <Menu slots={{ listbox: Listbox }}>

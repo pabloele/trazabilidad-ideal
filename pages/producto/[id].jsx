@@ -13,42 +13,32 @@ import {
   Divider,
   TextField,
   Tooltip,
-} from "@mui/material";
-import useProduct from "../../hooks/useProduct";
-import { useRouter } from "next/router";
-import Modal from "@mui/material/Modal";
-import Trazability from "../../components/Trazability/Trazability";
-import { ethers } from "ethers";
-import { contractAddress, contractAbi } from "../../contract/contract";
-import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
-import ModalDialog from "../../components/Modals/ModalDialog";
-import Spinner from "../../components/Spinner/Spinner";
-import Swal from "sweetalert2";
-import { useAddress } from "@thirdweb-dev/react";
-import { updateProduct } from "../../firebase/controllers/firestoreControllers";
-import { v4 } from "uuid";
-import CloseIcon from "@mui/icons-material/Close";
-import { useProductStore } from "../../store";
-import useModalStore from "../../store/useModalStore";
-import styled from "styled-components";
-import { FaEdit } from "react-icons/fa";
-import DeleteIcon from "@mui/icons-material/Delete";
-import useAddModalStore from "../../store/useAddModalStore";
-import EditIcon from "@mui/icons-material/Edit";
-import EditProduct from "../../components/Modals/EditProduct";
-import TrazabilityAssistant from "../../components/Trazability/TrazabilityAssistant";
-const CustomTextField = styled.textarea`
-  width: 30%;
-  height: 2rem;
-  padding: 8px;
-  margin-bottom: 2rem;
-  border: 2px solid #e1e1e1;
-  background-color: #cfcdcd28;
-  border-radius: 4px;
-  outline: none;
-  overflow-y: hidden;
-  resize: none;
-`;
+} from '@mui/material';
+import useProduct from '../../hooks/useProduct';
+import { useRouter } from 'next/router';
+import Modal from '@mui/material/Modal';
+import Trazability from '../../components/Trazability/Trazability';
+import { ethers } from 'ethers';
+import { contractAddress, contractAbi } from '../../contract/contract';
+import { agroupMilestones, uploadIPFS } from '../../contract/toBlockChain';
+import ModalDialog from '../../components/Modals/ModalDialog';
+import Spinner from '../../components/Spinner/Spinner';
+import Swal from 'sweetalert2';
+import { useAddress } from '@thirdweb-dev/react';
+import {
+  addProtocol,
+  updateProduct,
+} from '../../firebase/controllers/firestoreControllers';
+import { v4 } from 'uuid';
+import CloseIcon from '@mui/icons-material/Close';
+import { useProductStore } from '../../store';
+import useModalStore from '../../store/useModalStore';
+import { FaEdit } from 'react-icons/fa';
+import DeleteIcon from '@mui/icons-material/Delete';
+import useAddModalStore from '../../store/useAddModalStore';
+import EditIcon from '@mui/icons-material/Edit';
+import EditProduct from '../../components/Modals/EditProduct';
+import { CustomTextField } from '../../styledComponents/styledComponents';
 
 const Producto = () => {
   const address = useAddress();
