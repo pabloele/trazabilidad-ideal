@@ -161,14 +161,14 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                 href={'/nueva-produccion'}
                 onClick={onClose}
               >
-                Nueva
+                <Typography>Nueva</Typography>
               </Link>
               <Link
                 className={Styles.link}
                 href={'/productos/pendiente'}
                 onClick={onClose}
               >
-                En curso
+                <Typography>En curso</Typography>
               </Link>
 
               {/* <Link className={Styles.link} href={"/productos/realizado"}>
@@ -250,7 +250,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               href={`/profile/${user?.uid}`}
               onClick={onClose}
             >
-              Perfil
+              <Typography>Perfil</Typography>
             </Link>
 
             <Link
@@ -258,7 +258,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               href={'/suscription'}
               onClick={onClose}
             >
-              Suscripción
+              <Typography>Suscripción</Typography>
             </Link>
           </AccordionDetails>
         </Accordion>

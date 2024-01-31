@@ -19,7 +19,7 @@ export const HomeLayout = ({ children }) => {
 
       <Box
         component="main"
-        sx={{ backgroundColor: 'beige', flexGrow: 1, p: 3, marginTop: '3rem' }}
+        sx={{ backgroundColor: 'beige', flexGrow: 1, p: 7, marginTop: '3rem' }}
       >
         {children}
       </Box>
