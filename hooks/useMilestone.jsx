@@ -52,18 +52,13 @@ const useMilestone = (
 
       input.onchange = async (e) => {
         const rawFile = e.target.files[0];
+        console.log(rawFile);
         const file = await imageCompression(rawFile, options);
         if (file) {
           try {
             const result = await ipfs.add(file);
             const ipfsHash = result.path;
             const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
-
-            // setFileUri((prevFileUri) => {
-            //   const newFileUri = [...prevFileUri];
-            //   newFileUri[index] = urlImage;
-            //   return newFileUri;
-            // });
 
             setMilestone((prev) => ({
               ...prev,

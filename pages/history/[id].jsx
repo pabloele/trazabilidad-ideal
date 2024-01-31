@@ -1,7 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import useProduct from '../../hooks/useProduct';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import useProduct from "../../hooks/useProduct";
+import Image from "next/image";
+import { HiZoomIn, HiZoomOut } from "react-icons/hi";
+import {
+  MdKeyboardArrowRight,
+  MdKeyboardArrowLeft,
+  MdKeyboardArrowUp,
+  MdKeyboardArrowDown,
+} from "react-icons/md";
+import { MdCropRotate, MdOutlineDone } from "react-icons/md";
+import { BiRotateLeft, BiRotateRight } from "react-icons/bi";
+
 import {
   Typography,
   Box,
@@ -9,21 +19,30 @@ import {
   useMediaQuery,
   Paper,
   Grid,
-} from '@mui/material';
-import UserNavBar from '../../components/NavBar/UserNavBar';
-import { contractAddress, contractAbi } from '../../contract/contract';
-import { ethers } from 'ethers';
-
-import Link from 'next/link';
+  Divider,
+} from "@mui/material";
+import UserNavBar from "../../components/NavBar/UserNavBar";
+import { contractAddress, contractAbi } from "../../contract/contract";
+import { ethers } from "ethers";
+import Link from "next/link";
+import Loader from "../../components/Loader/Loader";
+import { useAuth } from "../../context/AuthContext";
 
 const ViewProduct = () => {
   const router = useRouter();
-  const { product } = useProduct(router.query.id);
+  const { product, updateProductById, laodingProduct } = useProduct(
+    router.query.id
+  );
 
-  const [productData, setProductData] = useState({ data: [], success: false });
+  const { user } = useAuth();
+
+  const [productData, setProductDataLocal] = useState({
+    data: [],
+    success: false,
+  });
   const [loading, setLoading] = useState(false);
-  const isSmallScreen = useMediaQuery('(min-width: 720px)');
-  const isMediumScreen = useMediaQuery('(min-width: 10240px)');
+  const isSmallScreen = useMediaQuery("(min-width: 720px)");
+  const isMediumScreen = useMediaQuery("(min-width: 10240px)");
 
   const getBlockChainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -39,7 +58,9 @@ const ViewProduct = () => {
     try {
       setLoading(true);
       const data = await trazabilityContract.getProductData(router.query.id);
-      setProductData({ data: data, success: true });
+
+      //todo revistar esto mas tarde
+      // setProductData({ data: data, success: true });
     } catch (error) {
       console.log(error);
     } finally {
@@ -56,19 +77,106 @@ const ViewProduct = () => {
       .then((response) => response.blob())
       .then((blob) => {
         const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', atachment.name);
+        link.setAttribute("download", atachment.name);
 
         link.click();
       })
       .catch((error) => {
-        console.error('Error al descargar el archivo', error);
+        console.error("Error al descargar el archivo", error);
       });
   };
 
+  const handleZoomIn = () => {
+    console.log(zoomLevel);
+    setZoomLevel(zoomLevel + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    if (zoomLevel > 0.1) {
+      setZoomLevel(zoomLevel - 0.1);
+    }
+  };
+
+  const handleMove = (direction) => {
+    const step = 10;
+    switch (direction) {
+      case "up":
+        setPosition({ ...position, y: position.y - step });
+        break;
+      case "down":
+        setPosition({ ...position, y: position.y + step });
+        break;
+      case "left":
+        setPosition({ ...position, x: position.x - step });
+        break;
+      case "right":
+        setPosition({ ...position, x: position.x + step });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const [isAdjustingImage, setIsAdjustingImage] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(
+    product.productImagePlacementData?.zoomLevel || 1
+  );
+  const [position, setPosition] = useState({
+    x: product.productImagePlacementData?.x || 0,
+    y: product.productImagePlacementData?.y || 0,
+  });
+  const [rotation, setRotation] = useState(
+    product.productImagePlacementData?.rotation || 0
+  );
+  const handleRotateClockwise = () => {
+    setRotation(rotation + 15);
+  };
+
+  const handleRotateCounterclockwise = () => {
+    setRotation(rotation - 15);
+  };
+
+  const handleSaveAdjustedImage = () => {
+    console.log(product);
+    const { x, y } = position;
+
+    console.log(x, y, zoomLevel, rotation);
+
+    const updatedProduct = {
+      ...product,
+      productImagePlacementData: { x, y, zoomLevel, rotation },
+    };
+
+    console.log(updatedProduct);
+
+    updateProductById(updatedProduct);
+    setIsAdjustingImage(false);
+  };
+
+  useEffect(() => {
+    if (product?.productImagePlacementData) {
+      setPosition({
+        x: product.productImagePlacementData?.x,
+        y: product.productImagePlacementData?.y,
+      });
+      setRotation(product.productImagePlacementData?.rotation);
+      setZoomLevel(product.productImagePlacementData?.zoomLevel);
+    }
+  }, [product.productImagePlacementData]);
+
+  if (laodingProduct) {
+    return <Loader />;
+  }
+
   return (
-    <Grid container justifyContent="center" direction={'column'}>
+    <Grid
+      container
+      justifyContent="center"
+      direction={"column"}
+      bgcolor="secondary.main"
+    >
       <Grid item>
         <UserNavBar />
       </Grid>
@@ -77,54 +185,261 @@ const ViewProduct = () => {
       <Grid item marginY={4}>
         <Paper
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
+            display: "flex",
+            flexDirection: "row",
             padding: 4,
-            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
           }}
         >
           {/* Product data */}
-          <Grid container direction="column">
+          <Grid container direction="row" gap={1}>
             <Grid
               item
+              xs={5}
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'InfoBackground',
-                direction: 'row',
+                display: "flex",
+                border: "primary.main",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "InfoBackground",
+                direction: "row",
               }}
             >
-              <Image
-                style={{ objectFit: 'contain' }}
-                src={product?.productImage}
-                width={isSmallScreen ? 350 : 300}
-                height={isSmallScreen ? 350 : 300}
-                alt="Product Image"
-              />
-            </Grid>
-            <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              <Typography
+              <Paper
                 sx={{
-                  fontSize: 48,
-                  fontWeight: 'bold',
-                  color: 'primary.main',
-                  textJustify: 'auto',
+                  position: "relative",
+                  overflow: "hidden",
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  bgcolor: "#d8cdd8",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                 }}
               >
-                {product?.name}
-              </Typography>
+                <Image
+                  style={{
+                    transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
+                    transition: "transform 0.1s ease-in-out",
+                  }}
+                  src={product?.productImage}
+                  width={isSmallScreen ? 350 : 300}
+                  height={isSmallScreen ? 350 : 300}
+                  alt="Product Image"
+                />
+              </Paper>
+            </Grid>
+            <Grid item xs={0.5}>
+              {isAdjustingImage && (
+                <Box display="flex" flexDirection="column">
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={handleZoomIn}
+                  >
+                    <HiZoomIn />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={handleZoomOut}
+                  >
+                    <HiZoomOut />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={() => handleMove("right")}
+                  >
+                    <MdKeyboardArrowRight />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={() => handleMove("left")}
+                  >
+                    <MdKeyboardArrowLeft />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={() => handleMove("up")}
+                  >
+                    <MdKeyboardArrowUp />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={() => handleMove("down")}
+                  >
+                    <MdKeyboardArrowDown />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={handleRotateClockwise}
+                  >
+                    <BiRotateRight />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    }}
+                    onClick={handleRotateCounterclockwise}
+                  >
+                    <BiRotateLeft />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                      color: "Highlight",
+                    }}
+                    onClick={handleSaveAdjustedImage}
+                  >
+                    <MdOutlineDone size={40} />
+                  </Button>
+                </Box>
+              )}
+              {!isAdjustingImage && user.uid === product.ownerUid && (
+                <MdCropRotate
+                  size={30}
+                  onClick={() => setIsAdjustingImage(true)}
+                  cursor="pointer"
+                />
+              )}
+            </Grid>
+            <Grid
+              container
+              xs={5}
+              direction="column"
+              sx={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Grid item display="flex" justifyContent="center">
+                <Typography
+                  sx={{
+                    fontSize: 64,
+                    fontWeight: "bold",
+                    color: "primary.main",
+                    textJustify: "auto",
+                  }}
+                >
+                  {product?.name}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                display="flex"
+                justifyContent="center"
+                bgcolor="primary.main"
+              >
+                <Divider sx={{ display: "flex", width: "100%" }}></Divider>
+              </Grid>
+              <Grid item display="flex" justifyContent="center">
+                <Typography
+                  sx={{
+                    fontSize: 32,
+                    fontWeight: "bold",
+                    color: "primary.main",
+                    textJustify: "auto",
+                  }}
+                >
+                  {product?.company}
+                </Typography>
+              </Grid>
+              <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer "
+                  href="/profile"
+                >
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      marginTop: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                      color: "#3BCED6",
+                    }}
+                  >
+                    Datos del productor
+                    {/* <Image
+                        src={'/images/logo-ideal.png'}
+                        width={50}
+                        height={20}
+                        alt="logo"
+                      /> */}
+                  </Button>
+                </Link>
+              </Grid>
             </Grid>
             {productData.success && (
               <Grid
                 item
                 sx={{
-                  backgroundColor: '#f5f5f5',
+                  backgroundColor: "#f5f5f5",
                   padding: 2,
-                  color: 'primary.main',
+                  color: "primary.main",
                 }}
               >
-                <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
                   Producto certificado
                 </Typography>
                 <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -132,7 +447,7 @@ const ViewProduct = () => {
                   tecnología blockchain
                 </Typography>
 
-                <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Link
                     target="_blank"
                     rel="noopener noreferrer "
@@ -141,16 +456,16 @@ const ViewProduct = () => {
                     <Button
                       variant="contained"
                       sx={{
-                        display: 'flex',
+                        display: "flex",
                         gap: 1,
-                        alignItems: 'center',
+                        alignItems: "center",
                         marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                       }}
                     >
                       Ver trazabilidad
                       <Image
-                        src={'/images/logo-ideal.png'}
+                        src={"/images/logo-ideal.png"}
                         width={50}
                         height={20}
                         alt="logo"
@@ -165,17 +480,17 @@ const ViewProduct = () => {
                 <Grid
                   item
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: 'dotted',
-                    direction: 'row',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "dotted",
+                    direction: "row",
                     backgroundImage:
                       'url("../../public/images/bg-product.jpg")',
                   }}
                 >
                   <Image
-                    style={{ objectFit: 'contain' }}
+                    style={{ objectFit: "contain" }}
                     src={product?.productImage}
                     width={isSmallScreen ? 315 : 215}
                     height={isSmallScreen ? 315 : 215}
@@ -184,13 +499,13 @@ const ViewProduct = () => {
                 </Grid>
                 <Grid item>
                   <Grid container direction="column">
-                    <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Grid item sx={{ display: "flex", alignItems: "flex-end" }}>
                       <Typography
                         sx={{
                           fontSize: 48,
-                          fontWeight: 'bold',
-                          color: 'primary.main',
-                          textJustify: 'auto',
+                          fontWeight: "bold",
+                          color: "primary.main",
+                          textJustify: "auto",
                         }}
                       >
                         {product?.name}
@@ -199,12 +514,12 @@ const ViewProduct = () => {
                     <Grid
                       item
                       sx={{
-                        backgroundColor: '#f5f5f5',
+                        backgroundColor: "#f5f5f5",
                         padding: 2,
-                        color: 'primary.main',
+                        color: "primary.main",
                       }}
                     >
-                      <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                      <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
                         Producto certificado
                       </Typography>
                       <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -213,22 +528,22 @@ const ViewProduct = () => {
                       </Typography>
                       <Grid
                         item
-                        sx={{ display: 'flex', justifyContent: 'flex-end' }}
+                        sx={{ display: "flex", justifyContent: "flex-end" }}
                       >
                         <Button
                           onClick={getBlockChainData}
                           variant="contained"
                           sx={{
-                            display: 'flex',
+                            display: "flex",
                             gap: 1,
-                            alignItems: 'center',
+                            alignItems: "center",
                             marginTop: 2,
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                           }}
                         >
                           Ver trazabilidad
                           <Image
-                            src={'/images/logo-ideal.png'}
+                            src={"/images/logo-ideal.png"}
                             width={50}
                             height={20}
                             alt="logo"
@@ -274,11 +589,12 @@ const ViewProduct = () => {
                   <Typography
                     sx={{
                       fontSize: 26,
-                      fontStyle: 'oblique',
-                      color: 'whitesmoke',
-                      backgroundColor: 'primary.main',
+                      fontStyle: "oblique",
+                      color: "white.main",
+                      backgroundColor: "primary.main",
                       marginX: 10,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      paddingX: 2,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                     }}
                   >
                     {trazability.name}
@@ -296,20 +612,24 @@ const ViewProduct = () => {
                                     <Box
                                       sx={{
                                         padding: 2,
-                                        display: 'flex',
-                                        flexDirection: 'row',
+                                        display: "flex",
+                                        flexDirection: "row",
                                         gap: 5,
-                                        justifyContent: 'center',
+                                        justifyContent: "center",
                                       }}
                                       flexDirection={
-                                        isSmallScreen ? 'row' : 'column'
+                                        isSmallScreen ? "row" : "column"
                                       }
                                     >
                                       <Box
                                         sx={{
-                                          width: '200px',
-                                          height: '200px',
-                                          position: 'relative',
+                                          width: "200px",
+                                          height: "200px",
+                                          position: "relative",
+                                          border: "1px solid",
+                                          bgcolor: "yellow.main",
+                                          boxShadow:
+                                            "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                                         }}
                                       >
                                         <Image
@@ -325,18 +645,18 @@ const ViewProduct = () => {
                                           width={isSmallScreen ? 280 : 215}
                                           height={215}
                                           sx={{
-                                            backgroundColor: '#f5f5f5',
-                                            overflowY: 'auto',
-                                            color: 'primary.main',
-                                            minWidth: '800px',
-                                            minHeight: '200px',
+                                            backgroundColor: "white.main",
+                                            overflowY: "auto",
+                                            color: "primary.main",
+                                            minWidth: "800px",
+                                            minHeight: "200px",
                                           }}
                                         >
                                           <Typography
                                             sx={{
                                               fontSize: 28,
-                                              fontWeight: 'bold',
-                                              color: 'primary.main',
+                                              fontWeight: "bold",
+                                              color: "primary.main",
                                             }}
                                           >
                                             {line.name}
@@ -352,7 +672,7 @@ const ViewProduct = () => {
                                           <Typography
                                             sx={{
                                               fontSize: 20,
-                                              fontWeight: 'bold',
+                                              fontWeight: "bold",
                                               paddingTop: 1,
                                             }}
                                           >
@@ -364,10 +684,10 @@ const ViewProduct = () => {
                                                 key={atachment.name}
                                                 sx={{
                                                   fontSize: 14,
-                                                  fontWeight: 'bold',
-                                                  color: 'black',
-                                                  textDecoration: 'none',
-                                                  cursor: 'pointer',
+                                                  fontWeight: "bold",
+                                                  color: "black",
+                                                  textDecoration: "none",
+                                                  cursor: "pointer",
                                                 }}
                                                 onClick={() =>
                                                   handleDownload(atachment)

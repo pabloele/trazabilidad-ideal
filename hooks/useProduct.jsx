@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 import { useProductStore } from "../store";
+import { productUpdate } from "../firebase/controllers/firestoreControllers";
 
 const useProduct = (productId) => {
   const { setProductData, product } = useProductStore();
 
+  const [laodingProduct, setLoadingProduct] = useState(false);
+
   const getProduct = async () => {
     try {
+      setLoadingProduct(true);
       const productRef = doc(db, "products", productId);
 
       const response = await getDoc(productRef);
@@ -15,10 +19,12 @@ const useProduct = (productId) => {
       if (response.exists()) {
         const productData = response.data();
 
-        setProductData(productData);
+        setProductData({ ...productData, id: productId });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingProduct(false);
     }
   };
 
@@ -44,11 +50,26 @@ const useProduct = (productId) => {
     }
   };
 
+  const updateProductById = async (updatedProduct) => {
+    try {
+      productUpdate(productId, updatedProduct);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getProduct();
   }, [productId]);
 
-  return { product, uploadProduct, uploadQr,setProductData };
+  return {
+    product,
+    uploadProduct,
+    uploadQr,
+    setProductData,
+    updateProductById,
+    laodingProduct,
+   };
 };
 
 export default useProduct;

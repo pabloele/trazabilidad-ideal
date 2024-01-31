@@ -22,10 +22,14 @@ import logo from '../../public/images/logo-ideal.png';
 import Image from 'next/image';
 import sideBarStore from '../../store/sideBarStore';
 import { useRouter } from 'next/router';
+import { useAuth } from '../../context/AuthContext';
 
 export const SideBar = ({ drawerWidth = 240 }) => {
   const router = useRouter();
-  const isMobileScreen = useMediaQuery('(min-width: 600px)');
+  // const isMobileScreen = useMediaQuery("(min-width: 600px)");
+  const isMobileScreen = false;
+
+  const { user } = useAuth();
 
   const { isOpen, onClose } = sideBarStore();
   const handleHover = (event) => {
@@ -40,6 +44,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
     <Drawer
       variant={isMobileScreen ? 'permanent' : 'temporary'}
       open={isOpen}
+      onBackdropClick={onClose}
       sx={{
         width: drawerWidth,
         backgroundColor: 'primary.main',
@@ -65,7 +70,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
           style={{ cursor: 'pointer' }}
         />
 
-        {!isMobileScreen && (
+        {/* {!isMobileScreen && (
           <CloseIcon
             onClick={onClose}
             sx={{
@@ -78,7 +83,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               },
             }}
           />
-        )}
+        )} */}
       </Toolbar>
 
       <Divider sx={{ backgroundColor: '#fff' }} />
@@ -151,11 +156,19 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                 gap: 2,
               }}
             >
-              <Link className={Styles.link} href={'/nueva-produccion'}>
-                Nueva
+              <Link
+                className={Styles.link}
+                href={'/nueva-produccion'}
+                onClick={onClose}
+              >
+                <Typography>Nueva</Typography>
               </Link>
-              <Link className={Styles.link} href={'/productos/pendiente'}>
-                En curso
+              <Link
+                className={Styles.link}
+                href={'/productos/pendiente'}
+                onClick={onClose}
+              >
+                <Typography>En curso</Typography>
               </Link>
 
               {/* <Link className={Styles.link} href={"/productos/realizado"}>
@@ -232,12 +245,20 @@ export const SideBar = ({ drawerWidth = 240 }) => {
               gap: 2,
             }}
           >
-            <Link className={Styles.link} href={'/profile'}>
-              Perfil
+            <Link
+              className={Styles.link}
+              href={`/profile/${user?.uid}`}
+              onClick={onClose}
+            >
+              <Typography>Perfil</Typography>
             </Link>
 
-            <Link className={Styles.link} href={'/suscription'}>
-              Suscripción
+            <Link
+              className={Styles.link}
+              href={'/suscription'}
+              onClick={onClose}
+            >
+              <Typography>Suscripción</Typography>
             </Link>
           </AccordionDetails>
         </Accordion>
