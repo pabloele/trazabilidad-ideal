@@ -1,4 +1,4 @@
-import { LogoutOutlined, MenuOutlined } from '@mui/icons-material';
+import { LogoutOutlined, MenuOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Grid,
@@ -6,13 +6,14 @@ import {
   Toolbar,
   Typography,
   Box,
-} from '@mui/material';
-import { AuthContextProvider, useAuth } from '../../context/AuthContext';
-import { ConnectWallet } from '@thirdweb-dev/react';
-import sideBarStore from '../../store/sideBarStore';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import PersonIcon from '@mui/icons-material/Person';
+} from "@mui/material";
+import { AuthContextProvider, useAuth } from "../../context/AuthContext";
+import { ConnectWallet } from "@thirdweb-dev/react";
+import sideBarStore from "../../store/sideBarStore";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import PersonIcon from "@mui/icons-material/Person";
+import BackButton from "../Buttons/BackButton";
 export const NavBar = ({ drawerWidth }) => {
   const router = useRouter();
 
@@ -20,7 +21,7 @@ export const NavBar = ({ drawerWidth }) => {
     try {
       logout();
 
-      router.push('/');
+      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -31,7 +32,7 @@ export const NavBar = ({ drawerWidth }) => {
 
   useEffect(() => {
     if (!user) {
-      router.push('/');
+      router.push("/");
     }
   }, [user]);
 
@@ -39,17 +40,19 @@ export const NavBar = ({ drawerWidth }) => {
     <AppBar
       position="fixed"
       sx={{
-        width: '100%',
+        width: "100%",
       }}
       // sx={{
       //   width: { sm: `calc(100% - ${drawerWidth}px)` },
       //   ml: { sm: `${drawerWidth}px` },
       // }}
     >
+      <BackButton />
+
       <Toolbar>
         <IconButton
           edge="start"
-          sx={{ mr: 2, color: 'secondary.main', display: 'flex' }}
+          sx={{ mr: 2, color: "secondary.main", display: "flex" }}
           // sx={{ mr: 2, color: 'secondary.main', display: { sm: 'none' } }}
         >
           <MenuOutlined onClick={onOpen} />
@@ -62,7 +65,7 @@ export const NavBar = ({ drawerWidth }) => {
           alignContent="center"
           alignItems="center"
         >
-          <Box display={'flex'} flexDirection={'row'}>
+          <Box display={"flex"} flexDirection={"row"}>
             <PersonIcon
               color="secondary"
               sx={{ fontSize: 30, marginRight: 1 }}
@@ -72,9 +75,9 @@ export const NavBar = ({ drawerWidth }) => {
               noWrap
               component="div"
               sx={{
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 // fontStyle: 'italic',
-                fontWeight: '800',
+                fontWeight: "800",
               }}
             >
               {user?.displayName}
@@ -85,10 +88,10 @@ export const NavBar = ({ drawerWidth }) => {
             <ConnectWallet
               btnTitle="Conectar Wallet"
               style={{
-                fontSize: '14px',
-                textTransform: 'uppercase',
-                color: 'purple',
-                fontWeight: '600',
+                fontSize: "14px",
+                textTransform: "uppercase",
+                color: "purple",
+                fontWeight: "600",
               }}
             />
             <IconButton onClick={handleLogout}>
