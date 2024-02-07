@@ -193,19 +193,32 @@ const Producto = () => {
       );
 
       try {
-        const response = await trazabilityContract.safeMint(
+        const estimatedGas = await trazabilityContract.estimateGas.safeMint(
           address,
           formatProduct,
           tokenDataIPFS.url
         );
+        const gasLimit = estimatedGas.mul(2); // Puedes ajustar el factor multiplicador según tus necesidades
+        const gasPrice = await signer.getGasPrice();
 
-        console.log(response);
+        const transaction =
+          await trazabilityContract.populateTransaction.safeMint(
+            address,
+            formatProduct,
+            tokenDataIPFS.url,
+            {
+              gasLimit: gasLimit,
+              gasPrice: gasPrice,
+            }
+          );
 
-        if (txHash) {
+        const response = await signer.sendTransaction(transaction);
+
+        if (response.hash) {
           const updated = await updateProduct(
             router.query.id,
             "realizado",
-            txHash
+            response.hash
           );
         } else {
           console.error("El valor de txHash es undefined.");
