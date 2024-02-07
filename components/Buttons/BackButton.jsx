@@ -9,19 +9,19 @@ const BackButton = () => {
     return null;
   }
   return (
-    <Button variant="contained" onClick={() => router.back()}>
-      <ArrowBackIcon
-        sx={{
-          fontSize: 40,
-          position: 'fixed',
-          top: 160,
-          left: 20,
-          color: 'gray',
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-          borderRadius: 8,
-        }}
-      />
-    </Button>
+    <ArrowBackIcon
+      sx={{
+        fontSize: 40,
+        position: 'fixed',
+        top: 160,
+        left: 20,
+        color: 'gray',
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+        borderRadius: 8,
+        cursor: 'pointer',
+      }}
+      onClick={() => router.back()}
+    />
   );
 };
 
