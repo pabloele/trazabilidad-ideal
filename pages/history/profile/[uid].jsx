@@ -231,11 +231,12 @@ const Profile = () => {
                 )}
               </Typography>
               <Box display="flex" justifyContent="center">
-                {user.data.history && (
-                  <IconButton onClick={handleToggleEditHistory}>
-                    <EditIcon />
-                  </IconButton>
-                )}
+                {/* {user.data.history && (
+                  <></>
+                  // <IconButton onClick={handleToggleEditHistory}>
+                  //   <EditIcon />
+                  // </IconButton>
+                )} */}
               </Box>
             </>
           </Paper>
