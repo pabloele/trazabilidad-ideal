@@ -54,13 +54,13 @@ const ViewProduct = () => {
       contractAbi,
       signer
     );
-
     try {
       setLoading(true);
-      const data = await trazabilityContract.getProductData(router.query.id);
-
+      const data = await trazabilityContract.getProductDataById(
+        router.query.id
+      );
       //todo revistar esto mas tarde
-      // setProductData({ data: data, success: true });
+      setProductDataLocal({ data: data, success: true });
     } catch (error) {
       console.log(error);
     } finally {
@@ -352,7 +352,7 @@ const ViewProduct = () => {
                   </Button>
                 </Box>
               )}
-              {!isAdjustingImage && user.uid === product.ownerUid && (
+              {!isAdjustingImage && user?.uid === product.ownerUid && (
                 <MdCropRotate
                   size={30}
                   onClick={() => setIsAdjustingImage(true)}
@@ -433,6 +433,7 @@ const ViewProduct = () => {
             {productData.success && (
               <Grid
                 item
+                xs={12}
                 sx={{
                   backgroundColor: '#f5f5f5',
                   padding: 2,

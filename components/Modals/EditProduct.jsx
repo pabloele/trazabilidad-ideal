@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Modal from '@mui/material/Modal';
+import React, { useEffect, useState } from "react";
+import Modal from "@mui/material/Modal";
 import {
   Button,
   Box,
@@ -8,18 +8,18 @@ import {
   IconButton,
   TextField,
   Grid,
-} from '@mui/material';
-import Image from 'next/image';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import { uplaodImageIPFS } from '../../contract/toBlockChain';
-import SaveIcon from '@mui/icons-material/Save';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore/lite';
-import { db } from '../../firebase/config';
-import Swal from 'sweetalert2';
-import DeleteIcon from '@mui/icons-material/Delete';
+} from "@mui/material";
+import Image from "next/image";
+import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import { uplaodImageIPFS } from "../../contract/toBlockChain";
+import SaveIcon from "@mui/icons-material/Save";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore/lite";
+import { db } from "../../firebase/config";
+import Swal from "sweetalert2";
+import DeleteIcon from "@mui/icons-material/Delete";
 const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
-  const isSmallScreen = useMediaQuery('(min-width: 600px)');
+  const isSmallScreen = useMediaQuery("(min-width: 600px)");
 
   const [loadingImage, setLoadingImage] = useState(false);
 
@@ -41,7 +41,7 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
     try {
       setProductData({ ...product, name: editedName });
 
-      const productRef = doc(db, 'products', product.id);
+      const productRef = doc(db, "products", product.id);
 
       const productDoc = await getDoc(productRef);
 
@@ -63,7 +63,7 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
     try {
       setProductData({ ...product, company: editedCompany });
 
-      const productRef = doc(db, 'products', product.id);
+      const productRef = doc(db, "products", product.id);
 
       const productDoc = await getDoc(productRef);
 
@@ -81,9 +81,9 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
 
   const handleImageUpload = async () => {
     try {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
 
       input.onchange = async (e) => {
         const file = e.target.files[0];
@@ -100,12 +100,12 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
 
             const updateData = {
               ...productDoc.data(),
-              imageUrl: result.url,
+              productImage: result.url,
             };
 
             await updateDoc(productRef, updateData);
           } catch (error) {
-            console.error('Error al subir la imagen a IPFS:', error);
+            console.error("Error al subir la imagen a IPFS:", error);
           } finally {
             setLoadingImage(false);
           }
@@ -114,26 +114,24 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
 
       input.click();
     } catch (error) {
-      console.error('Error al subir la imagen:', error);
+      console.error("Error al subir la imagen:", error);
     }
   };
-
-  useEffect(() => {}, [setProductData]);
 
   return (
     <>
       <Grid
         item
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignContent: 'center',
+          display: "flex",
+          flexDirection: "row",
+          alignContent: "center",
         }}
       >
         <Image
           style={{
             borderRadius: 2,
-            objectFit: 'cover',
+            objectFit: "cover",
           }}
           src={product?.productImage}
           width={isSmallScreen ? 100 : 100}
@@ -152,20 +150,20 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
       <Grid
         item
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignContent: 'center',
-          marginY: '2rem',
+          display: "flex",
+          flexDirection: "row",
+          alignContent: "center",
+          marginY: "2rem",
         }}
       >
         <Typography
           sx={{
-            color: 'primary.main',
+            color: "primary.main",
             fontSize: 20,
             marginRight: 1,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            alignSelf: 'center',
+            fontWeight: "bold",
+            textAlign: "center",
+            alignSelf: "center",
           }}
         >
           NOMBRE:
@@ -177,8 +175,8 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
             marginTop="0.35rem"
             fontWeight="bold"
             sx={{
-              textTransform: 'uppercase',
-              fontStyle: 'italic',
+              textTransform: "uppercase",
+              fontStyle: "italic",
             }}
           >
             {editedName}
@@ -206,20 +204,20 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
       <Grid
         item
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignContent: 'center',
-          marginBottom: '2rem',
+          display: "flex",
+          flexDirection: "row",
+          alignContent: "center",
+          marginBottom: "2rem",
         }}
       >
         <Typography
           sx={{
-            color: 'primary.main',
+            color: "primary.main",
             fontSize: 20,
             marginRight: 1,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            alignSelf: 'center',
+            fontWeight: "bold",
+            textAlign: "center",
+            alignSelf: "center",
           }}
         >
           PRODUCTOR:
@@ -231,8 +229,8 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
             marginTop="0.35rem"
             fontWeight="bold"
             sx={{
-              textTransform: 'uppercase',
-              fontStyle: 'italic',
+              textTransform: "uppercase",
+              fontStyle: "italic",
             }}
           >
             {editedCompany}

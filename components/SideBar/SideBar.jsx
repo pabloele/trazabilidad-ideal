@@ -92,6 +92,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
           <Box
             onClick={() => {
               router.push('/productos');
+              onClose();
             }}
             sx={{
               backgroundColor: 'rgba(13, 0, 128, 0.589)',
