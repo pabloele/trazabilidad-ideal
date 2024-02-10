@@ -391,7 +391,7 @@ const Profile = () => {
                       variant="contained"
                       onClick={saveHistory}
                       maxWidth="9rem"
-                      sx={{ marginRight: '2rem' }}
+                      sx={{ marginRight: '2rem', marginBottom: '1rem' }}
                     >
                       Guardar
                     </Button>

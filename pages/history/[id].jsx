@@ -229,129 +229,148 @@ const ViewProduct = () => {
                 />
               </Paper>
             </Grid>
-            <Grid item xs={0.5}>
-              {isAdjustingImage && (
-                <Box display="flex" flexDirection="column">
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={handleZoomIn}
-                  >
-                    <HiZoomIn />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={handleZoomOut}
-                  >
-                    <HiZoomOut />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={() => handleMove('right')}
-                  >
-                    <MdKeyboardArrowRight />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={() => handleMove('left')}
-                  >
-                    <MdKeyboardArrowLeft />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={() => handleMove('up')}
-                  >
-                    <MdKeyboardArrowUp />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={() => handleMove('down')}
-                  >
-                    <MdKeyboardArrowDown />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={handleRotateClockwise}
-                  >
-                    <BiRotateRight />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    }}
-                    onClick={handleRotateCounterclockwise}
-                  >
-                    <BiRotateLeft />
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      color: 'Highlight',
-                    }}
-                    onClick={handleSaveAdjustedImage}
-                  >
-                    <MdOutlineDone size={40} />
-                  </Button>
+            {isAdjustingImage && (
+              <Box display="flex" flexDirection="column" position="fixed">
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: 4,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={handleZoomIn}
+                >
+                  <HiZoomIn />
                 </Box>
-              )}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={handleZoomOut}
+                >
+                  <HiZoomOut />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={() => handleMove('right')}
+                >
+                  <MdKeyboardArrowRight />
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={() => handleMove('left')}
+                >
+                  <MdKeyboardArrowLeft />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={() => handleMove('up')}
+                >
+                  <MdKeyboardArrowUp />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={() => handleMove('down')}
+                >
+                  <MdKeyboardArrowDown />
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={handleRotateClockwise}
+                >
+                  <BiRotateRight />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={handleRotateCounterclockwise}
+                >
+                  <BiRotateLeft />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'center',
+                    marginTop: -1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                    width: '2rem',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}
+                  onClick={handleSaveAdjustedImage}
+                >
+                  <MdOutlineDone size="1.5rem" />
+                </Box>
+              </Box>
+            )}
+            <Grid item xs={0.5}>
               {!isAdjustingImage && user?.uid === product.ownerUid && (
                 <MdCropRotate
                   size={30}
