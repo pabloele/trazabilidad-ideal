@@ -230,13 +230,19 @@ const ViewProduct = () => {
               </Paper>
             </Grid>
             {isAdjustingImage && (
-              <Box display="flex" flexDirection="column" position="fixed">
+              <Box
+                display="flex"
+                flexDirection="column"
+                position="fixed"
+                marginLeft={1}
+                marginTop={1}
+              >
                 <Box
                   sx={{
                     display: 'flex',
                     gap: 1,
                     alignItems: 'center',
-                    marginTop: 4,
+
                     boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
                     width: '2rem',
                     justifyContent: 'center',
