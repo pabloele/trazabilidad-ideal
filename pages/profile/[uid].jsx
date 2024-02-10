@@ -117,14 +117,31 @@ const Profile = () => {
               onMouseLeave={() => setIsHoveredWallpaper(false)}
             >
               {isHoveredWallpaper && (
-                <IconButton
+                <Box
                   sx={{
                     position: 'absolute',
-                    right: '20px',
+                    top: 0,
+                    width: '100%',
+                    height: '50vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    '&:hover': {
+                      opacity: 1,
+                    },
                   }}
                 >
-                  <EditIcon onClick={handleSaveWallpaper} />
-                </IconButton>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: '#fff', cursor: 'pointer' }}
+                    onClick={handleSaveWallpaper}
+                  >
+                    Editar
+                  </Typography>
+                </Box>
               )}
               <Grid container direction="column">
                 <Grid
@@ -167,30 +184,49 @@ const Profile = () => {
                     >
                       <Avatar
                         alt="Foto de perfil"
-                        src={`${
+                        src={
                           user?.data?.profileImg
                             ? user.data.profileImg
                             : '/images/defaultProfile.webp'
-                        }`}
+                        }
                         sx={{
                           width: '150px',
                           height: '150px',
                           marginLeft: '25%',
-
                           boxShadow: '0px 0px 10px rgba(0, 1, 0, 1)',
                         }}
                       />
 
                       {isHovered && user?.uid === userAuth?.uid && (
-                        <EditIcon
-                          onClick={handleEditImage}
-                          sx={{
-                            position: 'absolute',
-                            top: '45%',
-                            left: '45%',
-                            cursor: 'pointer',
-                          }}
-                        />
+                        <>
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              top: 0,
+                              width: '150px',
+                              height: '150px',
+                              borderRadius: '50%',
+                              marginLeft: '25%',
+                              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              opacity: 0,
+                              transition: 'opacity 0.3s ease',
+                              '&:hover': {
+                                opacity: 1,
+                              },
+                            }}
+                          >
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ color: '#fff', cursor: 'pointer' }}
+                              onClick={handleEditImage}
+                            >
+                              Editar
+                            </Typography>
+                          </Box>
+                        </>
                       )}
                     </Box>
 
@@ -206,7 +242,6 @@ const Profile = () => {
                       {user?.data?.name}
                     </Typography>
                   </Box>
-                  {/* </Paper> */}
                 </Grid>
               </Grid>
             </Paper>
@@ -280,15 +315,50 @@ const Profile = () => {
                       : 'Sin descripción'}
                   </Typography>
                   {descriptionIsHovered && (
-                    <IconButton onClick={handleEditDescription}>
-                      <EditIcon />
-                    </IconButton>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        width: '100%',
+                        height: '4rem',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease',
+                        '&:hover': {
+                          opacity: 1,
+                        },
+                      }}
+                    >
+                      <Box
+                        display="flex"
+                        marginTop="1rem"
+                        flexDirection="column"
+                        alignContent="center"
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            color: '#fff',
+                            cursor: 'pointer',
+                            width: '100%',
+                            height: '3rem',
+                            textAlign: 'center',
+                          }}
+                          onClick={handleEditDescription}
+                        >
+                          Editar
+                        </Typography>
+                      </Box>
+                    </Box>
                   )}
                 </Box>
               )}
             </Paper>
           </Grid>
-          {/* Módulos con datos */}
+          {/* Módulo con datos */}
           <Grid item xs={12} marginTop={2}>
             <Paper
               elevation={3}
@@ -356,10 +426,45 @@ const Profile = () => {
                     )}
                   </Typography>
                   <Box display="flex" justifyContent="center">
-                    {user.data.history && (
-                      <IconButton onClick={handleToggleEditHistory}>
-                        <EditIcon />
-                      </IconButton>
+                    {user.data.history && !isEditingHistory && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease',
+                          '&:hover': {
+                            opacity: 1,
+                          },
+                        }}
+                      >
+                        <Box
+                          display="flex"
+                          marginTop="1rem"
+                          flexDirection="column"
+                          alignContent="center"
+                        >
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              color: '#fff',
+                              cursor: 'pointer',
+                              width: '100%',
+                              height: '3rem',
+                              textAlign: 'center',
+                            }}
+                            onClick={handleToggleEditHistory}
+                          >
+                            Editar
+                          </Typography>
+                        </Box>
+                      </Box>
                     )}
                   </Box>
                 </>
