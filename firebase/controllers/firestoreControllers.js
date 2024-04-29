@@ -67,16 +67,16 @@ export const getUserByUid = async (uid) => {
 export const createUser = async (payload) => {
   const { uid } = payload;
 
-  // Verificar si el usuario ya existe en la colección de usuarios
+
   const usersQuery = query(usersCollectionRef, where('uid', '==', uid));
   const userDocs = await getDocs(usersQuery);
 
   if (userDocs.empty) {
-    // El usuario no existe, entonces podemos crearlo
-    await addDoc(usersCollectionRef, { ...payload });
+   
+    await addDoc(usersCollectionRef, { ...payload, limit: Number(process.env.NEXT_PUBLIC_USER_DEFAULT_LIMIT) });
     console.log('Usuario creado exitosamente.');
   } else {
-    // El usuario ya existe, muestra un mensaje de error o realiza alguna otra acción
+    
     console.log('El usuario ya existe en la base de datos.');
   }
 };
@@ -98,15 +98,50 @@ export const getDocId = async (uid) => {
 
 export const addUserProduct = async (uid, product) => {
   try {
+    const id = await getDocId(uid)
+    console.log("UID:", id);
+    const userRef = doc(db, 'users', id);
+    console.log("User Reference:", userRef);
+
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      console.log("User not found");
+      return; 
+    }
+
+    const data = userDoc.data();
+    
+
+    const updatedData = {
+      ...data,
+      limit: userDoc.data().limit - 1,
+    };
+
+    console.log(updatedData);
     const productsCollection = collection(db, 'products');
     console.log(product);
     const docRef = await addDoc(productsCollection, {
       ...product,
       ownerUid: uid,
     });
+    await updateDoc(userRef, {
+      ...updatedData,
+    });
     console.log('Documento agregado con éxito', docRef.id);
 
     return docRef.id;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getUserLimit = async (uid) => {
+  console.log(uid);
+  try {
+    const users = await getUsers()
+    const user = users.find(u => u?.uid === uid)
+    console.log(user.limit);
+    return user.limit;
   } catch (error) {
     console.log(error);
   }
