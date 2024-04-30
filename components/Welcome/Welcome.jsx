@@ -7,14 +7,27 @@ import Recent from '../recentProducts/Recent';
 import { FaEthereum } from 'react-icons/fa';
 import useProducts from '../../hooks/useProducts';
 import { useAuth } from '../../context/AuthContext';
+import { getUserLimit } from '../../firebase/controllers/firestoreControllers';
 
 const Welcome = () => {
   const router = useRouter();
   const { user } = useAuth();
+  console.log(user.uid);
   const { products, setProducts } = useProducts();
   const ownerProducts = products.filter(
     (product) => product.ownerUid === user?.uid
   );
+
+  const handleCreateNewProduct = async ()=>{
+    const limit = await getUserLimit(user?.uid)
+    if (limit > 0) {
+
+      router.push('/nueva-produccion')
+    } else {
+      alert("Ha alcanzado el límite de trazabilidades disponibles")
+    }
+  }
+
 
   return (
     <Grid
@@ -37,7 +50,7 @@ const Welcome = () => {
           marginTop: '5rem',
           zIndex: 9999,
         }}
-        onClick={() => router.push('/nueva-produccion')}
+        onClick={handleCreateNewProduct}
       >
         NUEVA TRAZABILIDAD
       </Button>

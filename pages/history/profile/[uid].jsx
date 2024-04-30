@@ -24,7 +24,7 @@ import BackButton from '../../../components/Buttons/BackButton';
 import UserNavBar from '../../../components/NavBar/UserNavBar';
 const Profile = () => {
   const router = useRouter();
-  const { user: userAuth } = useAuth();
+  // const { user: userAuth } = useAuth();
 
   const {
     user,
