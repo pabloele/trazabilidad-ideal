@@ -1,6 +1,7 @@
 import { create } from "ipfs-http-client";
 import { v4 } from "uuid";
 export const agroupMilestones = (product) => {
+  
   const trazabilidadAgrupada = [];
   // Iterar sobre las líneas de trazabilidad
   for (const linea of product.trazability) {
