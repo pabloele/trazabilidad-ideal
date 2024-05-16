@@ -20,9 +20,8 @@
     "@mui/x-date-pickers": "^6.18.1",
     "@sweetalert2/theme-material-ui": "^5.0.15",
     "@thirdweb-dev/chains": "^0.1.108",
-    "@thirdweb-dev/sdk": "^3",
     "@thirdweb-dev/react": "^3",
-
+    "@thirdweb-dev/sdk": "^3",
     "browser-image-compression": "^2.0.2",
     "dayjs": "^1.11.10",
     "ethers": "^5",
