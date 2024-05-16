@@ -155,6 +155,10 @@ const Producto = () => {
       setLoading(true);
       const trazabilidadAgrupada = agroupMilestones(product);
 
+    
+
+    
+
       const trazability = await uploadIPFS(trazabilidadAgrupada);
 
       const productToIpfs = await uploadIPFS(product);
@@ -169,7 +173,6 @@ const Producto = () => {
       const tokenData = {
         name: product.name,
         description: `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`,
-
         image: product.productImage,
       };
 
@@ -193,6 +196,8 @@ const Producto = () => {
       );
 
       try {
+        console.log('aca llega');
+
         const estimatedGas = await trazabilityContract.estimateGas.safeMint(
           address,
           formatProduct,
@@ -201,16 +206,19 @@ const Producto = () => {
         const gasLimit = estimatedGas.mul(2); // Puedes ajustar el factor multiplicador según tus necesidades
         const gasPrice = await signer.getGasPrice();
 
+
+       
         const transaction =
           await trazabilityContract.populateTransaction.safeMint(
             address,
             formatProduct,
-            tokenDataIPFS.url,
-            {
-              gasLimit: gasLimit,
-              gasPrice: gasPrice,
+            tokenDataIPFS.url,{
+              gasLimit,
+              gasPrice
             }
           );
+     
+            
 
         const response = await signer.sendTransaction(transaction);
 

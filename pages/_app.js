@@ -4,7 +4,7 @@ import { ThemeProvider } from "@emotion/react";
 import { AuthContextProvider } from "../context/AuthContext";
 import { idealTheme } from "../theme";
 import "../styles/fonts.css";
-import { OptimismGoerli, Mumbai } from "@thirdweb-dev/chains";
+import { OptimismGoerli, Mumbai, OpSepoliaTestnet } from "@thirdweb-dev/chains";
 
 import { Open_Sans } from "next/font/google";
 
@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <ThemeProvider theme={idealTheme}>
       <ThirdwebProvider
-        activeChain={Mumbai}
+        activeChain={OpSepoliaTestnet}
         clientId={process.env.NEXT_PUBLIC_CLIENT_ID}
       >
         <AuthContextProvider>
