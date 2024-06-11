@@ -39,7 +39,7 @@ import useAddModalStore from '../../store/useAddModalStore';
 import EditIcon from '@mui/icons-material/Edit';
 import EditProduct from '../../components/Modals/EditProduct';
 import { CustomTextField } from '../../styledComponents/styledComponents';
-
+import { useSigner } from '@thirdweb-dev/react';
 const Producto = () => {
   const address = useAddress();
 
@@ -142,25 +142,14 @@ const Producto = () => {
     setEditingProtocolScreen('select');
     onCloseMilestoneModal();
   };
-
+  const signer = useSigner();
   const uploadToBlockChain = async () => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      if (!address)
-        throw new Error(
-          'Conecte una billetera para certificar la trazabilidad'
-        );
+      if (!address) throw new Error('Conecte una billetera para certificar la trazabilidad');
 
       setLoading(true);
       const trazabilidadAgrupada = agroupMilestones(product);
-
-    
-
-    
-
       const trazability = await uploadIPFS(trazabilidadAgrupada);
-
       const productToIpfs = await uploadIPFS(product);
 
       const formatProduct = {
@@ -172,68 +161,46 @@ const Producto = () => {
 
       const tokenData = {
         name: product.name,
-        description: `La trazabilidad del producto  "${product.name}" esta certificado con tecnología blockchain gracias a la plataforma de la Fundacion Ideal`,
+        description: `La trazabilidad del producto  "${product.name}" está certificada con tecnología blockchain gracias a la plataforma de la Fundación Ideal`,
         image: product.productImage,
       };
 
       const tokenDataIPFS = await uploadIPFS(tokenData);
 
-      const signer = provider.getSigner();
-
-      const network = await provider.getNetwork();
-
+      const network = await signer.provider.getNetwork();
       console.log(network);
+
       if (network.chainId !== Number(process.env.NEXT_PUBLIC_CHAIN_ID)) {
-        throw new Error(
-          `No estás en la red correcta, por favor seleccione la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`
-        );
+        throw new Error(`No estás en la red correcta, por favor selecciona la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`);
       }
 
-      const trazabilityContract = new ethers.Contract(
-        contractAddress,
-        contractAbi,
-        signer
-      );
+      const trazabilityContract = new ethers.Contract(contractAddress, contractAbi, signer);
 
       try {
         console.log('aca llega');
 
-        const estimatedGas = await trazabilityContract.estimateGas.safeMint(
-          address,
-          formatProduct,
-          tokenDataIPFS.url
-        );
-        const gasLimit = estimatedGas.mul(2); // Puedes ajustar el factor multiplicador según tus necesidades
+        const estimatedGas = await trazabilityContract.estimateGas.safeMint(address, tokenDataIPFS.url);
+        const gasLimit = estimatedGas.mul(2); // Ajusta el factor multiplicador según tus necesidades
         const gasPrice = await signer.getGasPrice();
 
-
-       
-        const transaction =
-          await trazabilityContract.populateTransaction.safeMint(
-            address,
-            formatProduct,
-            tokenDataIPFS.url,{
-              gasLimit,
-              gasPrice
-            }
-          );
-     
-            
+        const transaction = await trazabilityContract.populateTransaction.safeMint(
+          address,
+          tokenDataIPFS.url,
+          {
+            gasLimit,
+            gasPrice
+          }
+        );
 
         const response = await signer.sendTransaction(transaction);
 
         if (response.hash) {
-          const updated = await updateProduct(
-            router.query.id,
-            'realizado',
-            response.hash
-          );
+          const updated = await updateProduct(router.query.id, 'realizado', response.hash);
         } else {
           console.error('El valor de txHash es undefined.');
         }
       } catch (error) {
         setError(error.reason);
-
         console.log(error);
       }
     } catch (error) {
