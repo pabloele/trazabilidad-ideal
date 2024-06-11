@@ -65,7 +65,6 @@ const TrazabilityAssistant = ({ initialMilestone, closeModal }) => {
       setImage(response.url);
     } catch (error) {
       console.error("Error durante el proceso de carga:", error);
-      // Manejar el error según tus necesidades
     }
   }, []);
 
