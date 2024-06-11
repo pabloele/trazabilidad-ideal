@@ -1,5 +1,5 @@
-import { Box } from '@mui/system';
-import { NavBar, SideBar } from '../../components';
+import { Box } from "@mui/system";
+import { NavBar, SideBar } from "../../components";
 
 const drawerWidth = 200;
 
@@ -7,8 +7,8 @@ export const HomeLayout = ({ children }) => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        backgroundColor: 'beige',
+        display: "flex",
+        backgroundColor: "beige",
         // backgroundColor: 'primary.main'
       }}
       className="animate__animated animate__fadeIn animate__faster"
@@ -19,7 +19,13 @@ export const HomeLayout = ({ children }) => {
 
       <Box
         component="main"
-        sx={{ backgroundColor: 'beige', flexGrow: 1, p: 7, marginTop: '3rem' }}
+        sx={{
+          backgroundColor: "beige",
+          flexGrow: 1,
+          p: 7,
+          marginTop: "3rem",
+          marginLeft: "2rem",
+        }}
       >
         {children}
       </Box>
