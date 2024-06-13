@@ -90,7 +90,7 @@ export const NavBar = ({ drawerWidth }) => {
                 <ConnectWallet
                   btnTitle="Conectar Wallet"
                   style={{
-                    fontSize: "5px",
+                    fontSize: "12px",
                     textTransform: "uppercase",
                     color: "purple",
                     fontWeight: "800",

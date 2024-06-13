@@ -1,33 +1,31 @@
-import React from 'react';
+import React from "react";
 
-import { Grid, Box, Typography, Button } from '@mui/material';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import Recent from '../recentProducts/Recent';
-import { FaEthereum } from 'react-icons/fa';
-import useProducts from '../../hooks/useProducts';
-import { useAuth } from '../../context/AuthContext';
-import { getUserLimit } from '../../firebase/controllers/firestoreControllers';
+import { Grid, Box, Typography, Button } from "@mui/material";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import Recent from "../recentProducts/Recent";
+import { FaEthereum } from "react-icons/fa";
+import useProducts from "../../hooks/useProducts";
+import { useAuth } from "../../context/AuthContext";
+import { getUserLimit } from "../../firebase/controllers/firestoreControllers";
 
 const Welcome = () => {
   const router = useRouter();
   const { user } = useAuth();
-  console.log(user.uid);
+
   const { products, setProducts } = useProducts();
   const ownerProducts = products.filter(
     (product) => product.ownerUid === user?.uid
   );
 
-  const handleCreateNewProduct = async ()=>{
-    const limit = await getUserLimit(user?.uid)
+  const handleCreateNewProduct = async () => {
+    const limit = await getUserLimit(user?.uid);
     if (limit > 0) {
-
-      router.push('/nueva-produccion')
+      router.push("/nueva-produccion");
     } else {
-      alert("Ha alcanzado el límite de trazabilidades disponibles")
+      alert("Ha alcanzado el límite de trazabilidades disponibles");
     }
-  }
-
+  };
 
   return (
     <Grid
@@ -35,19 +33,19 @@ const Welcome = () => {
       spacing={0}
       justifyContent="center"
       sx={{
-        minHeight: '90vh',
-        backgroundColor: 'beige',
+        minHeight: "90vh",
+        backgroundColor: "beige",
         borderRadius: 3,
-        textAlign: 'center',
+        textAlign: "center",
       }}
     >
       <Button
         variant="contained"
         sx={{
-          position: 'fixed',
-          top: '5rem',
-          right: '6%',
-          marginTop: '5rem',
+          position: "fixed",
+          top: "5rem",
+          right: "6%",
+          marginTop: "5rem",
           zIndex: 9999,
         }}
         onClick={handleCreateNewProduct}
@@ -56,20 +54,20 @@ const Welcome = () => {
       </Button>
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          overflow: 'hidden',
-          justifyItems: 'center',
+          display: "flex",
+          alignItems: "center",
+          overflow: "hidden",
+          justifyItems: "center",
         }}
       >
         <Box
-          sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}
+          sx={{ color: "primary.main", display: "flex", alignItems: "center" }}
         >
           <Grid container direction="column">
-            <Box sx={{ fontSize: '3rem', marginRight: '1rem' }}>
+            <Box sx={{ fontSize: "3rem", marginRight: "1rem" }}>
               <FaEthereum />
             </Box>
-            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
+            <Typography sx={{ fontSize: 30, fontWeight: "bold" }}>
               Sistema de trazabilidad blockchain
             </Typography>
           </Grid>
