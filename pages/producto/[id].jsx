@@ -245,6 +245,7 @@ const Producto = () => {
     qrcode.append(ref.current);
 
     const QRdata = `${process.env.NEXT_PUBLIC_PAGE_URL}/history/${router.query.id}`;
+    console.log("QRdata:", QRdata);
     qrcode.update({
       data: QRdata,
     });
@@ -1121,8 +1122,8 @@ const Producto = () => {
               <Button
                 variant="contained"
                 onClick={createQRcode}
-                disabled={product?.qrcode ? true : false}
-                sx={{ height: "2.5rem", marginRight: "1rem" }}
+                // disabled={product?.qrcode ? true : false}
+                sx={{ height: "2.5rem", marginRight: "1rem", fontSize: 12 }}
               >
                 Crear QR
               </Button>
@@ -1130,9 +1131,9 @@ const Producto = () => {
                 variant="contained"
                 onClick={handleOpenModal}
                 // disabled={product?.status !== 'en curso'}
-                sx={{ height: "2.5rem" }}
+                sx={{ height: "2.5rem", fontSize: 12 }}
               >
-                Certificar en blockchain
+                Certificar blockchain
               </Button>
             </Box>
             {product?.qrcode && (
