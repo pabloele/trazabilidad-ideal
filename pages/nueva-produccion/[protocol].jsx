@@ -363,7 +363,15 @@ const ProtocolPage = () => {
             />
           </Box>
         </Box>
-        <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}>
+        <Box
+          sx={{
+            marginTop: 2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           {/* <Typography sx={{ color: 'primary.main', fontSize: 20 }}>
             Imagen del producto
           </Typography> */}
@@ -380,6 +388,7 @@ const ProtocolPage = () => {
               justifyContent: "center",
               gap: 2,
               marginTop: 2,
+              margin: 2,
             }}
           >
             {fileUri ? (
@@ -441,6 +450,7 @@ const ProtocolPage = () => {
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 2,
+                      marginX: "2rem",
                     }}
                   >
                     {field.value ? (
@@ -467,14 +477,18 @@ const ProtocolPage = () => {
                   <input
                     type="file"
                     onChange={(e) => handleFileChange(index, e)}
-                    style={{ color: "red", backgroundColor: "lightgray" }}
+                    style={{
+                      color: "red",
+                      backgroundColor: "lightgray",
+                      marginX: "20rem",
+                    }}
                   />
                 )}
 
                 <Button
-                  sx={{ marginTop: 1, marginLeft: 1 }}
+                  sx={{ marginTop: 1, marginLeft: 4 }}
                   variant="contained"
-                  color="error"
+                  color="primary"
                   onClick={() => handleRemoveField(index)}
                 >
                   Eliminar Campo
@@ -505,7 +519,7 @@ const ProtocolPage = () => {
               >
                 Texto <EditNoteIcon />
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 onClick={() => handleAddField("image")}
                 sx={{
                   display: "flex",
@@ -514,7 +528,7 @@ const ProtocolPage = () => {
                 }}
               >
                 Imagen <ImageIcon />
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
                 onClick={() => handleAddField("file")}
                 sx={{
