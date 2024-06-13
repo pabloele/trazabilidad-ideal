@@ -72,49 +72,53 @@ const Protocols = () => {
         }}
       >
         <Box sx={{ marginBottom: 2 }}>
-          <Typography>Seleccione un protocolo</Typography>
+          <Typography>Selecciona un protocolo</Typography>
         </Box>
 
-        <Box>
-          <Box container sx={{ display: "flex", gap: 2 }}>
-            {loadingProtocols && <Spinner />}
-            {protocols?.map((protocol, index) => (
-              <Box
-                data={protocol.trazability}
-                key={index}
-                name={protocol.name}
-                onClick={() =>
-                  router.push(`/nueva-produccion/${protocol.name}`)
-                }
-                item
+        <Box
+          container
+          sx={{
+            display: "flex",
+            gap: 2,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          {loadingProtocols && <Spinner />}
+          {protocols?.map((protocol, index) => (
+            <Box
+              data={protocol.trazability}
+              key={index}
+              name={protocol.name}
+              onClick={() => router.push(`/nueva-produccion/${protocol.name}`)}
+              item
+              sx={{
+                backgroundColor: "primary.main",
+                padding: 2,
+                width: 200,
+                height: 100,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                "&:hover": {
+                  cursor: "pointer",
+                  color: "#000",
+                },
+                transition: "all ease .3s",
+              }}
+            >
+              <Typography
                 sx={{
-                  backgroundColor: "primary.main",
-                  padding: 2,
-                  width: 200,
-                  height: 100,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  "&:hover": {
-                    cursor: "pointer",
-                    color: "#000",
-                  },
-                  transition: "all ease .3s",
+                  textTransform: "capitalize",
+                  color: "#fff",
                 }}
+                name={protocol.name}
+                data={protocol.trazability}
               >
-                <Typography
-                  sx={{
-                    textTransform: "capitalize",
-                    color: "#fff",
-                  }}
-                  name={protocol.name}
-                  data={protocol.trazability}
-                >
-                  {protocol.name}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
+                {protocol.name}
+              </Typography>
+            </Box>
+          ))}
         </Box>
       </Box>
     </>

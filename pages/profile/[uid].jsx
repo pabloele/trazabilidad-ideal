@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Container,
   Grid,
@@ -10,17 +10,19 @@ import {
   Button,
   TextField,
   InputAdornment,
-} from '@mui/material';
-import { useAuth } from '../../context/AuthContext';
-import { HomeLayout } from '../../layout';
-import { useRouter } from 'next/router';
-import useUser from '../../hooks/useUser';
-import EditIcon from '@mui/icons-material/Edit';
-import { RichText, toolbarOptionsFull, viewOnly } from '../../components';
-import { MdOutlineCancel, MdOutlineSave } from 'react-icons/md';
-import { IoTextSharp } from 'react-icons/io5';
+  useMediaQuery,
+} from "@mui/material";
+import { useAuth } from "../../context/AuthContext";
+import { HomeLayout } from "../../layout";
+import { useRouter } from "next/router";
+import useUser from "../../hooks/useUser";
+import EditIcon from "@mui/icons-material/Edit";
+import { RichText, toolbarOptionsFull, viewOnly } from "../../components";
+import { MdOutlineCancel, MdOutlineSave } from "react-icons/md";
+import { IoTextSharp } from "react-icons/io5";
 const Profile = () => {
   const router = useRouter();
+  const isNotSmallScreen = useMediaQuery("(min-width: 600px)");
   const { user: userAuth } = useAuth();
 
   const {
@@ -52,11 +54,11 @@ const Profile = () => {
   };
 
   const saveHistory = async () => {
-    const sanitizedContent = history.replace(/<[^>]*>/g, '').trim();
+    const sanitizedContent = history.replace(/<[^>]*>/g, "").trim();
 
-    if (sanitizedContent === '') {
-      setHistory('');
-      handleSaveHistory('');
+    if (sanitizedContent === "") {
+      setHistory("");
+      handleSaveHistory("");
     } else {
       handleSaveHistory(history);
     }
@@ -103,15 +105,15 @@ const Profile = () => {
                 padding: 0,
                 paddingLeft: 0,
                 marginLeft: 0,
-                bgcolor: 'purple',
-                textAlign: 'center',
-                position: 'relative',
+                bgcolor: "#f9faff",
+                textAlign: "center",
+                position: "relative",
                 backgroundImage: `url(${user?.data?.wallpaperImg})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative',
-                width: '100%',
-                height: '50vh',
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                width: "100%",
+                height: "50vh",
               }}
               onMouseEnter={() => setIsHoveredWallpaper(true)}
               onMouseLeave={() => setIsHoveredWallpaper(false)}
@@ -119,24 +121,24 @@ const Profile = () => {
               {isHoveredWallpaper && (
                 <Box
                   sx={{
-                    position: 'absolute',
+                    position: "absolute",
                     top: 0,
-                    width: '100%',
-                    height: '50vh',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    width: "100%",
+                    height: "50vh",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     opacity: 0,
-                    transition: 'opacity 0.3s ease',
-                    '&:hover': {
+                    transition: "opacity 0.3s ease",
+                    "&:hover": {
                       opacity: 1,
                     },
                   }}
                 >
                   <Typography
                     variant="subtitle1"
-                    sx={{ color: '#fff', cursor: 'pointer' }}
+                    sx={{ color: "#fff", cursor: "pointer" }}
                     onClick={handleSaveWallpaper}
                   >
                     Editar
@@ -164,20 +166,20 @@ const Profile = () => {
 
                   <Box
                     sx={{
-                      textAlign: 'center',
-                      position: 'absolute',
+                      textAlign: "center",
+                      position: "absolute",
                       bottom: 0,
-                      left: '10%',
-                      marginBottom: '1rem',
-                      backgroundColor: 'rgba(255, 255, 255, 0)',
+                      left: "10%",
+                      marginBottom: "1rem",
+                      backgroundColor: "rgba(255, 255, 255, 0)",
                     }}
                   >
                     <Box
                       sx={{
-                        display: 'flex',
-                        alignItems: 'center',
+                        display: "flex",
+                        alignItems: "center",
                         gap: 2,
-                        position: 'relative',
+                        position: "relative",
                       }}
                       onMouseEnter={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
@@ -187,13 +189,13 @@ const Profile = () => {
                         src={
                           user?.data?.profileImg
                             ? user.data.profileImg
-                            : '/images/defaultProfile.webp'
+                            : "/images/defaultProfile.webp"
                         }
                         sx={{
-                          width: '150px',
-                          height: '150px',
-                          marginLeft: '25%',
-                          boxShadow: '0px 0px 10px rgba(0, 1, 0, 1)',
+                          width: isNotSmallScreen ? "150px" : "75px",
+                          height: isNotSmallScreen ? "150px" : "75px",
+                          marginLeft: "25%",
+                          boxShadow: "0px 0px 10px rgba(0, 1, 0, 1)",
                         }}
                       />
 
@@ -201,26 +203,26 @@ const Profile = () => {
                         <>
                           <Box
                             sx={{
-                              position: 'absolute',
+                              position: "absolute",
                               top: 0,
-                              width: '150px',
-                              height: '150px',
-                              borderRadius: '50%',
-                              marginLeft: '25%',
-                              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              width: "150px",
+                              height: "150px",
+                              borderRadius: "50%",
+                              marginLeft: "25%",
+                              backgroundColor: "rgba(0, 0, 0, 0.5)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
                               opacity: 0,
-                              transition: 'opacity 0.3s ease',
-                              '&:hover': {
+                              transition: "opacity 0.3s ease",
+                              "&:hover": {
                                 opacity: 1,
                               },
                             }}
                           >
                             <Typography
                               variant="subtitle1"
-                              sx={{ color: '#fff', cursor: 'pointer' }}
+                              sx={{ color: "#fff", cursor: "pointer" }}
                               onClick={handleEditImage}
                             >
                               Editar
@@ -231,12 +233,12 @@ const Profile = () => {
                     </Box>
 
                     <Typography
-                      variant="h3"
+                      variant={isNotSmallScreen ? "h4" : "h6"}
                       sx={{
-                        marginTop: '10px',
-                        color: 'whitesmoke',
-                        fontWeight: 'bold',
-                        textShadow: '2px 2px 4px rgba(1, 1, 1, 1)',
+                        marginTop: "10px",
+                        color: "whitesmoke",
+                        fontWeight: "bold",
+                        textShadow: "2px 2px 4px rgba(1, 1, 1, 1)",
                       }}
                     >
                       {user?.data?.name}
@@ -253,30 +255,30 @@ const Profile = () => {
             <Paper
               elevation={3}
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
                 margin: 0,
                 padding: 0,
                 paddingLeft: 0,
                 marginLeft: 0,
-                bgcolor: 'whitesmoke',
-                textAlign: 'center',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative',
-                width: '100%',
-                height: 'auto',
-                minHeight: '4rem',
+                bgcolor: "whitesmoke",
+                textAlign: "center",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                width: "100%",
+                height: "auto",
+                minHeight: "4rem",
               }}
             >
               {isEditingDescription ? (
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
                   <TextField
@@ -301,10 +303,10 @@ const Profile = () => {
               ) : (
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                   onMouseEnter={() => setDescriptionIsHovered(true)}
                   onMouseLeave={() => setDescriptionIsHovered(false)}
@@ -312,22 +314,22 @@ const Profile = () => {
                   <Typography variant="h5" color="textSecondary">
                     {user?.data?.description
                       ? user.data.description
-                      : 'Sin descripción'}
+                      : "Sin descripción"}
                   </Typography>
                   {descriptionIsHovered && (
                     <Box
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 0,
-                        width: '100%',
-                        height: '4rem',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        width: "100%",
+                        height: "4rem",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         opacity: 0,
-                        transition: 'opacity 0.3s ease',
-                        '&:hover': {
+                        transition: "opacity 0.3s ease",
+                        "&:hover": {
                           opacity: 1,
                         },
                       }}
@@ -341,11 +343,11 @@ const Profile = () => {
                         <Typography
                           variant="subtitle1"
                           sx={{
-                            color: '#fff',
-                            cursor: 'pointer',
-                            width: '100%',
-                            height: '3rem',
-                            textAlign: 'center',
+                            color: "#fff",
+                            cursor: "pointer",
+                            width: "100%",
+                            height: "3rem",
+                            textAlign: "center",
                           }}
                           onClick={handleEditDescription}
                         >
@@ -363,20 +365,20 @@ const Profile = () => {
             <Paper
               elevation={3}
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
                 margin: 0,
                 padding: 0,
                 paddingLeft: 0,
                 marginLeft: 0,
-                bgcolor: 'whitesmoke',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative',
-                width: '100%',
-                height: 'auto',
-                minHeight: '10rem',
+                bgcolor: "whitesmoke",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                width: "100%",
+                height: "auto",
+                minHeight: "10rem",
               }}
             >
               {isEditingHistory ? (
@@ -391,7 +393,7 @@ const Profile = () => {
                       variant="contained"
                       onClick={saveHistory}
                       maxWidth="9rem"
-                      sx={{ marginRight: '2rem', marginBottom: '1rem' }}
+                      sx={{ marginRight: "2rem", marginBottom: "1rem" }}
                     >
                       Guardar
                     </Button>
@@ -406,9 +408,9 @@ const Profile = () => {
                           variant="body1"
                           component="div"
                           style={{
-                            backgroundColor: 'whitesmoke',
-                            color: 'black',
-                            padding: '16px',
+                            backgroundColor: "whitesmoke",
+                            color: "black",
+                            padding: "16px",
                           }}
                           dangerouslySetInnerHTML={{
                             __html: user?.data?.history,
@@ -429,17 +431,17 @@ const Profile = () => {
                     {user.data.history && !isEditingHistory && (
                       <Box
                         sx={{
-                          position: 'absolute',
+                          position: "absolute",
                           top: 0,
-                          width: '100%',
-                          height: '100%',
-                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          width: "100%",
+                          height: "100%",
+                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                           opacity: 0,
-                          transition: 'opacity 0.3s ease',
-                          '&:hover': {
+                          transition: "opacity 0.3s ease",
+                          "&:hover": {
                             opacity: 1,
                           },
                         }}
@@ -453,11 +455,11 @@ const Profile = () => {
                           <Typography
                             variant="subtitle1"
                             sx={{
-                              color: '#fff',
-                              cursor: 'pointer',
-                              width: '100%',
-                              height: '3rem',
-                              textAlign: 'center',
+                              color: "#fff",
+                              cursor: "pointer",
+                              width: "100%",
+                              height: "3rem",
+                              textAlign: "center",
                             }}
                             onClick={handleToggleEditHistory}
                           >

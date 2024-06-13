@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import useProduct from '../../hooks/useProduct';
-import Image from 'next/image';
-import { HiZoomIn, HiZoomOut } from 'react-icons/hi';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import useProduct from "../../hooks/useProduct";
+import Image from "next/image";
+import { HiZoomIn, HiZoomOut } from "react-icons/hi";
 import {
   MdKeyboardArrowRight,
   MdKeyboardArrowLeft,
   MdKeyboardArrowUp,
   MdKeyboardArrowDown,
-} from 'react-icons/md';
-import { MdCropRotate, MdOutlineDone } from 'react-icons/md';
-import { BiRotateLeft, BiRotateRight } from 'react-icons/bi';
+} from "react-icons/md";
+import { MdCropRotate, MdOutlineDone } from "react-icons/md";
+import { BiRotateLeft, BiRotateRight } from "react-icons/bi";
 
 import {
   Typography,
@@ -20,13 +20,13 @@ import {
   Paper,
   Grid,
   Divider,
-} from '@mui/material';
-import UserNavBar from '../../components/NavBar/UserNavBar';
-import { contractAddress, contractAbi } from '../../contract/contract';
-import { ethers } from 'ethers';
-import Link from 'next/link';
-import Loader from '../../components/Loader/Loader';
-import { useAuth } from '../../context/AuthContext';
+} from "@mui/material";
+import UserNavBar from "../../components/NavBar/UserNavBar";
+import { contractAddress, contractAbi } from "../../contract/contract";
+import { ethers } from "ethers";
+import Link from "next/link";
+import Loader from "../../components/Loader/Loader";
+import { useAuth } from "../../context/AuthContext";
 
 const ViewProduct = () => {
   const router = useRouter();
@@ -41,10 +41,13 @@ const ViewProduct = () => {
     success: false,
   });
   const [loading, setLoading] = useState(false);
-  const isSmallScreen = useMediaQuery('(min-width: 720px)');
-  const isMediumScreen = useMediaQuery('(min-width: 10240px)');
+  const isSmallScreen = useMediaQuery("(min-width: 720px)");
+  const isMediumScreen = useMediaQuery("(min-width: 10240px)");
   console.log(product.ownerUid);
   const getBlockChainData = async () => {
+    if (!window.ethereum) {
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     const signer = provider.getSigner();
@@ -59,8 +62,9 @@ const ViewProduct = () => {
       const data = await trazabilityContract.getProductDataById(
         router.query.id
       );
+      console.log(data.id.length);
       //todo revistar esto mas tarde
-      setProductDataLocal({ data: data, success: true });
+      setProductDataLocal({ data: data, success: data?.id?.length > 0 });
     } catch (error) {
       console.log(error);
     } finally {
@@ -77,14 +81,14 @@ const ViewProduct = () => {
       .then((response) => response.blob())
       .then((blob) => {
         const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', atachment.name);
+        link.setAttribute("download", atachment.name);
 
         link.click();
       })
       .catch((error) => {
-        console.error('Error al descargar el archivo', error);
+        console.error("Error al descargar el archivo", error);
       });
   };
 
@@ -102,16 +106,16 @@ const ViewProduct = () => {
   const handleMove = (direction) => {
     const step = 10;
     switch (direction) {
-      case 'up':
+      case "up":
         setPosition({ ...position, y: position.y - step });
         break;
-      case 'down':
+      case "down":
         setPosition({ ...position, y: position.y + step });
         break;
-      case 'left':
+      case "left":
         setPosition({ ...position, x: position.x - step });
         break;
-      case 'right':
+      case "right":
         setPosition({ ...position, x: position.x + step });
         break;
       default:
@@ -174,8 +178,8 @@ const ViewProduct = () => {
     <Grid
       container
       justifyContent="center"
-      direction={'column'}
-      bgcolor="secondary.main"
+      direction={"column"}
+      // bgcolor="secondary.main"
     >
       <Grid item>
         <UserNavBar />
@@ -185,10 +189,10 @@ const ViewProduct = () => {
       <Grid item marginY={4}>
         <Paper
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
+            display: "flex",
+            flexDirection: "row",
             padding: 4,
-            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
           }}
         >
           {/* Product data */}
@@ -197,30 +201,30 @@ const ViewProduct = () => {
               item
               xs={5}
               sx={{
-                display: 'flex',
-                border: 'primary.main',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'InfoBackground',
-                direction: 'row',
+                display: "flex",
+                border: "primary.main",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "InfoBackground",
+                direction: "row",
               }}
             >
               <Paper
                 sx={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  bgcolor: '#d8cdd8',
-                  boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                  position: "relative",
+                  overflow: "hidden",
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  bgcolor: "#d8cdd8",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                 }}
               >
                 <Image
                   style={{
                     transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
-                    transition: 'transform 0.1s ease-in-out',
+                    transition: "transform 0.1s ease-in-out",
                   }}
                   src={product?.productImage}
                   width={isSmallScreen ? 350 : 300}
@@ -239,14 +243,14 @@ const ViewProduct = () => {
               >
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
 
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
                   onClick={handleZoomIn}
                 >
@@ -254,14 +258,14 @@ const ViewProduct = () => {
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
                   onClick={handleZoomOut}
                 >
@@ -269,76 +273,76 @@ const ViewProduct = () => {
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
-                  onClick={() => handleMove('right')}
+                  onClick={() => handleMove("right")}
                 >
                   <MdKeyboardArrowRight />
                 </Box>
 
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
-                  onClick={() => handleMove('left')}
+                  onClick={() => handleMove("left")}
                 >
                   <MdKeyboardArrowLeft />
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
-                  onClick={() => handleMove('up')}
+                  onClick={() => handleMove("up")}
                 >
                   <MdKeyboardArrowUp />
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
-                  onClick={() => handleMove('down')}
+                  onClick={() => handleMove("down")}
                 >
                   <MdKeyboardArrowDown />
                 </Box>
 
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
                   onClick={handleRotateClockwise}
                 >
@@ -346,14 +350,14 @@ const ViewProduct = () => {
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
                   onClick={handleRotateCounterclockwise}
                 >
@@ -361,14 +365,14 @@ const ViewProduct = () => {
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 1,
-                    alignItems: 'center',
+                    alignItems: "center",
                     marginTop: -1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                    width: '2rem',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                    width: "2rem",
+                    justifyContent: "center",
+                    marginBottom: "1rem",
                   }}
                   onClick={handleSaveAdjustedImage}
                 >
@@ -390,18 +394,18 @@ const ViewProduct = () => {
               xs={5}
               direction="column"
               sx={{
-                display: 'flex',
-                alignContent: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
               }}
             >
               <Grid item display="flex" justifyContent="center">
                 <Typography
                   sx={{
                     fontSize: 64,
-                    fontWeight: 'bold',
-                    color: 'primary.main',
-                    textJustify: 'auto',
+                    fontWeight: "bold",
+                    color: "primary.main",
+                    textJustify: "auto",
                   }}
                 >
                   {product?.name}
@@ -413,21 +417,21 @@ const ViewProduct = () => {
                 justifyContent="center"
                 bgcolor="primary.main"
               >
-                <Divider sx={{ display: 'flex', width: '100%' }}></Divider>
+                <Divider sx={{ display: "flex", width: "100%" }}></Divider>
               </Grid>
               <Grid item display="flex" justifyContent="center">
                 <Typography
                   sx={{
                     fontSize: 32,
-                    fontWeight: 'bold',
-                    color: 'primary.main',
-                    textJustify: 'auto',
+                    fontWeight: "bold",
+                    color: "primary.main",
+                    textJustify: "auto",
                   }}
                 >
                   {product?.company}
                 </Typography>
               </Grid>
-              <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Link
                   target="_blank"
                   rel="noopener noreferrer "
@@ -436,12 +440,12 @@ const ViewProduct = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      display: 'flex',
+                      display: "flex",
                       gap: 1,
-                      alignItems: 'center',
+                      alignItems: "center",
                       marginTop: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
-                      color: '#3BCED6',
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
+                      color: "#3BCED6",
                     }}
                   >
                     Datos del productor
@@ -460,12 +464,12 @@ const ViewProduct = () => {
                 item
                 xs={12}
                 sx={{
-                  backgroundColor: '#f5f5f5',
+                  backgroundColor: "#f5f5f5",
                   padding: 2,
-                  color: 'primary.main',
+                  color: "primary.main",
                 }}
               >
-                <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
                   Producto certificado
                 </Typography>
                 <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -473,7 +477,7 @@ const ViewProduct = () => {
                   tecnología blockchain
                 </Typography>
 
-                <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Link
                     target="_blank"
                     rel="noopener noreferrer "
@@ -482,16 +486,16 @@ const ViewProduct = () => {
                     <Button
                       variant="contained"
                       sx={{
-                        display: 'flex',
+                        display: "flex",
                         gap: 1,
-                        alignItems: 'center',
+                        alignItems: "center",
                         marginTop: 2,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                       }}
                     >
                       Ver trazabilidad
                       <Image
-                        src={'/images/logo-ideal.png'}
+                        src={"/images/logo-ideal.png"}
                         width={50}
                         height={20}
                         alt="logo"
@@ -506,17 +510,17 @@ const ViewProduct = () => {
                 <Grid
                   item
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: 'dotted',
-                    direction: 'row',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "dotted",
+                    direction: "row",
                     backgroundImage:
                       'url("../../public/images/bg-product.jpg")',
                   }}
                 >
                   <Image
-                    style={{ objectFit: 'contain' }}
+                    style={{ objectFit: "contain" }}
                     src={product?.productImage}
                     width={isSmallScreen ? 315 : 215}
                     height={isSmallScreen ? 315 : 215}
@@ -525,13 +529,13 @@ const ViewProduct = () => {
                 </Grid>
                 <Grid item>
                   <Grid container direction="column">
-                    <Grid item sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Grid item sx={{ display: "flex", alignItems: "flex-end" }}>
                       <Typography
                         sx={{
                           fontSize: 48,
-                          fontWeight: 'bold',
-                          color: 'primary.main',
-                          textJustify: 'auto',
+                          fontWeight: "bold",
+                          color: "primary.main",
+                          textJustify: "auto",
                         }}
                       >
                         {product?.name}
@@ -540,12 +544,12 @@ const ViewProduct = () => {
                     <Grid
                       item
                       sx={{
-                        backgroundColor: '#f5f5f5',
+                        backgroundColor: "#f5f5f5",
                         padding: 2,
-                        color: 'primary.main',
+                        color: "primary.main",
                       }}
                     >
-                      <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                      <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
                         Producto certificado
                       </Typography>
                       <Typography sx={{ fontSize: 20, marginTop: 2 }}>
@@ -554,22 +558,22 @@ const ViewProduct = () => {
                       </Typography>
                       <Grid
                         item
-                        sx={{ display: 'flex', justifyContent: 'flex-end' }}
+                        sx={{ display: "flex", justifyContent: "flex-end" }}
                       >
                         <Button
                           onClick={getBlockChainData}
                           variant="contained"
                           sx={{
-                            display: 'flex',
+                            display: "flex",
                             gap: 1,
-                            alignItems: 'center',
+                            alignItems: "center",
                             marginTop: 2,
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                            boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                           }}
                         >
                           Ver trazabilidad
                           <Image
-                            src={'/images/logo-ideal.png'}
+                            src={"/images/logo-ideal.png"}
                             width={50}
                             height={20}
                             alt="logo"
@@ -600,7 +604,7 @@ const ViewProduct = () => {
       </Grid>
 
       {/* milestones */}
-      <Grid item>
+      <Grid item sx={{ paddingX: 4 }}>
         {product &&
           product.trazability &&
           product.trazability.map((trazability, index) => {
@@ -615,12 +619,13 @@ const ViewProduct = () => {
                   <Typography
                     sx={{
                       fontSize: 26,
-                      fontStyle: 'oblique',
-                      color: 'white.main',
-                      backgroundColor: 'primary.main',
+                      fontStyle: "oblique",
+                      color: "white.main",
+                      backgroundColor: "primary.main",
                       marginX: 10,
+                      marginBottom: 2,
                       paddingX: 2,
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                     }}
                   >
                     {trazability.name}
@@ -638,24 +643,24 @@ const ViewProduct = () => {
                                     <Box
                                       sx={{
                                         padding: 2,
-                                        display: 'flex',
-                                        flexDirection: 'row',
+                                        display: "flex",
+                                        flexDirection: "row",
                                         gap: 5,
-                                        justifyContent: 'center',
+                                        justifyContent: "center",
                                       }}
                                       flexDirection={
-                                        isSmallScreen ? 'row' : 'column'
+                                        isSmallScreen ? "row" : "column"
                                       }
                                     >
                                       <Box
                                         sx={{
-                                          width: '200px',
-                                          height: '200px',
-                                          position: 'relative',
-                                          border: '1px solid',
-                                          bgcolor: 'yellow.main',
+                                          width: "200px",
+                                          height: "200px",
+                                          position: "relative",
+                                          border: "1px solid",
+                                          bgcolor: "yellow.main",
                                           boxShadow:
-                                            '0px 4px 8px rgba(0, 0, 0.5, 0.5)',
+                                            "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                                         }}
                                       >
                                         <Image
@@ -671,18 +676,19 @@ const ViewProduct = () => {
                                           width={isSmallScreen ? 280 : 215}
                                           height={215}
                                           sx={{
-                                            backgroundColor: 'white.main',
-                                            overflowY: 'auto',
-                                            color: 'primary.main',
-                                            minWidth: '800px',
-                                            minHeight: '200px',
+                                            backgroundColor: "white.main",
+                                            overflowY: "auto",
+                                            color: "primary.main",
+                                            minWidth: "800px",
+                                            minHeight: "200px",
                                           }}
                                         >
                                           <Typography
                                             sx={{
                                               fontSize: 28,
-                                              fontWeight: 'bold',
-                                              color: 'primary.main',
+                                              fontWeight: "bold",
+                                              color: "primary.main",
+                                              paddingX: 2,
                                             }}
                                           >
                                             {line.name}
@@ -691,29 +697,34 @@ const ViewProduct = () => {
                                             sx={{
                                               fontSize: 20,
                                               marginTop: 2,
+                                              paddingX: 2,
                                             }}
                                           >
                                             {milestone.description}
                                           </Typography>
-                                          <Typography
-                                            sx={{
-                                              fontSize: 20,
-                                              fontWeight: 'bold',
-                                              paddingTop: 1,
-                                            }}
-                                          >
-                                            Archivos adjuntos:
-                                          </Typography>
+                                          {milestone.atachments?.length > 0 && (
+                                            <Typography
+                                              sx={{
+                                                fontSize: 20,
+                                                fontWeight: "bold",
+                                                paddingTop: 1,
+                                                paddingX: 2,
+                                              }}
+                                            >
+                                              Archivos adjuntos:
+                                            </Typography>
+                                          )}
                                           {milestone.atachments?.map(
                                             (atachment, index) => (
                                               <Typography
                                                 key={atachment.name}
                                                 sx={{
                                                   fontSize: 14,
-                                                  fontWeight: 'bold',
-                                                  color: 'black',
-                                                  textDecoration: 'none',
-                                                  cursor: 'pointer',
+                                                  fontWeight: "bold",
+                                                  color: "black",
+                                                  textDecoration: "none",
+                                                  cursor: "pointer",
+                                                  paddingX: 2,
                                                 }}
                                                 onClick={() =>
                                                   handleDownload(atachment)
