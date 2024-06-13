@@ -27,7 +27,7 @@ const VerticalLine = styled("div")({
 });
 
 export default function TrazabilityLine({ protocol }) {
-  const isMediumScreen = useMediaQuery("(min-width: 600px)");
+  const isMediumScreen = useMediaQuery("(min-width: 1500px)");
   const timelineWidth = isMediumScreen ? "900px" : "500px";
 
   const [isGrabbing, setIsGrabbing] = useState(false);
@@ -105,7 +105,7 @@ export default function TrazabilityLine({ protocol }) {
     <>
       <Modal open={open} onClose={closeModal}>
         <Box sx={style}>
-          <Paper sx={{ p: 2, border: '0' }}>
+          <Paper sx={{ p: 2, border: "0" }}>
             {/* <Typography variant="h6">Contenido del Milestone</Typography> */}
 
             {selectedMilestone &&

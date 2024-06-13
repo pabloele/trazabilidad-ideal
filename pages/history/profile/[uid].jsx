@@ -1,54 +1,21 @@
-import { useEffect, useState } from 'react';
-import {
-  Container,
-  Grid,
-  Paper,
-  Avatar,
-  Typography,
-  Box,
-  IconButton,
-  Button,
-  TextField,
-  InputAdornment,
-} from '@mui/material';
+import { Grid, Paper, Avatar, Typography, Box } from "@mui/material";
 
-import { HomeLayout } from '../../../layout';
-import { useRouter } from 'next/router';
-import useUser from '../../../hooks/useUser';
-import EditIcon from '@mui/icons-material/Edit';
-import { RichText, toolbarOptionsFull, viewOnly } from '../../../components';
-import { MdOutlineCancel, MdOutlineSave } from 'react-icons/md';
-import { IoTextSharp } from 'react-icons/io5';
-import { useAuth } from '../../../context/AuthContext';
-import BackButton from '../../../components/Buttons/BackButton';
-import UserNavBar from '../../../components/NavBar/UserNavBar';
+import { useRouter } from "next/router";
+import useUser from "../../../hooks/useUser";
+
+import { IoTextSharp } from "react-icons/io5";
+
+import UserNavBar from "../../../components/NavBar/UserNavBar";
 const Profile = () => {
   const router = useRouter();
-  // const { user: userAuth } = useAuth();
 
-  const {
-    user,
-    handleEditImage,
-    handleSaveDescription,
-    handleSaveHistory,
-    handleEditWallpaper,
-  } = useUser(router.query.uid);
-
-  if (!user) {
-    return (
-      <>
-        <HomeLayout>
-          <Typography>No se encontro el usuario</Typography>
-        </HomeLayout>
-      </>
-    );
-  }
+  const { user } = useUser(router.query.uid);
 
   return (
     <Grid
       container
       justifyContent="center"
-      direction={'column'}
+      direction={"column"}
       bgcolor="secondary.main"
     >
       <Grid item>
@@ -64,15 +31,15 @@ const Profile = () => {
               padding: 0,
               paddingLeft: 0,
               marginLeft: 0,
-              bgcolor: 'purple',
-              textAlign: 'center',
-              position: 'relative',
+              bgcolor: "#f9faff",
+              textAlign: "center",
+              position: "relative",
               backgroundImage: `url(${user?.data?.wallpaperImg})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              position: 'relative',
-              width: '100%',
-              height: '50vh',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              position: "relative",
+              width: "100%",
+              height: "50vh",
             }}
           >
             <Grid container direction="column">
@@ -96,20 +63,20 @@ const Profile = () => {
 
                 <Box
                   sx={{
-                    textAlign: 'center',
-                    position: 'absolute',
+                    textAlign: "center",
+                    position: "absolute",
                     bottom: 0,
-                    left: '10%',
-                    marginBottom: '1rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    left: "10%",
+                    marginBottom: "1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0)",
                   }}
                 >
                   <Box
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
+                      display: "flex",
+                      alignItems: "center",
                       gap: 2,
-                      position: 'relative',
+                      position: "relative",
                     }}
                   >
                     <Avatar
@@ -117,14 +84,14 @@ const Profile = () => {
                       src={`${
                         user?.data?.profileImg
                           ? user.data.profileImg
-                          : '/images/defaultProfile.webp'
+                          : "/images/defaultProfile.webp"
                       }`}
                       sx={{
-                        width: '150px',
-                        height: '150px',
-                        marginLeft: '25%',
+                        width: "150px",
+                        height: "150px",
+                        marginLeft: "25%",
 
-                        boxShadow: '0px 0px 10px rgba(0, 1, 0, 1)',
+                        boxShadow: "0px 0px 10px rgba(0, 1, 0, 1)",
                       }}
                     />
                   </Box>
@@ -132,10 +99,10 @@ const Profile = () => {
                   <Typography
                     variant="h3"
                     sx={{
-                      marginTop: '10px',
-                      color: 'whitesmoke',
-                      fontWeight: 'bold',
-                      textShadow: '2px 2px 4px rgba(1, 1, 1, 1)',
+                      marginTop: "10px",
+                      color: "whitesmoke",
+                      fontWeight: "bold",
+                      textShadow: "2px 2px 4px rgba(1, 1, 1, 1)",
                     }}
                   >
                     {user?.data?.name}
@@ -153,35 +120,35 @@ const Profile = () => {
           <Paper
             elevation={3}
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
               margin: 0,
               padding: 0,
               paddingLeft: 0,
               marginLeft: 0,
-              bgcolor: 'whitesmoke',
-              textAlign: 'center',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              position: 'relative',
-              width: '100%',
-              height: 'auto',
-              minHeight: '4rem',
+              bgcolor: "whitesmoke",
+              textAlign: "center",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              position: "relative",
+              width: "100%",
+              height: "auto",
+              minHeight: "4rem",
             }}
           >
             <Box
               sx={{
-                display: 'flex',
+                display: "flex",
                 gap: 2,
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Typography variant="h5" color="textSecondary">
                 {user?.data?.description
                   ? user.data.description
-                  : 'Sin descripción'}
+                  : "Sin descripción"}
               </Typography>
             </Box>
           </Paper>
@@ -191,20 +158,20 @@ const Profile = () => {
           <Paper
             elevation={3}
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
               margin: 0,
               padding: 0,
               paddingLeft: 0,
               marginLeft: 0,
-              bgcolor: 'whitesmoke',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              position: 'relative',
-              width: '100%',
-              height: 'auto',
-              minHeight: '10rem',
+              bgcolor: "whitesmoke",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              position: "relative",
+              width: "100%",
+              height: "auto",
+              minHeight: "10rem",
             }}
           >
             <>
@@ -215,9 +182,9 @@ const Profile = () => {
                       variant="body1"
                       component="div"
                       style={{
-                        backgroundColor: 'whitesmoke',
-                        color: 'black',
-                        padding: '16px',
+                        backgroundColor: "whitesmoke",
+                        color: "black",
+                        padding: "16px",
                       }}
                       dangerouslySetInnerHTML={{
                         __html: user?.data?.history,
@@ -230,14 +197,7 @@ const Profile = () => {
                   </Box>
                 )}
               </Typography>
-              <Box display="flex" justifyContent="center">
-                {/* {user.data.history && (
-                  <></>
-                  // <IconButton onClick={handleToggleEditHistory}>
-                  //   <EditIcon />
-                  // </IconButton>
-                )} */}
-              </Box>
+              <Box display="flex" justifyContent="center"></Box>
             </>
           </Paper>
         </Grid>

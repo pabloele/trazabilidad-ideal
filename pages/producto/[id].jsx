@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import TrazabilityLine from '../../components/TrazabilityLine/TrazabilityLine';
-import { HomeLayout } from '../../layout';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import TrazabilityLine from "../../components/TrazabilityLine/TrazabilityLine";
+import { HomeLayout } from "../../layout";
 import {
   Box,
   Typography,
@@ -13,42 +13,42 @@ import {
   Divider,
   TextField,
   Tooltip,
-} from '@mui/material';
-import useProduct from '../../hooks/useProduct';
-import { useRouter } from 'next/router';
-import Modal from '@mui/material/Modal';
-import Trazability from '../../components/Trazability/Trazability';
-import { ethers } from 'ethers';
-import { contractAddress, contractAbi } from '../../contract/contract';
-import { agroupMilestones, uploadIPFS } from '../../contract/toBlockChain';
-import ModalDialog from '../../components/Modals/ModalDialog';
-import Spinner from '../../components/Spinner/Spinner';
-import Swal from 'sweetalert2';
-import { useAddress } from '@thirdweb-dev/react';
+} from "@mui/material";
+import useProduct from "../../hooks/useProduct";
+import { useRouter } from "next/router";
+import Modal from "@mui/material/Modal";
+import Trazability from "../../components/Trazability/Trazability";
+import { ethers } from "ethers";
+import { contractAddress, contractAbi } from "../../contract/contract";
+import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
+import ModalDialog from "../../components/Modals/ModalDialog";
+import Spinner from "../../components/Spinner/Spinner";
+import Swal from "sweetalert2";
+import { useAddress } from "@thirdweb-dev/react";
 import {
   addProtocol,
   updateProduct,
-} from '../../firebase/controllers/firestoreControllers';
-import { v4 } from 'uuid';
-import CloseIcon from '@mui/icons-material/Close';
-import { useProductStore } from '../../store';
-import useModalStore from '../../store/useModalStore';
-import { FaEdit } from 'react-icons/fa';
-import DeleteIcon from '@mui/icons-material/Delete';
-import useAddModalStore from '../../store/useAddModalStore';
-import EditIcon from '@mui/icons-material/Edit';
-import EditProduct from '../../components/Modals/EditProduct';
-import { CustomTextField } from '../../styledComponents/styledComponents';
-import { useSigner } from '@thirdweb-dev/react';
+} from "../../firebase/controllers/firestoreControllers";
+import { v4 } from "uuid";
+import CloseIcon from "@mui/icons-material/Close";
+import { useProductStore } from "../../store";
+import useModalStore from "../../store/useModalStore";
+import { FaEdit } from "react-icons/fa";
+import DeleteIcon from "@mui/icons-material/Delete";
+import useAddModalStore from "../../store/useAddModalStore";
+import EditIcon from "@mui/icons-material/Edit";
+import EditProduct from "../../components/Modals/EditProduct";
+import { CustomTextField } from "../../styledComponents/styledComponents";
+import { useSigner } from "@thirdweb-dev/react";
 const Producto = () => {
   const address = useAddress();
 
-  const isSmallScreen = useMediaQuery('(min-width: 600px)');
+  const isSmallScreen = useMediaQuery("(min-width: 600px)");
   const router = useRouter();
 
   const { product, setProductData } = useProductStore();
 
-  const [oldValue, setOldValue] = useState('');
+  const [oldValue, setOldValue] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -64,7 +64,7 @@ const Producto = () => {
   const [txHash, setTxHash] = useState();
   const [error, setError] = useState();
   const [isEditingProtocol, setIsEditingProtocol] = useState(false);
-  const [editingProtocolScreen, setEditingProtocolScreen] = useState('select');
+  const [editingProtocolScreen, setEditingProtocolScreen] = useState("select");
   const [protocolSnapshot, setProtocolSnapshot] = useState({});
 
   const [editingStates, setEditingStates] = useState(
@@ -98,15 +98,15 @@ const Producto = () => {
   } = useProduct(router.query.id);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import('qr-code-styling').then((module) => {
+    if (typeof window !== "undefined") {
+      import("qr-code-styling").then((module) => {
         const QRCodeStyling = module.default;
 
         const qrCodeInstance = new QRCodeStyling({
           width: 120,
           height: 120,
-          image: '/images/cropped-logo-ideal-2.png',
-          dotsOptions: { type: 'extra-rounded', color: '#000000' },
+          image: "/images/cropped-logo-ideal-2.png",
+          dotsOptions: { type: "extra-rounded", color: "#000000" },
           imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
@@ -126,7 +126,7 @@ const Producto = () => {
   const onDownloadClick = () => {
     if (!qrcode) return;
     qrcode.download({
-      extension: 'png',
+      extension: "png",
     });
   };
 
@@ -139,13 +139,16 @@ const Producto = () => {
   const handleClose = () => {
     setIsEditingProtocol(false);
     setAddingStageAndProcess(false);
-    setEditingProtocolScreen('select');
+    setEditingProtocolScreen("select");
     onCloseMilestoneModal();
   };
   const signer = useSigner();
   const uploadToBlockChain = async () => {
     try {
-      if (!address) throw new Error('Conecte una billetera para certificar la trazabilidad');
+      if (!address)
+        throw new Error(
+          "Conecte una billetera para certificar la trazabilidad"
+        );
 
       setLoading(true);
       const trazabilidadAgrupada = agroupMilestones(product);
@@ -160,9 +163,12 @@ const Producto = () => {
       };
 
       const tokenData = {
+        id: router.query.id,
         name: product.name,
         description: `La trazabilidad del producto  "${product.name}" está certificada con tecnología blockchain gracias a la plataforma de la Fundación Ideal`,
         image: product.productImage,
+        trazability: `https://trazabilidadideal.infura-ipfs.io/ipfs/${trazability.path}`,
+        productReference: `https://trazabilidadideal.infura-ipfs.io/ipfs/${productToIpfs.path}`,
       };
 
       const tokenDataIPFS = await uploadIPFS(tokenData);
@@ -171,33 +177,57 @@ const Producto = () => {
       console.log(network);
 
       if (network.chainId !== Number(process.env.NEXT_PUBLIC_CHAIN_ID)) {
-        throw new Error(`No estás en la red correcta, por favor selecciona la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`);
+        throw new Error(
+          `No estás en la red correcta, por favor selecciona la red ${process.env.NEXT_PUBLIC_NETWORK_NAME.toString()}`
+        );
       }
 
-      const trazabilityContract = new ethers.Contract(contractAddress, contractAbi, signer);
+      const trazabilityContract = new ethers.Contract(
+        contractAddress,
+        contractAbi,
+        signer
+      );
 
       try {
-        console.log('aca llega');
+        console.log("aca llega");
 
-        const estimatedGas = await trazabilityContract.estimateGas.safeMint(address, tokenDataIPFS.url);
+        const estimatedGas = await trazabilityContract.estimateGas.safeMint(
+          address,
+          formatProduct.id,
+          formatProduct.name,
+          tokenDataIPFS.url,
+          tokenData.image,
+          formatProduct.productReference,
+          formatProduct.trazability
+        );
         const gasLimit = estimatedGas.mul(2); // Ajusta el factor multiplicador según tus necesidades
         const gasPrice = await signer.getGasPrice();
 
-        const transaction = await trazabilityContract.populateTransaction.safeMint(
-          address,
-          tokenDataIPFS.url,
-          {
-            gasLimit,
-            gasPrice
-          }
-        );
+        const transaction =
+          await trazabilityContract.populateTransaction.safeMint(
+            address,
+            formatProduct.id,
+            formatProduct.name,
+            tokenDataIPFS.url,
+            tokenData.image,
+            formatProduct.productReference,
+            formatProduct.trazability,
+            {
+              gasLimit,
+              gasPrice,
+            }
+          );
 
         const response = await signer.sendTransaction(transaction);
 
         if (response.hash) {
-          const updated = await updateProduct(router.query.id, 'realizado', response.hash);
+          const updated = await updateProduct(
+            router.query.id,
+            "realizado",
+            response.hash
+          );
         } else {
-          console.error('El valor de txHash es undefined.');
+          console.error("El valor de txHash es undefined.");
         }
       } catch (error) {
         setError(error.reason);
@@ -226,14 +256,14 @@ const Producto = () => {
   const handleOpenModal = async () => {
     Swal.fire({
       title:
-        '¿Seguro que deseas certificar este proceso productivo en la blockchain?',
-      text: 'Esta acción no es reversible y será información pública',
-      icon: 'question',
+        "¿Seguro que deseas certificar este proceso productivo en la blockchain?",
+      text: "Esta acción no es reversible y será información pública",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Certificar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Certificar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         setOpenDialog(true);
@@ -248,7 +278,7 @@ const Producto = () => {
   };
   useEffect(() => {
     if (product) {
-      if (product.protocolName == 'Diseña tu protocolo' && product.firstTime) {
+      if (product.protocolName == "Diseña tu protocolo" && product.firstTime) {
         setShowCustomFirsTime(true);
       }
     }
@@ -279,7 +309,7 @@ const Producto = () => {
   const [
     initialMilestoneStageAndProtocol,
     setInitialMilestoneStageAndProtocol,
-  ] = useState({ stage: '', protocol: '' });
+  ] = useState({ stage: "", protocol: "" });
 
   const handleChangeMilestoneField = (e) => {
     setInitialMilestoneStageAndProtocol((prev) => ({
@@ -294,8 +324,8 @@ const Producto = () => {
   };
 
   const [addingStageAndProcess, setAddingStageAndProcess] = useState({
-    stage: '',
-    process: '',
+    stage: "",
+    process: "",
   });
 
   const handleAddStageAndProcess = (e) => {
@@ -309,13 +339,13 @@ const Producto = () => {
 
   const handleDeleteStage = (stageIndex) => {
     Swal.fire({
-      title: '¿Seguro que deseas eliminar esta etapa?',
-      icon: 'question',
+      title: "¿Seguro que deseas eliminar esta etapa?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         const updatedProduct = setProtocolSnapshot((prevProduct) => {
@@ -330,15 +360,15 @@ const Producto = () => {
           try {
             uploadProduct(updatedProduct);
             setProductData(updatedProduct);
-            setEditingProtocolScreen('select');
+            setEditingProtocolScreen("select");
             onCloseMilestoneModal();
             Swal.fire({
-              title: 'Etapa eliminada correctamente!',
-              icon: 'success',
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Continuar',
-              cancelButtonText: 'Cancelar',
+              title: "Etapa eliminada correctamente!",
+              icon: "success",
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Continuar",
+              cancelButtonText: "Cancelar",
             });
             // onCloseMilestoneModal();
           } catch (error) {
@@ -351,13 +381,13 @@ const Producto = () => {
 
   const handleDeleteProcess = (stageIndex, processIndex) => {
     Swal.fire({
-      title: '¿Seguro que deseas eliminar este proceso?',
-      icon: 'question',
+      title: "¿Seguro que deseas eliminar este proceso?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         const updatedProduct = setProtocolSnapshot((prevProduct) => {
@@ -370,17 +400,17 @@ const Producto = () => {
           try {
             uploadProduct(updatedProduct);
             setProductData(updatedProduct);
-            setEditingProtocolScreen('select');
+            setEditingProtocolScreen("select");
 
             onCloseMilestoneModal();
 
             Swal.fire({
-              title: 'Proceso eliminado correctamente!',
-              icon: 'success',
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Continuar',
-              cancelButtonText: 'Cancelar',
+              title: "Proceso eliminado correctamente!",
+              icon: "success",
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Continuar",
+              cancelButtonText: "Cancelar",
             });
             // onCloseMilestoneModal();
           } catch (error) {
@@ -492,16 +522,16 @@ const Producto = () => {
       try {
         uploadProduct(updatedProduct);
         setProductData(updatedProduct);
-        setEditingProtocolScreen('select');
+        setEditingProtocolScreen("select");
         onCloseMilestoneModal();
 
         Swal.fire({
-          title: 'Agregado correctamente!',
-          icon: 'success',
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Continuar',
-          cancelButtonText: 'Cancelar',
+          title: "Agregado correctamente!",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Continuar",
+          cancelButtonText: "Cancelar",
         });
       } catch (error) {
         console.log(error);
@@ -518,7 +548,7 @@ const Producto = () => {
       try {
         uploadProduct(updatedProduct);
         setProductData(updatedProduct);
-        setEditingProtocolScreen('select');
+        setEditingProtocolScreen("select");
 
         onCloseMilestoneModal();
       } catch (error) {
@@ -536,10 +566,10 @@ const Producto = () => {
         <Box
           container
           sx={{
-            height: '90vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            height: "90vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Spinner />
@@ -554,33 +584,33 @@ const Producto = () => {
         <Modal
           open={isOpenMilestoneModal}
           onClose={handleClose}
-          sx={{ width: '100vw', height: '100vh' }}
+          sx={{ width: "100vw", height: "100vh" }}
         >
           <Box
             sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: isSmallScreen ? '95%' : '95%',
-              height: '90vh',
-              overflowY: 'auto',
-              bgcolor: 'background.paper',
-              border: '2px solid #000',
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: isSmallScreen ? "95%" : "95%",
+              height: "90vh",
+              overflowY: "auto",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
               boxShadow: 24,
-              margin: isSmallScreen ? '0' : 'auto',
-              textAlign: 'center',
-              justifyContent: 'center',
+              margin: isSmallScreen ? "0" : "auto",
+              textAlign: "center",
+              justifyContent: "center",
               p: 4,
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <CloseIcon
                 onClick={handleClose}
                 sx={{
-                  color: 'red',
-                  ':hover': {
-                    cursor: 'pointer',
+                  color: "red",
+                  ":hover": {
+                    cursor: "pointer",
                   },
                 }}
               />
@@ -588,11 +618,11 @@ const Producto = () => {
 
             {isEditingProtocol && !showCustomFirstTime && (
               <>
-                {editingProtocolScreen === 'select' && (
+                {editingProtocolScreen === "select" && (
                   <Box justifyContent="center">
                     <Typography
                       sx={{
-                        color: 'primary.main',
+                        color: "primary.main",
                         fontSize: 24,
                       }}
                     >
@@ -608,25 +638,25 @@ const Producto = () => {
                     >
                       <Button
                         onClick={() => {
-                          setEditingProtocolScreen('add');
+                          setEditingProtocolScreen("add");
                         }}
                         style={{
                           fontSize: 20,
-                          backgroundColor: '#1D45B0',
-                          color: 'whitesmoke',
+                          backgroundColor: "#1D45B0",
+                          color: "whitesmoke",
                         }}
                       >
                         Agregar
                       </Button>
                       <Button
                         onClick={() => {
-                          setEditingProtocolScreen('editRemove');
+                          setEditingProtocolScreen("editRemove");
                           setProtocolSnapshot({ ...product });
                         }}
                         style={{
                           fontSize: 20,
-                          backgroundColor: '#1D45B0',
-                          color: 'whitesmoke',
+                          backgroundColor: "#1D45B0",
+                          color: "whitesmoke",
                         }}
                       >
                         Editar o eliminar
@@ -635,9 +665,9 @@ const Producto = () => {
                   </Box>
                 )}
 
-                {editingProtocolScreen.substring(0, 3) === 'add' && (
+                {editingProtocolScreen.substring(0, 3) === "add" && (
                   <>
-                    {editingProtocolScreen === 'add' && (
+                    {editingProtocolScreen === "add" && (
                       <Grid container direction="row" height="100%">
                         {/* left */}
                         <Grid item xs={2}></Grid>
@@ -652,7 +682,7 @@ const Producto = () => {
                         >
                           <Typography
                             sx={{
-                              color: 'primary.main',
+                              color: "primary.main",
                               fontSize: 24,
                             }}
                           >
@@ -664,7 +694,7 @@ const Producto = () => {
                             onChange={handleAddStageAndProcess}
                             sx={{
                               minWidth: 200,
-                              height: '2.5rem',
+                              height: "2.5rem",
                               marginRight: 1,
                             }}
                           >
@@ -676,7 +706,7 @@ const Producto = () => {
                           </Select>
                           <Typography
                             sx={{
-                              color: 'primary.main',
+                              color: "primary.main",
                               fontSize: 20,
                             }}
                           >
@@ -691,7 +721,7 @@ const Producto = () => {
                           <br />
                           <Typography
                             sx={{
-                              color: 'primary.main',
+                              color: "primary.main",
                               fontSize: 20,
                             }}
                           >
@@ -709,11 +739,11 @@ const Producto = () => {
                               handleSaveNewStageAndProcess();
                             }}
                             style={{
-                              display: 'flex',
+                              display: "flex",
                               fontSize: 20,
-                              backgroundColor: '#1D45B0',
-                              color: 'whitesmoke',
-                              width: '10rem',
+                              backgroundColor: "#1D45B0",
+                              color: "whitesmoke",
+                              width: "10rem",
                             }}
                           >
                             Guardar
@@ -726,18 +756,18 @@ const Producto = () => {
                   </>
                 )}
 
-                {editingProtocolScreen === 'editRemove' && (
+                {editingProtocolScreen === "editRemove" && (
                   <Box
                     justifyContent="center"
                     justifyItems="center"
-                    display={'flex'}
-                    flexDirection={'column'}
+                    display={"flex"}
+                    flexDirection={"column"}
                   >
                     <Typography
                       sx={{
-                        color: 'primary.main',
+                        color: "primary.main",
                         fontSize: 20,
-                        bgcolor: 'lightBlue.main',
+                        bgcolor: "lightBlue.main",
                       }}
                     >
                       Editar Producto y estructura de etapas y procesos
@@ -777,10 +807,10 @@ const Producto = () => {
                             <Grid item>
                               {editingStates[index] ? (
                                 <>
-                                  <Box key={p.name} sx={{ display: 'flex' }}>
+                                  <Box key={p.name} sx={{ display: "flex" }}>
                                     <Typography
                                       sx={{
-                                        fontWeight: 'bold',
+                                        fontWeight: "bold",
                                         fontSize: 24,
                                       }}
                                     >
@@ -809,11 +839,11 @@ const Producto = () => {
                                     key={p.name}
                                     xs={12}
                                     sx={{
-                                      display: 'flex',
-                                      flexDirection: 'row',
-                                      alignContent: 'center',
-                                      justifyContent: 'start',
-                                      marginY: '1rem',
+                                      display: "flex",
+                                      flexDirection: "row",
+                                      alignContent: "center",
+                                      justifyContent: "start",
+                                      marginY: "1rem",
                                     }}
                                   >
                                     {/* <Typography
@@ -835,8 +865,8 @@ const Producto = () => {
                                       marginTop="0.35rem"
                                       fontWeight="bold"
                                       sx={{
-                                        textTransform: 'uppercase',
-                                        fontStyle: 'italic',
+                                        textTransform: "uppercase",
+                                        fontStyle: "italic",
                                       }}
                                     >
                                       {p.name}
@@ -874,22 +904,22 @@ const Producto = () => {
                                   <Grid
                                     key={l.name}
                                     sx={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
                                     }}
                                   >
                                     <Typography
                                       sx={{
-                                        color: 'primary.main',
+                                        color: "primary.main",
                                         fontSize: 20,
                                         marginRight: 1,
-                                        fontWeight: 'bold',
+                                        fontWeight: "bold",
                                       }}
                                     >
                                       Proceso:
                                     </Typography>
-                                    <Box display="flex" alignItems={'center'}>
+                                    <Box display="flex" alignItems={"center"}>
                                       {editingProcess[index] &&
                                       editingProcess[index][lineIndex] ? (
                                         <>
@@ -964,19 +994,19 @@ const Producto = () => {
                 <Box>
                   <Typography
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                       fontSize: 20,
                     }}
                   >
                     Los hitos productivos se estructuran en etapas y procesos
-                    (por ejemplo Etapa: Producción - Proceso: Siembra). <br />{' '}
+                    (por ejemplo Etapa: Producción - Proceso: Siembra). <br />{" "}
                     Por favor defina la etapa y proceso de su primer hito
                     productivo para comenzar con su trazabilidad.
                   </Typography>
                   <br />
                   <Typography
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                       fontSize: 20,
                     }}
                   >
@@ -991,7 +1021,7 @@ const Producto = () => {
                   <br />
                   <Typography
                     sx={{
-                      color: 'primary.main',
+                      color: "primary.main",
                       fontSize: 20,
                     }}
                   >
@@ -1008,8 +1038,8 @@ const Producto = () => {
                   onClick={handleBeginCustomProtocol}
                   style={{
                     fontSize: 20,
-                    backgroundColor: '#1D45B0',
-                    color: 'whitesmoke',
+                    backgroundColor: "#1D45B0",
+                    color: "whitesmoke",
                   }}
                 >
                   Comenzar
@@ -1021,7 +1051,7 @@ const Producto = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: 'primary.main',
+                    color: "primary.main",
                     fontSize: 24,
                   }}
                 >
@@ -1038,9 +1068,9 @@ const Producto = () => {
           <Box display="flex" flexDirection="row" alignItems="center">
             <Typography
               sx={{
-                color: 'primary.main',
+                color: "primary.main",
                 fontSize: 24,
-                marginRight: '1rem',
+                marginRight: "1rem",
               }}
             >
               {product.name}
@@ -1051,43 +1081,43 @@ const Producto = () => {
                 <FaEdit
                   color="#1d77c0"
                   size={24}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 />
               </IconButton>
             </Tooltip>
           </Box>
           {error && (
-            <Typography sx={{ color: '#FF0000', fontSize: 20 }}>
+            <Typography sx={{ color: "#FF0000", fontSize: 20 }}>
               {error}
             </Typography>
           )}
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
           </Box>
 
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: isSmallScreen ? 'row' : 'column',
-              alignItems: isSmallScreen ? 'flex-start' : 'center',
-              justifyContent: 'space-between',
+              display: "flex",
+              flexDirection: isSmallScreen ? "row" : "column",
+              alignItems: isSmallScreen ? "flex-start" : "center",
+              justifyContent: "space-between",
               gap: 2,
               left: isSmallScreen ? 240 : 25,
-              marginTop: isSmallScreen ? '0' : '1rem',
+              marginTop: isSmallScreen ? "0" : "1rem",
             }}
           >
             <Box
               sx={{
-                width: '100%',
-                display: 'flex',
-                justifyItems: 'flex-start',
+                width: "100%",
+                display: "flex",
+                justifyItems: "flex-start",
               }}
             >
               <Button
                 variant="contained"
                 onClick={createQRcode}
                 disabled={product?.qrcode ? true : false}
-                sx={{ height: '2.5rem', marginRight: '1rem' }}
+                sx={{ height: "2.5rem", marginRight: "1rem" }}
               >
                 Crear QR
               </Button>
@@ -1095,7 +1125,7 @@ const Producto = () => {
                 variant="contained"
                 onClick={handleOpenModal}
                 // disabled={product?.status !== 'en curso'}
-                sx={{ height: '2.5rem' }}
+                sx={{ height: "2.5rem" }}
               >
                 Certificar en blockchain
               </Button>
@@ -1103,13 +1133,13 @@ const Producto = () => {
             {product?.qrcode && (
               <Box
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
                   // marginTop: isSmallScreen ? '-8rem' : '0',
-                  position: 'fixed',
-                  top: '65%',
+                  position: "fixed",
+                  top: "65%",
                   right: 50,
                 }}
               >
@@ -1117,8 +1147,8 @@ const Producto = () => {
 
                 <Box
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
                   <Button onClick={onDownloadClick} sx={{ fontSize: 12 }}>
@@ -1126,7 +1156,7 @@ const Producto = () => {
                   </Button>
                   <Button
                     onClick={() =>
-                      window.open(`/history/${router.query.id}`, '_blank')
+                      window.open(`/history/${router.query.id}`, "_blank")
                     }
                     sx={{ fontSize: 12 }}
                     target="_blank"
@@ -1142,10 +1172,10 @@ const Producto = () => {
         <Button
           variant="contained"
           sx={{
-            position: 'fixed',
-            top: '0rem',
-            right: '5%',
-            marginTop: '7rem',
+            position: "fixed",
+            top: "0rem",
+            right: "5%",
+            marginTop: "7rem",
           }}
           onClick={handleOpen}
         >
@@ -1154,10 +1184,10 @@ const Producto = () => {
 
         <Box
           sx={{
-            position: 'fixed',
+            position: "fixed",
 
             right: isSmallScreen ? 65 : 25,
-            top: '50vh',
+            top: "50vh",
           }}
         ></Box>
       </HomeLayout>
