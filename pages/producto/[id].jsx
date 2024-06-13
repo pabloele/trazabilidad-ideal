@@ -560,6 +560,11 @@ const Producto = () => {
     onClose();
   };
 
+  useEffect(() => {
+    error && alert(error);
+    setError(null);
+  }, [error]);
+
   if (!product) {
     return (
       <HomeLayout>
@@ -641,7 +646,7 @@ const Producto = () => {
                           setEditingProtocolScreen("add");
                         }}
                         style={{
-                          fontSize: 20,
+                          fontSize: isSmallScreen ? 20 : 12,
                           backgroundColor: "#1D45B0",
                           color: "whitesmoke",
                         }}
@@ -654,7 +659,7 @@ const Producto = () => {
                           setProtocolSnapshot({ ...product });
                         }}
                         style={{
-                          fontSize: 20,
+                          fontSize: isSmallScreen ? 20 : 12,
                           backgroundColor: "#1D45B0",
                           color: "whitesmoke",
                         }}
@@ -1086,11 +1091,11 @@ const Producto = () => {
               </IconButton>
             </Tooltip>
           </Box>
-          {error && (
+          {/* {error && (
             <Typography sx={{ color: "#FF0000", fontSize: 20 }}>
               {error}
             </Typography>
-          )}
+          )} */}
           <Box sx={{ display: "flex" }}>
             <TrazabilityLine protocol={product.trazability} />
           </Box>

@@ -1,9 +1,11 @@
 import { Box } from "@mui/system";
 import { NavBar, SideBar } from "../../components";
+import { useMediaQuery } from "@mui/material";
 
 const drawerWidth = 200;
 
 export const HomeLayout = ({ children }) => {
+  const isNotSmallScreen = useMediaQuery("(min-width: 600px)");
   return (
     <Box
       sx={{
@@ -22,9 +24,11 @@ export const HomeLayout = ({ children }) => {
         sx={{
           backgroundColor: "beige",
           flexGrow: 1,
-          p: 7,
+          p: isNotSmallScreen ? 7 : 0.5,
+          paddingTop: isNotSmallScreen ? "" : "3.5rem",
+          paddingLeft: isNotSmallScreen ? "" : "1rem",
           marginTop: "3rem",
-          marginLeft: "2rem",
+          marginLeft: isNotSmallScreen ? "2rem" : "0.5rem",
         }}
       >
         {children}

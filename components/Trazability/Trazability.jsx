@@ -43,7 +43,7 @@ const CustomTextField = styled.textarea`
 const Trazability = ({ initialMilestone, closeModal }) => {
   const router = useRouter();
   const index = 0;
-  const isSmallScreen = useMediaQuery("(min-width: 1500px)");
+  const isSmallScreen = useMediaQuery("(min-width: 1070px)");
 
   const [showCategories, setShowCategories] = useState(true);
 

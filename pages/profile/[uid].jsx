@@ -10,6 +10,7 @@ import {
   Button,
   TextField,
   InputAdornment,
+  useMediaQuery,
 } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { HomeLayout } from "../../layout";
@@ -21,6 +22,7 @@ import { MdOutlineCancel, MdOutlineSave } from "react-icons/md";
 import { IoTextSharp } from "react-icons/io5";
 const Profile = () => {
   const router = useRouter();
+  const isNotSmallScreen = useMediaQuery("(min-width: 600px)");
   const { user: userAuth } = useAuth();
 
   const {
@@ -190,8 +192,8 @@ const Profile = () => {
                             : "/images/defaultProfile.webp"
                         }
                         sx={{
-                          width: "150px",
-                          height: "150px",
+                          width: isNotSmallScreen ? "150px" : "75px",
+                          height: isNotSmallScreen ? "150px" : "75px",
                           marginLeft: "25%",
                           boxShadow: "0px 0px 10px rgba(0, 1, 0, 1)",
                         }}
@@ -231,7 +233,7 @@ const Profile = () => {
                     </Box>
 
                     <Typography
-                      variant="h3"
+                      variant={isNotSmallScreen ? "h4" : "h6"}
                       sx={{
                         marginTop: "10px",
                         color: "whitesmoke",

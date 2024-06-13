@@ -45,6 +45,9 @@ const ViewProduct = () => {
   const isMediumScreen = useMediaQuery("(min-width: 10240px)");
   console.log(product.ownerUid);
   const getBlockChainData = async () => {
+    if (!window.ethereum) {
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     const signer = provider.getSigner();
@@ -59,9 +62,9 @@ const ViewProduct = () => {
       const data = await trazabilityContract.getProductDataById(
         router.query.id
       );
-      console.log(data);
+      console.log(data.id.length);
       //todo revistar esto mas tarde
-      setProductDataLocal({ data: data, success: true });
+      setProductDataLocal({ data: data, success: data?.id?.length > 0 });
     } catch (error) {
       console.log(error);
     } finally {
@@ -176,7 +179,7 @@ const ViewProduct = () => {
       container
       justifyContent="center"
       direction={"column"}
-      bgcolor="secondary.main"
+      // bgcolor="secondary.main"
     >
       <Grid item>
         <UserNavBar />
@@ -601,7 +604,7 @@ const ViewProduct = () => {
       </Grid>
 
       {/* milestones */}
-      <Grid item>
+      <Grid item sx={{ paddingX: 4 }}>
         {product &&
           product.trazability &&
           product.trazability.map((trazability, index) => {
@@ -620,6 +623,7 @@ const ViewProduct = () => {
                       color: "white.main",
                       backgroundColor: "primary.main",
                       marginX: 10,
+                      marginBottom: 2,
                       paddingX: 2,
                       boxShadow: "0px 4px 8px rgba(0, 0, 0.5, 0.5)",
                     }}
@@ -684,6 +688,7 @@ const ViewProduct = () => {
                                               fontSize: 28,
                                               fontWeight: "bold",
                                               color: "primary.main",
+                                              paddingX: 2,
                                             }}
                                           >
                                             {line.name}
@@ -692,19 +697,23 @@ const ViewProduct = () => {
                                             sx={{
                                               fontSize: 20,
                                               marginTop: 2,
+                                              paddingX: 2,
                                             }}
                                           >
                                             {milestone.description}
                                           </Typography>
-                                          <Typography
-                                            sx={{
-                                              fontSize: 20,
-                                              fontWeight: "bold",
-                                              paddingTop: 1,
-                                            }}
-                                          >
-                                            Archivos adjuntos:
-                                          </Typography>
+                                          {milestone.atachments?.length > 0 && (
+                                            <Typography
+                                              sx={{
+                                                fontSize: 20,
+                                                fontWeight: "bold",
+                                                paddingTop: 1,
+                                                paddingX: 2,
+                                              }}
+                                            >
+                                              Archivos adjuntos:
+                                            </Typography>
+                                          )}
                                           {milestone.atachments?.map(
                                             (atachment, index) => (
                                               <Typography
@@ -715,6 +724,7 @@ const ViewProduct = () => {
                                                   color: "black",
                                                   textDecoration: "none",
                                                   cursor: "pointer",
+                                                  paddingX: 2,
                                                 }}
                                                 onClick={() =>
                                                   handleDownload(atachment)
