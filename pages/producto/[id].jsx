@@ -151,6 +151,7 @@ const Producto = () => {
         );
 
       setLoading(true);
+
       const trazabilidadAgrupada = agroupMilestones(product);
       const trazability = await uploadIPFS(trazabilidadAgrupada);
       const productToIpfs = await uploadIPFS(product);
@@ -172,6 +173,7 @@ const Producto = () => {
       };
 
       const tokenDataIPFS = await uploadIPFS(tokenData);
+      const tokenDataIPFSUrl = `https://trazabilidadideal.infura-ipfs.io/ipfs/${tokenDataIPFS.path}`;
 
       const network = await signer.provider.getNetwork();
       console.log(network);
@@ -187,44 +189,43 @@ const Producto = () => {
         contractAbi,
         signer
       );
-
       try {
-        console.log("aca llega");
-
+        console.log("tokenDataIPFSUrl", tokenDataIPFSUrl);
+        if (!tokenDataIPFSUrl) {
+          throw new Error(
+            "No se pudo guardar la información en IPFS, espere unos instantes e intente de nuevo"
+          );
+        }
         const estimatedGas = await trazabilityContract.estimateGas.safeMint(
           address,
-          formatProduct.id,
-          formatProduct.name,
-          tokenDataIPFS.url,
-          tokenData.image,
-          formatProduct.productReference,
-          formatProduct.trazability
+          tokenData.id,
+          tokenData.name,
+          tokenDataIPFSUrl,
+          tokenData.image
         );
-        const gasLimit = estimatedGas.mul(2); // Ajusta el factor multiplicador según tus necesidades
+
+        const gasLimit = estimatedGas.mul(2); // Adjust the factor as needed
         const gasPrice = await signer.getGasPrice();
 
-        const transaction =
-          await trazabilityContract.populateTransaction.safeMint(
-            address,
-            formatProduct.id,
-            formatProduct.name,
-            tokenDataIPFS.url,
-            tokenData.image,
-            formatProduct.productReference,
-            formatProduct.trazability,
-            {
-              gasLimit,
-              gasPrice,
-            }
-          );
+        const transaction = await trazabilityContract.safeMint(
+          address,
+          tokenData.id,
+          tokenData.name,
+          tokenDataIPFSUrl,
+          tokenData.image,
+          {
+            gasLimit,
+            gasPrice,
+          }
+        );
 
-        const response = await signer.sendTransaction(transaction);
+        const response = await transaction.wait();
 
-        if (response.hash) {
+        if (response.transactionHash) {
           const updated = await updateProduct(
             router.query.id,
             "realizado",
-            response.hash
+            response.transactionHash
           );
         } else {
           console.error("El valor de txHash es undefined.");
