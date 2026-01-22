@@ -1,4 +1,4 @@
-const DEFAULT_IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+const DEFAULT_IPFS_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 const DEFAULT_PINATA_API_URL = "https://api.pinata.cloud";
 
 const getGatewayBase = () => {
@@ -120,8 +120,11 @@ export const resolveIpfsUrl = (value) => {
     return value;
   }
 
+  const forceGateway =
+    process.env.NEXT_PUBLIC_IPFS_FORCE_GATEWAY === "true";
+
   if (value.startsWith("http://") || value.startsWith("https://")) {
-    if (value.includes("/ipfs/")) {
+    if (forceGateway && value.includes("/ipfs/")) {
       const parts = value.split("/ipfs/");
       const ipfsPath = parts[parts.length - 1];
       return buildIpfsUrl(ipfsPath);

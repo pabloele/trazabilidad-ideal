@@ -7,6 +7,7 @@ const nextConfig = {
     domains: [
       'firebasestorage.googleapis.com',
       'ipfs.io',
+      'gateway.pinata.cloud',
       'trazabilidadideal.infura-ipfs.io',
       'harlequin-nearby-partridge-715.mypinata.cloud',
     ],
