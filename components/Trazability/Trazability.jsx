@@ -18,6 +18,7 @@ import styled from "styled-components";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import ClassIcon from "@mui/icons-material/Class";
 import { v4 } from "uuid";
+import { resolveIpfsUrl } from "../../utils/ipfs";
 import HighlightOffSharpIcon from "@mui/icons-material/HighlightOffSharp";
 import TabPanel from "../TabPanel/TabPanel";
 import useProduct from "../../hooks/useProduct";
@@ -560,7 +561,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                       >
                         {milestone.image ? (
                           <Image
-                            src={milestone.image}
+                            src={resolveIpfsUrl(milestone.image)}
                             width={150}
                             height={150}
                             alt={milestone.image}
@@ -568,6 +569,7 @@ const Trazability = ({ initialMilestone, closeModal }) => {
                               objectFit: "cover",
                               borderRadius: "20px",
                             }}
+                            unoptimized
                           />
                         ) : (
                           <Box

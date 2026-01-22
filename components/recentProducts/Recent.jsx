@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import useProducts from '../../hooks/useProducts';
 import { useRouter } from 'next/router';
+import { resolveIpfsUrl } from '../../utils/ipfs';
 
 const Recent = () => {
   const router = useRouter();
@@ -99,7 +100,7 @@ const Recent = () => {
                     <CardMedia
                       component="img"
                       height="250"
-                      image={product.productImage}
+                      image={resolveIpfsUrl(product.productImage)}
                       alt={product.name}
                       sx={{
                         width: '100%',

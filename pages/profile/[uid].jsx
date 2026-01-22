@@ -20,6 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { RichText, toolbarOptionsFull, viewOnly } from "../../components";
 import { MdOutlineCancel, MdOutlineSave } from "react-icons/md";
 import { IoTextSharp } from "react-icons/io5";
+import { resolveIpfsUrl } from "../../utils/ipfs";
 const Profile = () => {
   const router = useRouter();
   const isNotSmallScreen = useMediaQuery("(min-width: 600px)");
@@ -108,7 +109,9 @@ const Profile = () => {
                 bgcolor: "#f9faff",
                 textAlign: "center",
                 position: "relative",
-                backgroundImage: `url(${user?.data?.wallpaperImg})`,
+                backgroundImage: user?.data?.wallpaperImg
+                  ? `url(${resolveIpfsUrl(user.data.wallpaperImg)})`
+                  : "none",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 position: "relative",
@@ -188,7 +191,7 @@ const Profile = () => {
                         alt="Foto de perfil"
                         src={
                           user?.data?.profileImg
-                            ? user.data.profileImg
+                            ? resolveIpfsUrl(user.data.profileImg)
                             : "/images/defaultProfile.webp"
                         }
                         sx={{

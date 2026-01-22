@@ -27,6 +27,7 @@ import { ethers } from "ethers";
 import Link from "next/link";
 import Loader from "../../components/Loader/Loader";
 import { useAuth } from "../../context/AuthContext";
+import { resolveIpfsUrl } from "../../utils/ipfs";
 
 const ViewProduct = () => {
   const router = useRouter();
@@ -226,10 +227,11 @@ const ViewProduct = () => {
                     transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
                     transition: "transform 0.1s ease-in-out",
                   }}
-                  src={product?.productImage}
+                  src={resolveIpfsUrl(product?.productImage)}
                   width={isSmallScreen ? 350 : 300}
                   height={isSmallScreen ? 350 : 300}
                   alt="Product Image"
+                  unoptimized
                 />
               </Paper>
             </Grid>
@@ -481,7 +483,7 @@ const ViewProduct = () => {
                   <Link
                     target="_blank"
                     rel="noopener noreferrer "
-                    href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.data.trazability}`}
+                    href={resolveIpfsUrl(productData.data.trazability)}
                   >
                     <Button
                       variant="contained"
@@ -521,10 +523,11 @@ const ViewProduct = () => {
                 >
                   <Image
                     style={{ objectFit: "contain" }}
-                    src={product?.productImage}
+                    src={resolveIpfsUrl(product?.productImage)}
                     width={isSmallScreen ? 315 : 215}
                     height={isSmallScreen ? 315 : 215}
                     alt="Product Image"
+                    unoptimized
                   />
                 </Grid>
                 <Grid item>
@@ -593,7 +596,7 @@ const ViewProduct = () => {
                 <Link
                   target="_blank"
                   rel="noopener noreferrer "
-                  href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.trazability}`}
+                  href={resolveIpfsUrl(productData.trazability)}
                 >
                   Linea de trazabilidad
                 </Link>
@@ -664,10 +667,11 @@ const ViewProduct = () => {
                                         }}
                                       >
                                         <Image
-                                          src={milestone.image}
+                                          src={resolveIpfsUrl(milestone.image)}
                                           alt="Milestone Image"
                                           layout="fill"
                                           objectFit="contain"
+                                          unoptimized
                                         />
                                       </Box>
 
@@ -742,7 +746,9 @@ const ViewProduct = () => {
                                               <Link
                                                 target="_blank"
                                                 rel="noopener noreferrer "
-                                                href={`https://trazabilidadideal.infura-ipfs.io/ipfs/${productData.trazability}`}
+                                                href={resolveIpfsUrl(
+                                                  productData.trazability
+                                                )}
                                               >
                                                 Linea de trazabilidad
                                               </Link>

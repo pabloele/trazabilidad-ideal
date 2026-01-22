@@ -18,6 +18,7 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore/lite";
 import { db } from "../../firebase/config";
 import Swal from "sweetalert2";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { resolveIpfsUrl } from "../../utils/ipfs";
 const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
   const isSmallScreen = useMediaQuery("(min-width: 600px)");
 
@@ -133,11 +134,12 @@ const EditProduct = ({ isOpen, setIsOpen, product, setProductData }) => {
             borderRadius: 2,
             objectFit: "cover",
           }}
-          src={product?.productImage}
+          src={resolveIpfsUrl(product?.productImage)}
           width={isSmallScreen ? 100 : 100}
           height={isSmallScreen ? 100 : 100}
           alt={product.name}
           marginTop="10rem"
+          unoptimized
         />
         <Box display="flex" alignItems="end">
           <Box height="2rem">

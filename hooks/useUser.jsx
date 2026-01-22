@@ -6,7 +6,7 @@ import {
   updateProfileImage,
   updateWallpaperImg,
 } from '../firebase/controllers/firestoreControllers';
-import { create } from 'ipfs-http-client';
+import { pinFileToIpfs } from '../utils/ipfs';
 
 const useUser = (id) => {
   const [user, setUser] = useState();
@@ -25,24 +25,6 @@ const useUser = (id) => {
     fetchUser();
   }, []);
 
-  const auth =
-    'Basic ' +
-    Buffer.from(
-      process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ':' +
-        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString('base64');
-
-  const ipfs = create({
-    host: 'ipfs.infura.io',
-    port: 5001,
-    protocol: 'https',
-    apiPath: '/api/v0',
-    headers: {
-      authorization: auth,
-    },
-  });
-
   const handleEditImage = async () => {
     try {
       const input = document.createElement('input');
@@ -53,9 +35,8 @@ const useUser = (id) => {
         const file = e.target.files[0];
         if (file) {
           try {
-            const result = await ipfs.add(file);
-            const ipfsHash = result.path;
-            const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
+            const result = await pinFileToIpfs(file);
+            const urlImage = result.url;
             setUser((prevUser) => ({
               ...prevUser,
               data: {
@@ -87,9 +68,8 @@ const useUser = (id) => {
         const file = e.target.files[0];
         if (file) {
           try {
-            const result = await ipfs.add(file);
-            const ipfsHash = result.path;
-            const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
+            const result = await pinFileToIpfs(file);
+            const urlImage = result.url;
             setUser((prevUser) => ({
               ...prevUser,
               data: {

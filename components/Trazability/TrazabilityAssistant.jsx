@@ -12,6 +12,7 @@ import Image from "next/image";
 import TextArea from "../Inputs/TextArea";
 import AttachmentsFiles from "../Inputs/AttachmentsFiles";
 import { v4 } from "uuid";
+import { resolveIpfsUrl } from "../../utils/ipfs";
 
 const STEPS = {
   CATEGORY: 0,
@@ -244,10 +245,11 @@ const TrazabilityAssistant = ({ initialMilestone, closeModal }) => {
                 </>
               ) : (
                 <Image
-                  src={milestone.image}
+                  src={resolveIpfsUrl(milestone.image)}
                   height={300}
                   width={600}
                   alt={"imagen del milestone"}
+                  unoptimized
                 />
               )}
             </Box>

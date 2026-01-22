@@ -6,6 +6,7 @@ import useUser from "../../../hooks/useUser";
 import { IoTextSharp } from "react-icons/io5";
 
 import UserNavBar from "../../../components/NavBar/UserNavBar";
+import { resolveIpfsUrl } from "../../../utils/ipfs";
 const Profile = () => {
   const router = useRouter();
 
@@ -34,7 +35,9 @@ const Profile = () => {
               bgcolor: "#f9faff",
               textAlign: "center",
               position: "relative",
-              backgroundImage: `url(${user?.data?.wallpaperImg})`,
+              backgroundImage: user?.data?.wallpaperImg
+                ? `url(${resolveIpfsUrl(user.data.wallpaperImg)})`
+                : "none",
               backgroundSize: "cover",
               backgroundPosition: "center",
               position: "relative",
@@ -81,11 +84,11 @@ const Profile = () => {
                   >
                     <Avatar
                       alt="Foto de perfil"
-                      src={`${
+                      src={
                         user?.data?.profileImg
-                          ? user.data.profileImg
+                          ? resolveIpfsUrl(user.data.profileImg)
                           : "/images/defaultProfile.webp"
-                      }`}
+                      }
                       sx={{
                         width: "150px",
                         height: "150px",

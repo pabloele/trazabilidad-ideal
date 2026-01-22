@@ -8,6 +8,7 @@ const nextConfig = {
       'firebasestorage.googleapis.com',
       'ipfs.io',
       'trazabilidadideal.infura-ipfs.io',
+      'harlequin-nearby-partridge-715.mypinata.cloud',
     ],
   },
 };

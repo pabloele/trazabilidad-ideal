@@ -21,6 +21,7 @@ import Trazability from "../../components/Trazability/Trazability";
 import { ethers } from "ethers";
 import { contractAddress, contractAbi } from "../../contract/contract";
 import { agroupMilestones, uploadIPFS } from "../../contract/toBlockChain";
+import { buildIpfsUrl } from "../../utils/ipfs";
 import ModalDialog from "../../components/Modals/ModalDialog";
 import Spinner from "../../components/Spinner/Spinner";
 import Swal from "sweetalert2";
@@ -168,12 +169,12 @@ const Producto = () => {
         name: product.name,
         description: `La trazabilidad del producto  "${product.name}" está certificada con tecnología blockchain gracias a la plataforma de la Fundación Ideal`,
         image: product.productImage,
-        trazability: `https://trazabilidadideal.infura-ipfs.io/ipfs/${trazability.path}`,
-        productReference: `https://trazabilidadideal.infura-ipfs.io/ipfs/${productToIpfs.path}`,
+        trazability: buildIpfsUrl(trazability.path),
+        productReference: buildIpfsUrl(productToIpfs.path),
       };
 
       const tokenDataIPFS = await uploadIPFS(tokenData);
-      const tokenDataIPFSUrl = `https://trazabilidadideal.infura-ipfs.io/ipfs/${tokenDataIPFS.path}`;
+      const tokenDataIPFSUrl = buildIpfsUrl(tokenDataIPFS.path);
 
       const network = await signer.provider.getNetwork();
       console.log(network);

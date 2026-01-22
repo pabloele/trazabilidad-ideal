@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { create } from "ipfs-http-client";
 import { v4 } from "uuid";
 import imageCompression from "browser-image-compression";
+import { pinFileToIpfs } from "../utils/ipfs";
 
 const options = {
   maxSizeMB: 2,
@@ -26,24 +26,6 @@ const useMilestone = (
 
   const { uploadFile, getFile } = useAuth();
 
-  const auth =
-    "Basic " +
-    Buffer.from(
-      process.env.NEXT_PUBLIC_IPFS_API_KEY +
-        ":" +
-        process.env.NEXT_PUBLIC_IPFS_KEY_SECRET
-    ).toString("base64");
-
-  const ipfs = create({
-    host: "ipfs.infura.io",
-    port: 5001,
-    protocol: "https",
-    apiPath: "/api/v0",
-    headers: {
-      authorization: auth,
-    },
-  });
-
   const handleImageUpload = async () => {
     try {
       const input = document.createElement("input");
@@ -56,9 +38,8 @@ const useMilestone = (
         const file = await imageCompression(rawFile, options);
         if (file) {
           try {
-            const result = await ipfs.add(file);
-            const ipfsHash = result.path;
-            const urlImage = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
+            const result = await pinFileToIpfs(file);
+            const urlImage = result.url;
 
             setMilestone((prev) => ({
               ...prev,
@@ -90,9 +71,11 @@ const useMilestone = (
 
           // const randomName = `${uniqueId}`;
 
-          const result = await ipfs.add(file);
-          const ipfsHash = result.path;
-          const urlFile = `https://trazabilidadideal.infura-ipfs.io/ipfs/${ipfsHash}`;
+          const result = await pinFileToIpfs(file, {
+            fileName: randomName,
+            metadata: { name: randomName },
+          });
+          const urlFile = result.url;
 
           const atachments = [
             ...milestone.atachments,

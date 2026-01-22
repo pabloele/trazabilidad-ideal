@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 import useProtocols from "../../hooks/useProtocols";
 import { HomeLayout } from "../../layout";
 import ImageIcon from "@mui/icons-material/Image";
-import { create } from "ipfs-http-client";
 import Image from "next/image";
 import { addUserProduct } from "../../firebase/controllers/firestoreControllers";
 import { useAuth } from "../../context/AuthContext";
 import Spinner from "../../components/Spinner/Spinner";
+import { resolveIpfsUrl } from "../../utils/ipfs";
 import { Dropdown } from "@mui/base/Dropdown";
 import { Menu } from "@mui/base/Menu";
 import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
@@ -393,7 +393,7 @@ const ProtocolPage = () => {
           >
             {fileUri ? (
               <img
-                src={fileUri}
+                src={resolveIpfsUrl(fileUri)}
                 alt="Uploaded Image"
                 style={{
                   width: "100%",
@@ -455,7 +455,7 @@ const ProtocolPage = () => {
                   >
                     {field.value ? (
                       <img
-                        src={fileUri}
+                        src={resolveIpfsUrl(field.value)}
                         alt="Uploaded Image"
                         style={{
                           width: "100%",
