@@ -1,5 +1,5 @@
-import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
 import "../styles/globals.css";
+import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
 import { ThemeProvider } from "@emotion/react";
 import { AuthContextProvider } from "../context/AuthContext";
 import { idealTheme } from "../theme";

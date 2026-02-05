@@ -1,9 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material';
-import { ConnectWallet } from '@thirdweb-dev/react';
 import logo from '../../public/images/logo-ideal.png';
 import Image from 'next/image';
-import styles from '../../styles/Login.module.css';
-import { useState } from 'react';
 export const AuthLayout = ({ children, title = '', logingIn }) => {
   return (
     <Grid

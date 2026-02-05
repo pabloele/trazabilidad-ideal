@@ -72,7 +72,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <AuthLayout title="Registro">
+    <>
       <form
         onSubmit={handleSignUp}
         className={`animate__animated animate__fadeIn animate__faster ${styles.form}`}
@@ -157,7 +157,7 @@ const RegisterPage = () => {
           </Typography>
         </Link>
       </Grid>
-    </AuthLayout>
+    </>
   );
 };
 
